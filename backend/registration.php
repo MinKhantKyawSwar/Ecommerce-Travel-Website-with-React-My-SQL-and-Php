@@ -3,34 +3,53 @@
     header("Access-Control-Allow-Methods: *");
     header("Access-Control-Allow-Headers: Content-Type");
 
-    $conn = new mysqli("localhost", "ecommtest","1234","user");
-    if (mysqli_connect_error()){
-        echo mysqli_connect_error();
-        exit();
+    $server = "localhost";
+    $port = 3306;
+    $user = "root";
+    $password = "";
+    try {
+        $conn = new PDO("mysql:host=$server;port=$port;dbname=ecommtest", $user, $password);
+        echo "Successfully Connected!";
+    } catch (PDOException $e) {
+        echo $e->getMessage();
     }
-    else{
-        $eData = file_get_contents("php://input");
-        $dData = json_decode($eData, true);
 
+    $eData = file_get_contents("php://input");
+    $dData = json_decode($eData, true);
+
+    if (isset($dData['user'], $dData['email'], $dData['password'])) {
         $user = $dData['user'];
         $email = $dData['email'];
         $password = $dData['password'];
-
-        if($user != "" and $email != "" and $password != ""){
-            $sql = "INSERT INTO user(user,email,password) VALUES ('$user', '$email','$password')";
-            $res = mysqli_query($conn, $sql);
-            if($res){
-                $result = "You have registered Successfully!";
-            }else{
-                $result = "";
+    
+        if ($user !== "" && $email !== "" && $password !== "") {
+            try {
+                // Use prepared statements to prevent SQL injection
+                $sql = "INSERT INTO user (user, email, pass) VALUES (:user, :email, :password)";
+                $stmt = $conn->prepare($sql);
+                $stmt->bindParam(':user', $user);
+                $stmt->bindParam(':email', $email);
+                $stmt->bindParam(':password', $password);
+    
+                if ($stmt->execute()) {
+                    $result = "You have registered successfully!";
+                } else {
+                    $result = "Registration failed.";
+                }
+            } catch (PDOException $e) {
+                $result = "Error: " . $e->getMessage();
             }
+        } else {
+            $result = "All fields are required!";
         }
-        else {
-            $result ="";
-        }
-
-        $conn -> close();
-        $response[] = array("result" => $result);
-        echo json_encode($responese);
+    } else {
+        $result = "Invalid input!";
     }
-?>
+    
+    // Close the connection
+    $conn = null;
+    
+    // Send response
+    $response = array("result" => $result);
+    echo json_encode($response);
+    ?>

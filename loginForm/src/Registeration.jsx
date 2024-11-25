@@ -4,7 +4,7 @@ const Registeration = () => {
     const [user, setUser] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [password2, setpassword2] = useState("");
+    const [password2, setPassword2] = useState("");
     const [error, setError] = useState("");
     const [msg, setMsg] = useState("");
 
@@ -16,11 +16,13 @@ const Registeration = () => {
     },[])
 
     const handleInputChange = (e, type) =>{
+        const value = e.target.value;
+
         switch(type){
             case "user":
                 setError("");
-                setUser(e.target.value)
-                if (e.target.value ===""){
+                setUser(value)
+                if (value === ""){
                     setError("Username is blank!");
                 }
                 break;
@@ -28,27 +30,27 @@ const Registeration = () => {
             
             case "email":
                 setError("");
-                setEmail(e.target.value)
-                if (e.target.value ===""){
+                setEmail(value)
+                if (value ===""){
                     setError("Email is blank!");
                 }
                 break;
         
             case "password":
                 setError("");
-                setPassword(e.target.value)
-                if (e.target.value ===""){
+                setPassword(value)
+                if (value ===""){
                     setError("Password is blank!");
                 }
                 break;
             
             case "password2":
                 setError("");
-                setpassword2(e.target.value)
-                if (e.target.value ===""){
+                setPassword2(value)
+                if (value ===""){
                     setError("Confirm Password is blank!");
                 }
-                else if(e.target.value !== password){
+                else if(value !== password){
                     setError("Confirm Password does not match with Password!");
                 }
                 else{
@@ -61,7 +63,7 @@ const Registeration = () => {
 
     function handleSubmit(){
         if(user !== "" && email !=="" && password !== "" && password2 !==""){
-            var url = "http://localhost/backend/registration.php";
+            var url = "http://localhost:3000/backend/registration.php";
             var headers = {
                 "Accept" : "application/json",
                 "Content-Type" : "application/json"
@@ -86,6 +88,7 @@ const Registeration = () => {
             setEmail("")
             setPassword("")
             setPassword2("")
+            console.log("successfully added")
         }
         else{
             setError("All Fields are required!")
@@ -115,7 +118,7 @@ const Registeration = () => {
     }
 
     function checkEmail(){
-        var url = "http://localhost/react/checkemail.php";
+        var url = "http://localhost/checkemail.php";
         var headers = {
             "Accept" : "application/json",
             "Content-Type" : "application/json"
@@ -138,7 +141,7 @@ const Registeration = () => {
 
   return (
     <section>
-        <form className='flex flex-wrap flex-col items-center justify-center'>
+        <div className='flex flex-wrap flex-col items-center justify-center'>
             <p className='h-24 text-4xl'>
                 {
                     msg !=="" ?
@@ -156,7 +159,7 @@ const Registeration = () => {
                 name="username" 
                 value={user}
                 onChange={(e)=>handleInputChange(e, "user")}
-                onBlur={checkUser}
+                // onBlur={checkUser}
                 className='bg-slate-50 border-slate-200 border-2 rounded-md'/>
 
             <label htmlFor="email">Email</label>
@@ -165,12 +168,12 @@ const Registeration = () => {
                 name="email" 
                 value={email}
                 onChange={(e)=>handleInputChange(e, "email")}
-                onBlur={checkEmail}
+                // onBlur={checkEmail}
                 className='bg-slate-50 border-slate-200 border-2 rounded-md'/>
 
             <label htmlFor="password">Password</label>
             <input 
-                type="text" 
+                type="password" 
                 name="password" 
                 value={password} 
                 onChange={(e)=>handleInputChange(e, "password")}
@@ -178,7 +181,7 @@ const Registeration = () => {
             
             <label htmlFor="password">Confirm Password</label>
             <input 
-                type="text" 
+                type="password" 
                 name="password2" 
                 value={password2} 
                 onChange={(e)=>handleInputChange(e, "password2")}
@@ -187,9 +190,10 @@ const Registeration = () => {
             <input 
                 type="submit" 
                 defaultValue="submit"
+                onClick={e=>handleSubmit()}
                 className='bg-blue-500 text-white h-10 w-32 border-blue-500 mt-5 border-2 rounded-md'
                 /> 
-        </form>
+        </div>
     </section>
   )
 }
