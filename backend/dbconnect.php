@@ -1,12 +1,23 @@
 <?php
-$server = "localhost";
-$port = 3306;
-$user = "root";
-$password = "";
-try {
-    $conn = new PDO("mysql:host=$server;port=$port;dbname=ecommtest", $user, $password);
-    echo "Successfully Connected!";
-} catch (PDOException $e) {
-    echo $e->getMessage();
+
+Class dbconnect{
+    private $server = "localhost";
+    private $port = 3306;
+    private $user = "root";
+    private $password = "";
+    private $dbname="ecommtest";
+
+    public function connect(){
+        try {
+            $conn = new PDO('mysql:host=' .$this->server. ';port='.$this->port .';dbname='.$this->dbname, $this -> user, $this-> password);
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            return $conn;
+        } catch (PDOException $e) {
+            echo "Database Error: " . $e->getMessage();
+        }
+            }
+
 }
-?>;
+
+
+?>

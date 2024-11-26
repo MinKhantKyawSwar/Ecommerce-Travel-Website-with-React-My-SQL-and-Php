@@ -2,8 +2,9 @@ import { axiosInstance } from "./axiosInstance";
 
 // register new account
 export const registerUser = async (payload) => {
+  
   try {
-    const response = await axiosInstance.post("/registration.php",  payload, {
+    const response = await axiosInstance.post("/registeration.php", payload, {
       validateStatus: () => true,
     });
     return response.data;

@@ -3,33 +3,28 @@
     header("Access-Control-Allow-Methods: *");
     header("Access-Control-Allow-Headers: Content-Type");
 
-    $conn = new mysqli("ecomm", "react-user","1234","user");
-    if (mysqli_connect_error()){
-        echo mysqli_connect_error();
-        exit();
-    }
-    else{
-        $eData = file_get_contents("php://input");
-        $dData = json_decode($eData, true);
+    include 'dbconnect.php';
+    $objDb = new dbconnect;
+    $eData = file_get_contents("php://input");
+    $dData = json_decode($eData, true);
 
-        $user = $dData['user'];
+    $user = isset($dData['user']) ? trim($dData['user']) : "";
 
-        if($user != ""){
-            $sql = "SELECT * FROM user WHERE user='$user'";
-            $res = mysqli_query($conn, $sql);
-            if(mysqli_num_rows($res) !=0){
-                $result = "Username is already Taken!";
-            }
-            else{
-                $result = "";
-            }
+    if (!empty($user)) {
+        // Prepare and execute the query securely using prepared statements
+        $stmt = $pdo->prepare("SELECT COUNT(*) AS user_count FROM user WHERE user = :user");
+        $stmt->execute(['user' => $user]);
+        $result = $stmt->fetch();
+
+        if ($result['user_count'] > 0) {
+            $response = ["result" => "Username is already Taken!"];
+        } else {
+            $response = ["result" => ""]; // Username is available
         }
-        else {
-            $result ="";
-        }
-
-        $conn -> close();
-        $response[] = array("result" => $result);
-        echo json_encode($responese);
+    } else {
+        $response = ["result" => "Username is empty"];
     }
+
+// Return the JSON response
+echo json_encode($response);
 ?>
