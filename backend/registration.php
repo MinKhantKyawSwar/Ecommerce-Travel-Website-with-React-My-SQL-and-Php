@@ -1,7 +1,8 @@
 <?php
     header("Access-Control-Allow-Origin: *");
     header("Access-Control-Allow-Methods: *");
-    header("Access-Control-Allow-Headers: Content-Type");
+    header("Access-Control-Allow-Headers: *");
+    // header("Access-Control-Allow-Headers: Content-Type");
 
     $server = "localhost";
     $port = 3306;
@@ -21,6 +22,7 @@
         $user = $dData['user'];
         $email = $dData['email'];
         $password = $dData['password'];
+        $hashedpassword = password_hash($password, PASSWORD_DEFAULT);
     
         if ($user !== "" && $email !== "" && $password !== "") {
             try {
@@ -29,7 +31,7 @@
                 $stmt = $conn->prepare($sql);
                 $stmt->bindParam(':user', $user);
                 $stmt->bindParam(':email', $email);
-                $stmt->bindParam(':password', $password);
+                $stmt->bindParam(':password', $hashedpassword);
     
                 if ($stmt->execute()) {
                     $result = "You have registered successfully!";
@@ -48,8 +50,8 @@
     
     // Close the connection
     $conn = null;
-    
     // Send response
-    $response = array("result" => $result);
+    $response = $result;
+    echo $response;
     echo json_encode($response);
-    ?>
+?>

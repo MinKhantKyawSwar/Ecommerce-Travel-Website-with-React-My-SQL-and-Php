@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
+import {Link, redirect, useNavigate} from 'react-router-dom'
 
 const Registeration = () => {
     const [user, setUser] = useState("");
@@ -7,6 +8,9 @@ const Registeration = () => {
     const [password2, setPassword2] = useState("");
     const [error, setError] = useState("");
     const [msg, setMsg] = useState("");
+
+
+    const navigate = useNavigate()
 
 
     useEffect(()=>{
@@ -22,9 +26,13 @@ const Registeration = () => {
             case "user":
                 setError("");
                 setUser(value)
+                if (value.length < 5){
+                    setError("Username should be less than 5.")
+                }
                 if (value === ""){
                     setError("Username is blank!");
                 }
+                
                 break;
             
             
@@ -62,7 +70,9 @@ const Registeration = () => {
     }
 
     function handleSubmit(){
+        // checking all the data are entered
         if(user !== "" && email !=="" && password !== "" && password2 !==""){
+        //connecting to backend (php)
             var url = "http://localhost:3000/backend/registration.php";
             var headers = {
                 "Accept" : "application/json",
@@ -82,62 +92,62 @@ const Registeration = () => {
                 setMsg(response[0].result)
             }).catch((err)=>{
                 setError(err);
-                console.log(err) 
             })
             setUser("")
             setEmail("")
             setPassword("")
             setPassword2("")
             console.log("successfully added")
+            navigate("/login")
         }
         else{
             setError("All Fields are required!")
         }
     }
 
-    function checkUser(){
-        var url = "http://localhost/react/checkuser.php";
-        var headers = {
-            "Accept" : "application/json",
-            "Content-Type" : "application/json"
-        }
-        var Data = {
-            user: user,
-        }
-        fetch(url, {
-            method: "POST",
-            headers : headers,
-            body: JSON.stringify(Data)
-        }).then((response)=> response.json())
-        .then((response)=>{
-            setError(response[0].result)
-        }).catch((err)=>{
-            setError(err);
-            console.log(err) 
-        })
-    }
+    // function checkUser(){
+    //     var url = "http://localhost/react/checkuser.php";
+    //     var headers = {
+    //         "Accept" : "application/json",
+    //         "Content-Type" : "application/json"
+    //     }
+    //     var Data = {
+    //         user: user,
+    //     }
+    //     fetch(url, {
+    //         method: "POST",
+    //         headers : headers,
+    //         body: JSON.stringify(Data)
+    //     }).then((response)=> response.json())
+    //     .then((response)=>{
+    //         setError(response[0].result)
+    //     }).catch((err)=>{
+    //         setError(err);
+    //         console.log(err) 
+    //     })
+    // }
 
-    function checkEmail(){
-        var url = "http://localhost/checkemail.php";
-        var headers = {
-            "Accept" : "application/json",
-            "Content-Type" : "application/json"
-        }
-        var Data = {
-            email: email,
-        }
-        fetch(url, {
-            method: "POST",
-            headers : headers,
-            body: JSON.stringify(Data)
-        }).then((response)=> response.json())
-        .then((response)=>{
-            setError(response[0].result)
-        }).catch((err)=>{
-            setError(err);
-            console.log(err) 
-        })
-    }
+    // function checkEmail(){
+    //     var url = "http://localhost/checkemail.php";
+    //     var headers = {
+    //         "Accept" : "application/json",
+    //         "Content-Type" : "application/json"
+    //     }
+    //     var Data = {
+    //         email: email,
+    //     }
+    //     fetch(url, {
+    //         method: "POST",
+    //         headers : headers,
+    //         body: JSON.stringify(Data)
+    //     }).then((response)=> response.json())
+    //     .then((response)=>{
+    //         setError(response[0].result)
+    //     }).catch((err)=>{
+    //         setError(err);
+    //         console.log(err) 
+    //     })
+    // }
 
   return (
     <section>
@@ -168,7 +178,6 @@ const Registeration = () => {
                 name="email" 
                 value={email}
                 onChange={(e)=>handleInputChange(e, "email")}
-                // onBlur={checkEmail}
                 className='bg-slate-50 border-slate-200 border-2 rounded-md'/>
 
             <label htmlFor="password">Password</label>
@@ -199,3 +208,4 @@ const Registeration = () => {
 }
 
 export default Registeration
+
