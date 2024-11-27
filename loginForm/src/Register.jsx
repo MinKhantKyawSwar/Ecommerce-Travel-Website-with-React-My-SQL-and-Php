@@ -5,7 +5,7 @@ import Register2 from './Register2'
 
 const Register = () => {
   return (
-    <AuthForm isLoginPage={false}/>
+    <AuthForm isLogin={false}/>
     // <Register2 isLoginPage={false}/>
   )
 }

@@ -2,7 +2,7 @@ import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 
-import { Slide, ToastContainer, toast } from "react-toastify";
+import { Bounce, Slide, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 //formik custom error message
@@ -12,7 +12,7 @@ import { Navigate } from "react-router-dom";
 
 
 const AuthForm = ({ isLogin }) => {
-  const [redirect, setReirect] = useState(false);
+  const [redirect, setRedirect] = useState(false);
 
   const initialValues = {
     username: "",
@@ -58,6 +58,19 @@ const AuthForm = ({ isLogin }) => {
             });
             
         const toastFire = (message) => {
+            toast.success(message, {
+              position: "top-center",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              transition: Bounce,
+            });
+          }; 
+          const toastError = (message) => {
             toast.error(message, {
               position: "top-center",
               autoClose: 5000,
@@ -71,18 +84,28 @@ const AuthForm = ({ isLogin }) => {
             });
           };
 
-
-          if (response.status === 201) {
-            setReirect(true);
-          } else if (response.status === 200) {
-            // updateToken(responseData);
-            setReirect(true);
-          } else if (response.status === 400) {
-            const pickedMessage = responseData.errorMessages[0].msg;
-            toastFire(pickedMessage);
-          } else if (response.status === 401) {
-            toastFire(responseData.message);
+          if (response.data.status == 1) {
+            // setRedirect(true);
+            toastFire(response.data.message);
+            setTimeout(setRedirect(true),10)
+          } else if (response.data.status===0){
+            toastError(response.data.message);
           }
+          else if (response.data.status==6){
+            toastError(response.data.message);
+          }
+
+          // if (response.status === 201) {
+          //   setRedirect(true);
+          // } else if (response.status === 200) {
+          //   // updateToken(responseData);
+          //   setRedirect(true);
+          // } else if (response.status === 400) {
+          //   const pickedMessage = responseData.errorMessages[0].msg;
+          //   toastFire(pickedMessage);
+          // } else if (response.status === 401) {
+          //   toastFire(response.message);
+          // }
    
             console.log("Response:", response.data);
           } catch (error) {
@@ -93,6 +116,7 @@ const AuthForm = ({ isLogin }) => {
   if (redirect) {
     return <Navigate to={isLogin ? "/" : "/login"} />;
   }
+  // setRedirect(false);
 
   return (
     <>
