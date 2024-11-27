@@ -11,7 +11,7 @@
     $eData = file_get_contents('php://input');
     // $eData = file_get_contents("php://input");
     // $dData = json_decode($eData, true);
-    echo  $eData;
+
     $method = $_SERVER['REQUEST_METHOD'];
     switch($method){
         case "POST":
@@ -19,7 +19,8 @@
                 $data = json_decode($eData);
                 $password = $data->password;
                 $hashedpassword = password_hash($password, PASSWORD_DEFAULT);
-
+                  
+                $checkUser = "SELECT * FROM user (user, email, pass) where user = $user OR email = $email";
                 $sql = "INSERT INTO user (user, email, pass) VALUES (:user, :email, :password)";
                 $conn = $objDb->connect();
                 $stmt = $conn->prepare($sql);
@@ -27,7 +28,9 @@
                 $stmt->bindParam(':email', $data->email);
                 $stmt->bindParam(':password', $hashedpassword);
                 
-                if ($stmt->execute()) {
+            $status = $stmt->execute();
+            echo $status;
+                if ($status) {
                     $response = ['status' => 1, 'message' => "Account Created Successfully"];
                 } else {
                     $response= ['status' => 0, 'message' => "Failed to create account"];
@@ -35,7 +38,8 @@
             } catch (PDOException $e) {
                 $response = "Error: " . $e->getMessage();
             }
-            break;
-        }
+            echo json_encode($response);
+            break; 
+    }
           // Close the connection
 ?>

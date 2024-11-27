@@ -8,15 +8,19 @@
     $eData = file_get_contents("php://input");
     $dData = json_decode($eData, true);
 
+
     $user = isset($dData['user']) ? trim($dData['user']) : "";
 
     if (!empty($user)) {
+        $user = $data->user;
         // Prepare and execute the query securely using prepared statements
-        $stmt = $pdo->prepare("SELECT COUNT(*) AS user_count FROM user WHERE user = :user");
-        $stmt->execute(['user' => $user]);
+        $sql = "SELECT * FROM user WHERE user = 'user'";
+        $conn = $objDb->connect();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['user' => $user->user]);
         $result = $stmt->fetch();
 
-        if ($result['user_count'] > 0) {
+        if ($result > 0) {
             $response = ["result" => "Username is already Taken!"];
         } else {
             $response = ["result" => ""]; // Username is available

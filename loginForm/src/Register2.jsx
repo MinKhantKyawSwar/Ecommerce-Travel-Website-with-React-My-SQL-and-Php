@@ -105,20 +105,13 @@ const Register2 = ({isLoginPage}) => {
 
     const checkUser = (e) =>{
         e.preventDefault();
-        var url = "http://localhost/react/checkuser.php";
+        var url = "http://localhost/react/checkUser.php";
         var Data = {
             user: user,
         }
         axios.post(url,Data).then(function(response) {
             console.log(response.data);
-            navigate("/login") 
             
-        }).then((response)=> response.json())
-        .then((response)=>{
-            setError(response[0].result)
-        }).catch((err)=>{
-            setError(err);
-            console.log(err) 
         })
     }
 
