@@ -18,7 +18,13 @@ const AuthForm = ({ isLogin }) => {
   const initialValues = {
     username: "",
     email: "",
+    role: "user",
+    phone : "",
     password: "",
+    country: "",
+    city: "",
+    Tour_Package: "",
+    Created_At: null
   };
 
   const AuthFormSchema = Yup.object({
@@ -31,14 +37,22 @@ const AuthForm = ({ isLogin }) => {
     email: Yup.string()
       .required("Email is required.")
       .email("Please enter a valid email."),
+    phone: Yup.number()
+      .required("Phone is required.")
+      .integer(),
     password: Yup.string()
       .min(4, "Password is too short.")
       .required("Password is required."),
+    city: Yup.string()
+      .required("City is required.")
+      .min(3, "City is too short."),
+      country: Yup.string()
+      .required("City is required.")
+      .min(3, "City is too short."),
   });
 
   const submitHandler = async(values) => {
-    const { email, password, username } = values;
-    
+    const { email, password, username, phone, country, city } = values;
     let url = "http://localhost:3000/backend/register.php";
 
     if (isLogin) {
@@ -46,9 +60,15 @@ const AuthForm = ({ isLogin }) => {
     }
 
     const data = {
-        user: username,
+        username,
         email,
-        password
+        role : "user",
+        phone,
+        password,
+        country,
+        city,
+        Tour_Package : "",
+        Created_At : new Date().toLocaleString(),
     }
 
         try {
@@ -157,7 +177,42 @@ const AuthForm = ({ isLogin }) => {
               />
               <StyledErrorMessage name="email" />
             </div>
-
+            <div className="mb-3">
+              <label htmlFor="phone" className="font-medium block">
+                phone
+              </label>
+              <Field
+                type="phone"
+                name="phone"
+                id="phone"
+                className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
+              />
+              <StyledErrorMessage name="phone" />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="country" className="font-medium block">
+                country
+              </label>
+              <Field
+                type="text"
+                name="country"
+                id="country"
+                className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
+              />
+              <StyledErrorMessage name="city" />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="city" className="font-medium block">
+                city
+              </label>
+              <Field
+                type="text"
+                name="city"
+                id="city"
+                className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
+              />
+              <StyledErrorMessage name="city" />
+            </div>
             <div className="mb-3">
               <label htmlFor="password" className="font-medium block">
                 password
