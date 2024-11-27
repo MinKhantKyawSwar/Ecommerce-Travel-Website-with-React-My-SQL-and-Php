@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 //formik custom error message
 import StyledErrorMessage from "./StyledErrorMessage";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Navigate } from "react-router-dom";
 
 
@@ -51,7 +51,7 @@ const AuthForm = ({ isLogin }) => {
     }
 
         try {
-            const response = await axios.post("http://localhost:3000/backend/register.php", data, {
+            const response = await axios.post(url, data, {
               headers: {
                 "Content-Type": "application/json",
               },
@@ -60,7 +60,7 @@ const AuthForm = ({ isLogin }) => {
         const toastFire = (message) => {
             toast.success(message, {
               position: "top-center",
-              autoClose: 5000,
+              autoClose: 1800,
               hideProgressBar: false,
               closeOnClick: true,
               pauseOnHover: true,
@@ -73,7 +73,7 @@ const AuthForm = ({ isLogin }) => {
           const toastError = (message) => {
             toast.error(message, {
               position: "top-center",
-              autoClose: 5000,
+              autoClose: 3000,
               hideProgressBar: false,
               closeOnClick: true,
               pauseOnHover: true,
@@ -84,30 +84,17 @@ const AuthForm = ({ isLogin }) => {
             });
           };
 
-          if (response.data.status == 1) {
-            // setRedirect(true);
-            toastFire(response.data.message);
-            setTimeout(setRedirect(true),10)
-          } else if (response.data.status===0){
+          if (response.data.status === 0) {
             toastError(response.data.message);
+          } else if (response.data.status===1){
+            setRedirect(true);
+            toastFire(response.data.message);
+            setTimeout(() => setRedirect(true), 2000);
           }
           else if (response.data.status==6){
             toastError(response.data.message);
           }
 
-          // if (response.status === 201) {
-          //   setRedirect(true);
-          // } else if (response.status === 200) {
-          //   // updateToken(responseData);
-          //   setRedirect(true);
-          // } else if (response.status === 400) {
-          //   const pickedMessage = responseData.errorMessages[0].msg;
-          //   toastFire(pickedMessage);
-          // } else if (response.status === 401) {
-          //   toastFire(response.message);
-          // }
-   
-            console.log("Response:", response.data);
           } catch (error) {
             console.error("Error:", error.response ? error.response.data : error.message);
           }
@@ -116,7 +103,6 @@ const AuthForm = ({ isLogin }) => {
   if (redirect) {
     return <Navigate to={isLogin ? "/" : "/login"} />;
   }
-  // setRedirect(false);
 
   return (
     <>

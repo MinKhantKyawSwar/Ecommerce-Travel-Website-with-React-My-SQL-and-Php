@@ -5,37 +5,47 @@
     header("Access-Control-Allow-Origin: *");
     header("Access-Control-Allow-Methods: *");
     header("Access-Control-Allow-Headers: *");
+
     include 'dbconnect.php';
     $objDb = new dbconnect;
 
     $eData = file_get_contents('php://input');
-    // $eData = file_get_contents("php://input");
-    // $dData = json_decode($eData, true);
-    echo  $eData;
-    $method = $_SERVER['REQUEST_METHOD'];
-    switch($method){
-        case "POST":
-            try{
-                $data = json_decode($eData);
-                $password = $data->password;
-                $hashedpassword = password_hash($password, PASSWORD_DEFAULT);
 
-                $sql = "SELECT * FROM USER WHERE = {:user, :email, :password}";
+    $method = $_SERVER['REQUEST_METHOD'];
+    switch ($method) {
+        case "POST":
+            try {
+                $data = json_decode($eData);
+                $email = $data->email;
+                $password = $data->password;
+
+                // Connection to database
                 $conn = $objDb->connect();
+
+                // Check if the user exists
+                $sql = "SELECT * FROM user WHERE email = :email LIMIT 1";
                 $stmt = $conn->prepare($sql);
-                $stmt->bindParam(':user', $data->user);
-                $stmt->bindParam(':email', $data->email);
-                $stmt->bindParam(':password', $hashedpassword);
+                $stmt->bindParam(':email', $email);
+                $stmt->execute();
+
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                $hashedPassword = $user['pass'];
+                // Verify the password
+                if (!password_verify($password, $hashedPassword)) {
+                    $response = ['status' => 0, 'message' => "Invalid password"];
+                } else{
+                    header("Status: 401");
+                    $response = ['status' => 1, 'message' => "Login successful"];
+                }
                 
-                if ($stmt->execute()) {
-                    $response = ['status' => 1, 'message' => "Login Successfully"];
-                } else {
-                    $response= ['status' => 0, 'message' => "Failed to create account"];
+                if (!$user) {
+                    header("Status: 404");
+                    $response = ['status' => 0, 'message' => "User not found"];
                 }
             } catch (PDOException $e) {
-                $response = "Error: " . $e->getMessage();
+                $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
             }
+            echo json_encode($response);
             break;
-        }
-          // Close the connection
+}
 ?>

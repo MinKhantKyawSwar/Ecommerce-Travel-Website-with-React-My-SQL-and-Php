@@ -59,5 +59,4 @@
             echo json_encode($response);
             break; 
     }
-          // Close the connection
 ?>
