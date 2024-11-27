@@ -1,9 +1,9 @@
-import Registeration from "./Registeration";
 import Index from "./Index";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Main2 from "./Main2";
 import Login from "./Login";
 import Register from "./Register";
+import isLoginLoader from "./utils/isLogin";
 
 function App() {
   const router = createBrowserRouter([
@@ -13,25 +13,15 @@ function App() {
       children: [
         {
           index: true,
-          element: (
-            <Index />
-          )
-          ,
+          element: <Index />
         },
         {
           path: "/register",
-          element: (
-            // <Registeration />
-            <Register/>
-          )
-          ,
+          element:<Register/>
         },
         {
           path: "/login",
-          element: (
-            <Login />
-          )
-          ,
+          element: <Login />
         }
       ],
     },

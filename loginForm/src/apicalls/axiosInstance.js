@@ -6,7 +6,7 @@ const getFreshLocalStorage = () => {
 };
 
 export const axiosInstance = axios.create({
-  baseURL: `${import.meta.env.PHP_DATABASE_URL}`,
+  baseURL: "http://localhost:3000/backend/",
 });
 
 axiosInstance.interceptors.request.use(
