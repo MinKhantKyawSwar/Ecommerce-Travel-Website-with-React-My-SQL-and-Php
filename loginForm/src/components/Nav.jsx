@@ -1,16 +1,18 @@
 import React, { useContext, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { UserContext } from "../utils/UserContext";
 import axios from "axios";
 
 
 const nav = () => {
-  const { token, updateToken, userInfo, setUserInfo } = useContext(UserContext);
+  const { token, updateToken, userInfo, setUserInfo, deleteToken } = useContext(UserContext);
+  const navigate = useNavigate();
 
   const logoutHandler = () => {
     updateToken(null);
     localStorage.removeItem("token");
+    navigate("/login")
   };
 
   const getUserId = async () => {
@@ -40,7 +42,7 @@ const nav = () => {
 
   useEffect((_)=>{
     getUserId();
-  },[])
+  },[navigate])
 
 
   return (
@@ -60,13 +62,13 @@ const nav = () => {
         <div className="flex gap-3">
           {token ? (
             <>
-              <Link to={"/profile"} className="text-blue-600 font-medium">
+              <Link to={"/profile"} className="w-10 text-blue-600 font-medium py-2">
                 {" "}
                 Profile{" "}
               </Link>
               <button
                 type="button"
-                className="text-blue-600 font-medium"
+                className="w-20 text-blue-600 font-medium py-2 rounded hover:bg-blue-600 hover:text-white"
                 onClick={logoutHandler}
               >
                 {" "}
@@ -75,15 +77,15 @@ const nav = () => {
             </>
           ) : (
             <>
-                <Link to ="/register" className='p-2 mt-5 text-blue-600'>Register</Link>
-                <Link to ="/login" className='px-5 py-2 border-2 border-blue-600 mt-5 rounded-xl text-blue-600 hover:'>Login</Link>
+                <Link to ="/register" className='p-2 mt-5 text-blue-600 hover:bg-blue-600 hover:text-white'>Register</Link>
+                <Link to ="/login" className='px-5 py-2 border-2 border-blue-600 mt-5 rounded-xl text-blue-600 hover:bg-blue-600 hover:text-white'>Login</Link>
             </>
           )}
         </div>
       </div>
       {token && (
          <div className="text-right text-sm text-blue-600 ">
-          <span className="font-semibold">Login as </span>
+          <span className="font-semibold">Logined as </span>
           <span className="font-bold text-xl">{userInfo.username}</span>
         </div>
       )}

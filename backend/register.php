@@ -24,6 +24,7 @@
                 $country = $data->country;
                 $city = $data->city;
                 $Tour_Package = $data->Tour_Package;
+                $profile_image = $data->profile_image;
                 $Created_At = $data->Created_At;
 
                 // connection to database
@@ -44,7 +45,7 @@
                 }
                 else{
                     // adding data into database
-                    $sql = "INSERT INTO customers (username, role, email, phone, password, country, city, Tour_Package, Created_At) VALUES (:username, :role, :email, :phone, :password, :country, :city, :Tour_Package, :Created_At)";
+                    $sql = "INSERT INTO customers (username, role, email, phone, password, country, city, Tour_Package,profile_image, Created_At) VALUES (:username, :role, :email, :phone, :password, :country, :city, :Tour_Package, :profile_image, :Created_At)";
                     $stmt = $conn->prepare($sql);
                     $stmt->bindParam(':username', $username);
                     $stmt->bindParam(':role', $role);
@@ -54,6 +55,7 @@
                     $stmt->bindParam(':country', $country);
                     $stmt->bindParam(':city', $city);
                     $stmt->bindParam(':Tour_Package', $Tour_Package);
+                    $stmt->bindParam(':profile_image', $profile_image);
                     $stmt->bindParam(':Created_At', $Created_At);
                     $status = $stmt->execute();
 

@@ -16,6 +16,11 @@ export const UserContextProvider = ({ children }) => {
     setToken(JWTtoken);
   };
 
+  const deleteToken = () => {
+    setToken(null);
+    localStorage.removeItem("token");
+  };
+
   useEffect((_) => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
@@ -24,7 +29,7 @@ export const UserContextProvider = ({ children }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ token, updateToken, userInfo, setUserInfo }}>
+    <UserContext.Provider value={{ token, updateToken, userInfo, setUserInfo, deleteToken }}>
       {children}
     </UserContext.Provider>
   );

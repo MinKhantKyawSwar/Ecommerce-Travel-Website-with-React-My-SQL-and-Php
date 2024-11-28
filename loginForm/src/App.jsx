@@ -5,6 +5,8 @@ import Login from "./Login";
 import Register from "./Register";
 import isLoginLoader from "./utils/isLogin";
 import Profile from "./components/Profile";
+import ManageProfile from "./components/ManageProfile";
+import { UserContextProvider } from "./utils/UserContext";
 
 function App() {
   const router = createBrowserRouter([
@@ -27,11 +29,19 @@ function App() {
         {
           path: "/profile",
           element: <Profile/>
+        },
+        {
+          path: "/profile/manage-profile",
+          element: <ManageProfile/>
         }
       ],
     },
   ]);
-  return <RouterProvider router={router} />;
+  return (
+  <UserContextProvider>
+    <RouterProvider router={router} />;
+  </UserContextProvider>
+  )
 };
 
 export default App;

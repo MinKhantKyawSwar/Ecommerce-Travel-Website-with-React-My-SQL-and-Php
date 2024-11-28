@@ -23,6 +23,7 @@ const AuthForm = ({ isLogin }) => {
     country: "",
     city: "",
     Tour_Package: "",
+    profile_image : "",
     Created_At: null,
   };
 
@@ -49,32 +50,7 @@ const AuthForm = ({ isLogin }) => {
     // .required("Country is required.")
     // .min(3, "Country is too short."),
   });
-
-
-  const getUserId = async () => {
-    try {
-    //   const token = localStorage.getItem("authToken");
-      if (!token) {
-        console.error("No token found, user may not be logged in.");
-        return;
-      }
-
-      const response = await axios.get("http://localhost:3000/backend/login.php", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-
-      if (response.data.status === 1 && response.data) {
-        console.log(response.data.customer);
-
-        return response.data.customer
-      } else {
-        console.error("Failed to fetch user ID:", response.data.message);
-      }
-    } catch (error) {
-      console.error("Error fetching user ID:", error.message);
-    }
-  };
+  
 
   const submitHandler = async (values) => {
     const { email, password, username, phone, country, city } = values;
@@ -93,6 +69,7 @@ const AuthForm = ({ isLogin }) => {
       country,
       city,
       Tour_Package: "",
+      profile_image : "",
       Created_At: new Date().toLocaleString(),
     };
     try {
@@ -105,7 +82,7 @@ const AuthForm = ({ isLogin }) => {
       const toastFire = (message) => {
         toast.success(message, {
           position: "top-center",
-          autoClose: 1800,
+          autoClose: 1000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -118,7 +95,7 @@ const AuthForm = ({ isLogin }) => {
       const toastError = (message) => {
         toast.error(message, {
           position: "top-center",
-          autoClose: 3000,
+          autoClose: 1000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -132,7 +109,7 @@ const AuthForm = ({ isLogin }) => {
       if (response.data.status === 0) {
         toastError(response.data.message);
       } else if (response.data.status === 1) {
-        console.log(response.data.username);
+        // console.log(response.data.username);
         updateToken(response.data.token);
         toastFire(response.data.message);
         setTimeout(() => setRedirect(true), 2000);
@@ -154,7 +131,7 @@ const AuthForm = ({ isLogin }) => {
     <>
       <ToastContainer
         position="top-center"
-        autoClose={5000}
+        autoClose={2000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
@@ -244,6 +221,20 @@ const AuthForm = ({ isLogin }) => {
                     value=""
                   />
                   <StyledErrorMessage name="city" />
+                </div>
+                <div className="mb-3">
+                  {/* <label htmlFor="city" className="font-medium block">
+                  city
+                </label> */}
+                  <Field
+                    type="text"
+                    name="profile_image"
+                    id="profile_image"
+                    className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
+                    hidden
+                    value=""
+                  />
+                  <StyledErrorMessage name="profile_image" />
                 </div>
               </>
             )}
