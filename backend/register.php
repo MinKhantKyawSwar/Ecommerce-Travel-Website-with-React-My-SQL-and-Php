@@ -6,7 +6,7 @@
     header("Access-Control-Allow-Methods: *");
     header("Access-Control-Allow-Headers: *");
     include 'dbconnect.php';
-    $objDb = new dbconnect;
+    $db = new dbconnect;
 
     $eData = file_get_contents('php://input');
 
@@ -27,7 +27,7 @@
                 $Created_At = $data->Created_At;
 
                 // connection to database
-                $conn = $objDb->connect();
+                $conn = $db->connect();
 
                 //checking user name or email is already exists
                 $checkUser = "SELECT * FROM customers WHERE username = :username OR email = :email";
@@ -58,9 +58,9 @@
                     $status = $stmt->execute();
 
                     if ($status) {
-                        $response = ['status' => 1, 'message' => "Account Created Successfully"];
+                        $response = ['status' => 1, 'message' => "Account Created Successfully!"];
                     } else {
-                        $response= ['status' => 0, 'message' => "Failed to create account"];
+                        $response= ['status' => 0, 'message' => "Failed to create account!"];
                     }
                 }
 

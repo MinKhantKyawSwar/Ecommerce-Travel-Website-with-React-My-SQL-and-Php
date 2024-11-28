@@ -14,7 +14,6 @@ import { UserContext } from "../utils/UserContext";
 const AuthForm = ({ isLogin }) => {
   const { updateToken } = useContext(UserContext);
   const [redirect, setRedirect] = useState(false);
-
   const initialValues = {
     username: "",
     email: "",
@@ -107,7 +106,7 @@ const AuthForm = ({ isLogin }) => {
       if (response.data.status === 0) {
         toastError(response.data.message);
       } else if (response.data.status === 1) {
-        console.log(response.data.token);
+        console.log(response.data.username);
         updateToken(response.data.token);
         toastFire(response.data.message);
         setTimeout(() => setRedirect(true), 2000);

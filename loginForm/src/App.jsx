@@ -4,6 +4,7 @@ import Main2 from "./Main2";
 import Login from "./Login";
 import Register from "./Register";
 import isLoginLoader from "./utils/isLogin";
+import Profile from "./components/Profile";
 
 function App() {
   const router = createBrowserRouter([
@@ -21,7 +22,11 @@ function App() {
         },
         {
           path: "/login",
-          element: <Login />
+          element: <Login/>
+        },
+        {
+          path: "/profile",
+          element: <Profile/>
         }
       ],
     },

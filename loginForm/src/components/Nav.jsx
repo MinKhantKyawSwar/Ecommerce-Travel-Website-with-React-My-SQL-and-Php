@@ -1,14 +1,44 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import { UserContext } from "../utils/UserContext";
+import axios from "axios";
+
 
 const nav = () => {
   const { token, updateToken } = useContext(UserContext);
 
   const logoutHandler = () => {
     updateToken(null);
+    localStorage.removeItem("token");
   };
+
+  const getUserId = async () => {
+    try {
+    //   const token = localStorage.getItem("authToken");
+      if (!token) {
+        console.error("No token found, user may not be logged in.");
+        return;
+      }
+
+      const response = await axios.get("http://localhost:3000/backend/login.php", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+
+      if (response.data.status === 1 && response.data) {
+        console.log(response.data.customer);
+
+        return response.data.customer
+      } else {
+        console.error("Failed to fetch user ID:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching user ID:", error.message);
+    }
+  };
+  
+
 
   return (
     <nav className="bg-slate-50 py-2 w- m-auto">
@@ -27,9 +57,9 @@ const nav = () => {
         <div className="flex gap-3">
           {token ? (
             <>
-              <Link to={"/create"} className="text-teal-600 font-medium">
+              <Link to={"/profile"} className="text-teal-600 font-medium" onClick={getUserId}>
                 {" "}
-                SHARE NOTE{" "}
+                Profile{" "}
               </Link>
               <button
                 type="button"
@@ -37,7 +67,7 @@ const nav = () => {
                 onClick={logoutHandler}
               >
                 {" "}
-                LOGOUT{" "}
+                Logout{" "}
               </button>
             </>
           ) : (
@@ -49,11 +79,15 @@ const nav = () => {
         </div>
       </div>
 
-      {token && token.user_mail && (
-        <p className="text-right text-sm text-teal-600">
+      {token && (
+
+         <p className="text-right text-sm text-teal-600">
           <span className="font-semibold">Login as </span>
-          {token.user_mail}
+          
+          {/* {console.log(response)} */}
         </p>
+
+       
       )}
     </nav>
   );
