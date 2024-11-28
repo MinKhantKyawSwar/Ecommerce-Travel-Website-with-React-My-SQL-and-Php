@@ -50,6 +50,32 @@ const AuthForm = ({ isLogin }) => {
     // .min(3, "Country is too short."),
   });
 
+
+  const getUserId = async () => {
+    try {
+    //   const token = localStorage.getItem("authToken");
+      if (!token) {
+        console.error("No token found, user may not be logged in.");
+        return;
+      }
+
+      const response = await axios.get("http://localhost:3000/backend/login.php", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+
+      if (response.data.status === 1 && response.data) {
+        console.log(response.data.customer);
+
+        return response.data.customer
+      } else {
+        console.error("Failed to fetch user ID:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching user ID:", error.message);
+    }
+  };
+
   const submitHandler = async (values) => {
     const { email, password, username, phone, country, city } = values;
     let url = "http://localhost:3000/backend/register.php";

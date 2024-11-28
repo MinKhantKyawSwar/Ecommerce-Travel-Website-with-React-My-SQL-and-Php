@@ -6,7 +6,7 @@ import axios from "axios";
 
 
 const nav = () => {
-  const { token, updateToken } = useContext(UserContext);
+  const { token, updateToken, userInfo, setUserInfo } = useContext(UserContext);
 
   const logoutHandler = () => {
     updateToken(null);
@@ -27,8 +27,8 @@ const nav = () => {
 
 
       if (response.data.status === 1 && response.data) {
-        console.log(response.data.customer);
-
+        setUserInfo(response.data.customer);
+        // console.log(response.data.customer);
         return response.data.customer
       } else {
         console.error("Failed to fetch user ID:", response.data.message);
@@ -37,7 +37,10 @@ const nav = () => {
       console.error("Error fetching user ID:", error.message);
     }
   };
-  
+
+  useEffect((_)=>{
+    getUserId();
+  },[])
 
 
   return (
@@ -57,13 +60,13 @@ const nav = () => {
         <div className="flex gap-3">
           {token ? (
             <>
-              <Link to={"/profile"} className="text-teal-600 font-medium" onClick={getUserId}>
+              <Link to={"/profile"} className="text-blue-600 font-medium">
                 {" "}
                 Profile{" "}
               </Link>
               <button
                 type="button"
-                className="text-teal-600 font-medium"
+                className="text-blue-600 font-medium"
                 onClick={logoutHandler}
               >
                 {" "}
@@ -78,16 +81,11 @@ const nav = () => {
           )}
         </div>
       </div>
-
       {token && (
-
-         <p className="text-right text-sm text-teal-600">
+         <div className="text-right text-sm text-blue-600 ">
           <span className="font-semibold">Login as </span>
-          
-          {/* {console.log(response)} */}
-        </p>
-
-       
+          <span className="font-bold text-xl">{userInfo.username}</span>
+        </div>
       )}
     </nav>
   );

@@ -8,6 +8,8 @@ export const UserContextProvider = ({ children }) => {
     return storedToken ? JSON.parse(storedToken) : null;
   });
 
+  const [userInfo, setUserInfo] = useState({});
+
   const updateToken = (JWTtoken) => {
     const token = JSON.stringify(JWTtoken);
     localStorage.setItem("token", token);
@@ -22,7 +24,7 @@ export const UserContextProvider = ({ children }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ token, updateToken }}>
+    <UserContext.Provider value={{ token, updateToken, userInfo, setUserInfo }}>
       {children}
     </UserContext.Provider>
   );
