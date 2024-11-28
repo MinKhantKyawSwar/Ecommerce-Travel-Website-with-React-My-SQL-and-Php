@@ -19,30 +19,32 @@ switch ($method) {
             $email = $data->email;
             $password = $data->password;
 
+            echo $data->username;
             // Connection to database
             $conn = $objDb->connect();
 
             // Check if the user exists
-            $sql = "SELECT * FROM user WHERE email = :email LIMIT 1";
+            $sql = "SELECT * FROM customers WHERE email = :email LIMIT 1";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':email', $email);
             $stmt->execute();
 
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            $hashedPassword = $user['pass'];
+            $hashedPassword = $user['password'];
             // Verify the password
             if (!password_verify($password, $hashedPassword)) {
                 $response = ['status' => 0, 'message' => "Invalid password"];
             } else {
                 $tokenData = [
-                    'id' => $user['id'],
+                    'id' => $user['customer_id'],
+                    'username' => $user['username'],
                     'email' => $user['email'],
-                    'exp' => time() + (86400) // Token expiration (1 day)
+                    'exp' => time() + (86400)
                 ];
 
                 $token = base64_encode(json_encode($tokenData));
-                $response = ['status' => 1, 'message' => "Login successful",'token' => $token, 'user_id' => $user['id']];
+                $response = ['status' => 1, 'message' => "Login successful",'token' => $token, 'id' => $user['customer_id']];
             }
 
             if (!$user) {
@@ -66,7 +68,7 @@ switch ($method) {
 
 
         $recievedToken = json_decode(base64_decode($token), true);
-        $id = $recievedToken['id'];
+        $id = $recievedToken['customer_id'];
         $exp = $recievedToken['exp'];
 
         if (isset($id) && isset($exp)) {
@@ -83,10 +85,10 @@ switch ($method) {
         }
 
         try {
-            $sql = "SELECT id, name, email FROM user where id = :id";
+            $sql = "SELECT customer_id, name, email FROM customers where customer_id = :id";
             $conn = $objDb->connect();
             $stmt = $conn->prepare($sql);
-            $stmt->bindParam(":id", $userId);
+            $stmt->bindParam(":id", $id);
             $stmt->execute();
 
             if ($stmt->rowCount() == 0) {

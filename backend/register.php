@@ -15,18 +15,24 @@
         case "POST":
             try{
                 $data = json_decode($eData);
-                $user = $data->user;
+                $username = $data->username;
                 $email = $data->email;
+                $role = $data->role;
+                $phone = $data->phone;
                 $password = $data->password;
                 $hashedpassword = password_hash($password, PASSWORD_DEFAULT);
+                $country = $data->country;
+                $city = $data->city;
+                $Tour_Package = $data->Tour_Package;
+                $Created_At = $data->Created_At;
 
                 // connection to database
                 $conn = $objDb->connect();
 
                 //checking user name or email is already exists
-                $checkUser = "SELECT * FROM user WHERE user = :user OR email = :email";
+                $checkUser = "SELECT * FROM customers WHERE username = :username OR email = :email";
                 $stmt = $conn->prepare($checkUser);
-                $stmt->bindParam(':user', $data->user);
+                $stmt->bindParam(':username', $data->username);
                 $stmt->bindParam(':email', $data->email);
                 $stmt->execute();
                 $existingUser = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -38,11 +44,17 @@
                 }
                 else{
                     // adding data into database
-                    $sql = "INSERT INTO user (user, email, pass) VALUES (:user, :email, :password)";
+                    $sql = "INSERT INTO customers (username, role, email, phone, password, country, city, Tour_Package, Created_At) VALUES (:username, :role, :email, :phone, :password, :country, :city, :Tour_Package, :Created_At)";
                     $stmt = $conn->prepare($sql);
-                    $stmt->bindParam(':user', $data->user);
-                    $stmt->bindParam(':email', $data->email);
+                    $stmt->bindParam(':username', $username);
+                    $stmt->bindParam(':role', $role);
+                    $stmt->bindParam(':email', $email);
+                    $stmt->bindParam(':phone', $phone);
                     $stmt->bindParam(':password', $hashedpassword);  
+                    $stmt->bindParam(':country', $country);
+                    $stmt->bindParam(':city', $city);
+                    $stmt->bindParam(':Tour_Package', $Tour_Package);
+                    $stmt->bindParam(':Created_At', $Created_At);
                     $status = $stmt->execute();
 
                     if ($status) {

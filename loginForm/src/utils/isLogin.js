@@ -2,7 +2,7 @@ import { redirect } from "react-router-dom";
 
 const isLogin = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
-  // console.log(token)
+  console.log(token)
 
   if (!token) {
     return redirect("/");

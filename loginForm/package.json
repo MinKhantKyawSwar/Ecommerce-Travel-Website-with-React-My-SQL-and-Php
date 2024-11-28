@@ -10,6 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.5",
+    "@emotion/styled": "^11.13.5",
+    "@mui/material": "^6.1.9",
+    "@mui/styled-engine-sc": "^6.1.9",
     "@reduxjs/toolkit": "^2.3.0",
     "axios": "^1.7.8",
     "dotenv": "^16.4.5",
@@ -21,6 +25,7 @@
     "react-router-dom": "^7.0.1",
     "react-toastify": "^10.0.6",
     "redux-persist": "^6.0.0",
+    "styled-components": "^6.1.13",
     "yup": "^1.4.0"
   },
   "devDependencies": {

@@ -19,12 +19,12 @@ const AuthForm = ({ isLogin }) => {
     username: "",
     email: "",
     role: "user",
-    phone : "",
+    phone: "",
     password: "",
     country: "",
     city: "",
     Tour_Package: "",
-    Created_At: null
+    Created_At: null,
   };
 
   const AuthFormSchema = Yup.object({
@@ -37,21 +37,21 @@ const AuthForm = ({ isLogin }) => {
     email: Yup.string()
       .required("Email is required.")
       .email("Please enter a valid email."),
-    phone: Yup.number()
-      .required("Phone is required.")
-      .integer(),
+    // phone: Yup.number()
+    //   .required("Phone is required.")
+    //   .integer(),
     password: Yup.string()
       .min(4, "Password is too short.")
       .required("Password is required."),
-    city: Yup.string()
-      .required("City is required.")
-      .min(3, "City is too short."),
-      country: Yup.string()
-      .required("City is required.")
-      .min(3, "City is too short."),
+    // city: Yup.string()
+    //   .required("City is required.")
+    //   .min(3, "City is too short."),
+    // country: Yup.string()
+    // .required("Country is required.")
+    // .min(3, "Country is too short."),
   });
 
-  const submitHandler = async(values) => {
+  const submitHandler = async (values) => {
     const { email, password, username, phone, country, city } = values;
     let url = "http://localhost:3000/backend/register.php";
 
@@ -60,67 +60,66 @@ const AuthForm = ({ isLogin }) => {
     }
 
     const data = {
-        username,
-        email,
-        role : "user",
-        phone,
-        password,
-        country,
-        city,
-        Tour_Package : "",
-        Created_At : new Date().toLocaleString(),
+      username,
+      email,
+      role: "user",
+      phone,
+      password,
+      country,
+      city,
+      Tour_Package: "",
+      Created_At: new Date().toLocaleString(),
+    };
+    try {
+      const response = await axios.post(url, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const toastFire = (message) => {
+        toast.success(message, {
+          position: "top-center",
+          autoClose: 1800,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+      };
+      const toastError = (message) => {
+        toast.error(message, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Slide,
+        });
+      };
+
+      if (response.data.status === 0) {
+        toastError(response.data.message);
+      } else if (response.data.status === 1) {
+        console.log(response.data.token);
+        updateToken(response.data.token);
+        toastFire(response.data.message);
+        setTimeout(() => setRedirect(true), 2000);
+      } else if (response.data.status == 6) {
+        toastError(response.data.message);
+      }
+    } catch (error) {
+      console.error(
+        "Error:",
+        error.response ? error.response.data : error.message
+      );
     }
-
-        try {
-            const response = await axios.post(url, data, {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            });
-            
-        const toastFire = (message) => {
-            toast.success(message, {
-              position: "top-center",
-              autoClose: 1800,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-              transition: Bounce,
-            });
-          }; 
-          const toastError = (message) => {
-            toast.error(message, {
-              position: "top-center",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-              transition: Slide,
-            });
-          };
-
-          if (response.data.status === 0) {
-            toastError(response.data.message);
-          } else if (response.data.status===1){
-            console.log(response.data.token)
-            updateToken(response.data.token);
-            toastFire(response.data.message);
-            setTimeout(() => setRedirect(true), 2000);
-          }
-          else if (response.data.status==6){
-            toastError(response.data.message);
-          }
-
-          } catch (error) {
-            console.error("Error:", error.response ? error.response.data : error.message);
-          }
-
   };
   if (redirect) {
     return <Navigate to={isLogin ? "/" : "/login"} />;
@@ -177,42 +176,53 @@ const AuthForm = ({ isLogin }) => {
               />
               <StyledErrorMessage name="email" />
             </div>
-            <div className="mb-3">
-              <label htmlFor="phone" className="font-medium block">
-                phone
-              </label>
-              <Field
-                type="phone"
-                name="phone"
-                id="phone"
-                className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
-              />
-              <StyledErrorMessage name="phone" />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="country" className="font-medium block">
-                country
-              </label>
-              <Field
-                type="text"
-                name="country"
-                id="country"
-                className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
-              />
-              <StyledErrorMessage name="city" />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="city" className="font-medium block">
-                city
-              </label>
-              <Field
-                type="text"
-                name="city"
-                id="city"
-                className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
-              />
-              <StyledErrorMessage name="city" />
-            </div>
+            {!isLogin && (
+              <>
+                <div className="mb-3">
+                  {/* <label htmlFor="phone" className="font-medium block">
+                  phone
+                </label> */}
+                  <Field
+                    type="phone"
+                    name="phone"
+                    id="phone"
+                    className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
+                    hidden
+                    value="0"
+                  />
+                  <StyledErrorMessage name="phone" />
+                </div>
+                <div className="mb-3">
+                  {/* <label htmlFor="country" className="font-medium block" >
+                  country
+                </label> */}
+                  <Field
+                    type="text"
+                    name="country"
+                    id="country"
+                    className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
+                    hidden
+                    value=""
+                  />
+                  <StyledErrorMessage name="country" />
+                </div>
+                <div className="mb-3">
+                  {/* <label htmlFor="city" className="font-medium block">
+                  city
+                </label> */}
+                  <Field
+                    type="text"
+                    name="city"
+                    id="city"
+                    className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
+                    hidden
+                    value=""
+                  />
+                  <StyledErrorMessage name="city" />
+                </div>
+              </>
+            )}
+
             <div className="mb-3">
               <label htmlFor="password" className="font-medium block">
                 password
