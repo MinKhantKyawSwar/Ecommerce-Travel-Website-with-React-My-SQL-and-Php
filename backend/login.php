@@ -44,7 +44,7 @@ switch ($method) {
                 ];
 
                 $token = base64_encode(json_encode($tokenData));
-                $response = ['status' => 1, 'message' => "Login successful",'token' => $token, 'id' => $user['customer_id'],'username' => $user['username']];
+                $response = ['status' => 1, 'message' => "Login successful",'token' => $token, 'id' => $user['customer_id'],'email' => $user['email']];
             }
 
             if (!$user) {
@@ -57,9 +57,7 @@ switch ($method) {
         echo json_encode($response);
         break;
 
-    case "GET":{
-
-    
+    case "GET":{    
         $headers = apache_request_headers();
 
         if (!isset($headers['Authorization'])) {

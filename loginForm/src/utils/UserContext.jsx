@@ -19,6 +19,7 @@ export const UserContextProvider = ({ children }) => {
   const deleteToken = () => {
     setToken(null);
     localStorage.removeItem("token");
+    setUserInfo(null)
   };
 
   useEffect((_) => {

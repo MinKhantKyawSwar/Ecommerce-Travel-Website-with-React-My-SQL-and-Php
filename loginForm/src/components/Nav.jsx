@@ -1,5 +1,5 @@
-import React, { useContext, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, redirect, useNavigate } from "react-router-dom";
 
 import { UserContext } from "../utils/UserContext";
 import axios from "axios";
@@ -12,6 +12,7 @@ const nav = () => {
   const logoutHandler = () => {
     updateToken(null);
     localStorage.removeItem("token");
+    setUserInfo("")
     navigate("/login")
   };
 
@@ -30,7 +31,7 @@ const nav = () => {
 
       if (response.data.status === 1 && response.data) {
         setUserInfo(response.data.customer);
-        // console.log(response.data.customer);
+        setEmail(response.data.customer.email);
         return response.data.customer
       } else {
         console.error("Failed to fetch user ID:", response.data.message);
@@ -40,9 +41,9 @@ const nav = () => {
     }
   };
 
-  useEffect((_)=>{
-    getUserId();
-  },[navigate])
+  // useEffect((_)=>{
+  //   getUserId();
+  // })
 
 
   return (
@@ -94,3 +95,4 @@ const nav = () => {
 };
 
 export default nav;
+
