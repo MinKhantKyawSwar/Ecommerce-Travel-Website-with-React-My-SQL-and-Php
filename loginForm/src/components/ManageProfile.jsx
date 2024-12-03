@@ -57,9 +57,6 @@ const ManageProfile = () => {
     const { email, prev_password, username, phone, country, city, profile_image } = values;
     let url = "http://localhost:3000/backend/editProfile.php";
 
-    if (prev_password == initialValues.password){
-
-    }
     const data = {
       username,
       email,
@@ -78,6 +75,8 @@ const ManageProfile = () => {
           "Content-Type": "application/json",
         },
       });
+
+      console.log(data);
 
       const toastFire = (message) => {
         toast.success(message, {
@@ -150,7 +149,7 @@ const ManageProfile = () => {
       enableReinitialize={true}
     >
       {({ isSubmitting }) => (
-        <Form className="w-1/2 mx-auto" method="POST"  encType="multipart/form-data">
+        <Form className="w-1/2 mx-auto" method="POST">
           <h1 className="text-center font-semibold text-4xl my-4 text-teal-600">
             {/* {isLogin ? "Login" : "Register"} */}
             Manage Profile
@@ -260,7 +259,7 @@ const ManageProfile = () => {
             />
             <StyledErrorMessage name="new_password" />
           </div> */}
-          <label
+          {/* <label
           htmlFor="upload"
           className="p-2 rounded-md border-dashed border-2 border-blue-600font-medium my-3 text-blue-600 cursor-pointer"
         >
@@ -274,7 +273,7 @@ const ManageProfile = () => {
           multiple
           accept="image/png, image/jpeg, image/jpg"
           onChange={() => onChangeHandler(event)}
-        />
+        /> */}
           <button
             className="text-white bg-teal-600 py-4 font-medium w-full text-center"
             type="submit"

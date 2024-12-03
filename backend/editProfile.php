@@ -17,16 +17,21 @@ switch ($method) {
         try {
             $data = json_decode($eData);
             $email = $data->email;
-            echo $email;
+            echo $eData;
             // Connection to database
             $conn = $db->connect();
 
-            // Check if the user exists
+            // override into user
             $sql = "INSERT into customers WHERE email = :email LIMIT 1";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':email', $email);
             $stmt->execute();
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($status) {
+                $response = ['status' => 1, 'message' => "Account Created Successfully!"];
+            } else {
+                $response= ['status' => 0, 'message' => "Failed to create account!"];
+            }
             
         } catch (PDOException $e) {
             $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];

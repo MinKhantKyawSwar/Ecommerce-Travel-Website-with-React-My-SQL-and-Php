@@ -31,7 +31,6 @@ const nav = () => {
 
       if (response.data.status === 1 && response.data) {
         setUserInfo(response.data.customer);
-        setEmail(response.data.customer.email);
         return response.data.customer
       } else {
         console.error("Failed to fetch user ID:", response.data.message);
@@ -41,9 +40,9 @@ const nav = () => {
     }
   };
 
-  // useEffect((_)=>{
-  //   getUserId();
-  // })
+  useEffect((_)=>{
+    getUserId();
+  }, [])
 
 
   return (
