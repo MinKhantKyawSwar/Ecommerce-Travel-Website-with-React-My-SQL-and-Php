@@ -21,9 +21,6 @@ switch ($method) {
             $conn = $db->connect();
             if (isset($_GET['id']) && is_numeric($_GET['id'])) {
                 $id = intval($_GET['id']);
-
-
-
                 $getAllDestination = "SELECT * FROM destination where destination_id = :id";
                 $stmt = $conn->prepare($getAllDestination);
                 $stmt->bindParam(':id', $id);

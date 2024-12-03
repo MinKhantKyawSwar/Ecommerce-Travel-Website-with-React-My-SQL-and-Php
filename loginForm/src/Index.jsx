@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
 // import {Link} from 'react-router-dom'
 
 const Index = () => {
@@ -7,14 +8,15 @@ const Index = () => {
   const [selectedDestination, setSelectedDestination] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const navigate = useNavigate(); 
  
   // Fetch all destinations
-  const fetchDestinations = async () => {
+  const getDestinations = async () => {
     try {
       const response = await axios.get(
         "http://localhost:3000/backend/getDestination.php"
       );
+
       if (response.data.status === 1) {
         setDestinations(response.data.data);
       } else {
@@ -34,9 +36,10 @@ const Index = () => {
       const response = await axios.get(
         `http://localhost:3000/backend/getDestination.php?id=${id}`
       );
-      console.log(response.data.data)
+      // console.log(response.data.data)
       if (response.data.status === 1) {
         setSelectedDestination(response.data.data); // Save details of the selected destination
+        navigate(`/destination/${id}`); 
       } else {
         setError("No details found for this destination");
       }
@@ -48,7 +51,7 @@ const Index = () => {
   };
 
   useEffect(() => {
-    fetchDestinations();
+    getDestinations();
   }, []);
 
   if (loading) return <p>Loading...</p>;
@@ -58,10 +61,13 @@ const Index = () => {
     <div>
       <h1>Destinations</h1>
       <ul>
-        {destinations.map((destination, index) => (
+        {destinations.map((destination, index ) => (
           <li key={index}>
-            <b className="font-medium text-xl">{destination.country}</b>:{" "}
+            <b className="font-medium text-xl">{destination.country}</b>:
             {destination.description}
+            <p>
+              {destination.destination_name}
+            </p>
             <button
               className="border-2 px-3 py-2 m-2"
               onClick={() => handleDetails(destination.destination_id)}

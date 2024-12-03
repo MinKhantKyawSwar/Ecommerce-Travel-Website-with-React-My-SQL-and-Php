@@ -7,6 +7,7 @@ import isLoginLoader from "./utils/isLogin";
 import Profile from "./components/Profile";
 import ManageProfile from "./components/ManageProfile";
 import { UserContextProvider } from "./utils/UserContext";
+import Details from "./components/Details";
 
 function App() {
   const router = createBrowserRouter([
@@ -29,6 +30,10 @@ function App() {
         {
           path: "/profile",
           element: <Profile/>
+        },
+        {
+          path : "/destination/:id",
+          element: <Details/>
         },
         {
           path: "/profile/manage-profile",
