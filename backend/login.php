@@ -24,7 +24,7 @@ switch ($method) {
             $conn = $db->connect();
 
             // Check if the user exists
-            $sql = "SELECT * FROM customers WHERE email = :email LIMIT 1";
+            $sql = "SELECT * FROM users WHERE email = :email LIMIT 1";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':email', $email);
             $stmt->execute();
@@ -37,14 +37,14 @@ switch ($method) {
                 $response = ['status' => 0, 'message' => "Invalid password"];
             } else {
                 $tokenData = [
-                    'id' => $user['customer_id'],
+                    'id' => $user['user_id'],
                     'username' => $user['username'],
                     'email' => $user['email'],
                     'exp' => time() + (86400)
                 ];
 
                 $token = base64_encode(json_encode($tokenData));
-                $response = ['status' => 1, 'message' => "Login successful",'token' => $token, 'id' => $user['customer_id'],'email' => $user['email']];
+                $response = ['status' => 1, 'message' => "Login successful",'token' => $token, 'id' => $user['user_id'],'email' => $user['email']];
             }
 
             if (!$user) {
@@ -83,7 +83,7 @@ switch ($method) {
 
         try {
             $conn = $db->connect();
-            $sql = "SELECT * FROM customers where customer_id = :id";
+            $sql = "SELECT * FROM users where user_id = :id";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(":id", $id);
             $stmt->execute();

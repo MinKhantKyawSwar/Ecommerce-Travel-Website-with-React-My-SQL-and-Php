@@ -20,11 +20,8 @@ const AuthForm = ({ isLogin }) => {
     role: "user",
     phone: "",
     password: "",
-    country: "",
-    city: "",
-    Tour_Package: "",
     profile_image : "",
-    Created_At: null,
+    created_at: null,
   };
 
   const AuthFormSchema = Yup.object({
@@ -66,11 +63,8 @@ const AuthForm = ({ isLogin }) => {
       role: "user",
       phone,
       password,
-      country,
-      city,
-      Tour_Package: "",
       profile_image : "",
-      Created_At: new Date().toLocaleString(),
+      created_at: new Date().toLocaleString(),
     };
     try {
       const response = await axios.post(url, data, {
@@ -181,51 +175,18 @@ const AuthForm = ({ isLogin }) => {
             {!isLogin && (
               <>
                 <div className="mb-3">
-                  {/* <label htmlFor="phone" className="font-medium block">
+                  <label htmlFor="phone" className="font-medium block">
                   phone
-                </label> */}
+                </label>
                   <Field
                     type="phone"
                     name="phone"
                     id="phone"
                     className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
-                    hidden
-                    value="0"
                   />
                   <StyledErrorMessage name="phone" />
                 </div>
                 <div className="mb-3">
-                  {/* <label htmlFor="country" className="font-medium block" >
-                  country
-                </label> */}
-                  <Field
-                    type="text"
-                    name="country"
-                    id="country"
-                    className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
-                    hidden
-                    value=""
-                  />
-                  <StyledErrorMessage name="country" />
-                </div>
-                <div className="mb-3">
-                  {/* <label htmlFor="city" className="font-medium block">
-                  city
-                </label> */}
-                  <Field
-                    type="text"
-                    name="city"
-                    id="city"
-                    className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
-                    hidden
-                    value=""
-                  />
-                  <StyledErrorMessage name="city" />
-                </div>
-                <div className="mb-3">
-                  {/* <label htmlFor="city" className="font-medium block">
-                  city
-                </label> */}
                   <Field
                     type="text"
                     name="profile_image"

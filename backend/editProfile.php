@@ -9,35 +9,73 @@ header("Access-Control-Allow-Headers: *");
 include 'dbconnect.php';
 $db = new dbconnect;
 
-$eData = file_get_contents('php://input');
-
+// Get the HTTP method
 $method = $_SERVER['REQUEST_METHOD'];
+
 switch ($method) {
     case "POST":
         try {
-            $data = json_decode($eData);
-            $email = $data->email;
-            echo $eData;
-            // Connection to database
-            $conn = $db->connect();
+            // Check if the file is uploaded
+            // if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === 0) {
 
-            // override into user
-            $sql = "INSERT into customers WHERE email = :email LIMIT 1";
-            $stmt = $conn->prepare($sql);
-            $stmt->bindParam(':email', $email);
-            $stmt->execute();
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($status) {
-                $response = ['status' => 1, 'message' => "Account Created Successfully!"];
-            } else {
-                $response= ['status' => 0, 'message' => "Failed to create account!"];
-            }
-            
+                // Get the file details
+                $file = $_FILES['profile_image'];
+                $fileName = basename($file['name']);
+                $saveLocation = 'pictures/profile/'; // Directory to save the image
+                $targetFilePath = $saveLocation . uniqid() . '_' . $fileName; // Unique name for the file
+
+                // Check if the file is an image (optional)
+                $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+                if (!in_array($fileType, ['jpg', 'jpeg', 'png', 'jfif'])) {
+                    echo json_encode(['status' => 0, 'message' => 'Invalid file type']);
+                    exit;
+                }
+
+                // Move the uploaded file to the target directory
+                if (move_uploaded_file($file['tmp_name'], $targetFilePath)) {
+                    // Read POST data
+                    $username = $_POST['username'];
+                    $email = $_POST['email'];
+                    $phone = $_POST['phone'];
+                    $profile_image = $targetFilePath;  // Store the uploaded file path
+
+                    // Connect to the database
+                    $conn = $db->connect();
+
+                    // Prepare the SQL statement to update user data
+                    $sql = "UPDATE users SET username = :username, email = :email, phone = :phone, profile_image = :profile_image WHERE email = :email";
+                    $stmt = $conn->prepare($sql);
+
+                    // Bind the parameters to the prepared statement
+                    $stmt->bindParam(':email', $email);
+                    $stmt->bindParam(':username', $username);
+                    $stmt->bindParam(':phone', $phone);
+                    $stmt->bindParam(':profile_image', $profile_image);
+
+                    // Execute the statement
+                    $success = $stmt->execute();
+
+                    // Send the response back
+                    if ($success) {
+                        $response = ['status' => 1, 'message' => 'User updated successfully'];
+                    } else {
+                        $response = ['status' => 0, 'message' => 'Failed to update user'];
+                    }
+
+                    echo json_encode($response);
+
+                } else {
+                    echo json_encode(['status' => 0, 'message' => 'File upload failed']);
+                }
+            // } else {
+            //     echo json_encode(['status' => 0, 'message' => 'No file uploaded or upload error']);
+            // }
         } catch (PDOException $e) {
-            $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
+            echo json_encode(['status' => 0, 'message' => 'Error: ' . $e->getMessage()]);
         }
-        echo json_encode($response);
         break;
 
-    
+    default:
+        echo json_encode(['status' => 0, 'message' => 'Unsupported request method']);
+        break;
 }

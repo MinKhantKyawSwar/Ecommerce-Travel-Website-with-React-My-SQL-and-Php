@@ -17,21 +17,18 @@
                 $data = json_decode($eData);
                 $username = $data->username;
                 $email = $data->email;
-                $role = $data->role;
                 $phone = $data->phone;
+                $role = $data->role;
                 $password = $data->password;
                 $hashedpassword = password_hash($password, PASSWORD_DEFAULT);
-                $country = $data->country;
-                $city = $data->city;
-                $Tour_Package = $data->Tour_Package;
+                $created_at = $data->created_at;
                 $profile_image = $data->profile_image;
-                $Created_At = $data->Created_At;
 
                 // connection to database
                 $conn = $db->connect();
 
                 //checking user name or email is already exists
-                $checkUser = "SELECT * FROM customers WHERE username = :username OR email = :email";
+                $checkUser = "SELECT * FROM users WHERE username = :username OR email = :email";
                 $stmt = $conn->prepare($checkUser);
                 $stmt->bindParam(':username', $data->username);
                 $stmt->bindParam(':email', $data->email);
@@ -45,18 +42,15 @@
                 }
                 else{
                     // adding data into database
-                    $sql = "INSERT INTO customers (username, role, email, phone, password, country, city, Tour_Package,profile_image, Created_At) VALUES (:username, :role, :email, :phone, :password, :country, :city, :Tour_Package, :profile_image, :Created_At)";
+                    $sql = "INSERT INTO users (username, email, phone,role,profile_image, password, created_at) VALUES (:username, :email, :phone, :role, :profile_image, :password, :created_at)";
                     $stmt = $conn->prepare($sql);
                     $stmt->bindParam(':username', $username);
-                    $stmt->bindParam(':role', $role);
                     $stmt->bindParam(':email', $email);
                     $stmt->bindParam(':phone', $phone);
-                    $stmt->bindParam(':password', $hashedpassword);  
-                    $stmt->bindParam(':country', $country);
-                    $stmt->bindParam(':city', $city);
-                    $stmt->bindParam(':Tour_Package', $Tour_Package);
+                    $stmt->bindParam(':role', $role);
                     $stmt->bindParam(':profile_image', $profile_image);
-                    $stmt->bindParam(':Created_At', $Created_At);
+                    $stmt->bindParam(':password', $hashedpassword);  
+                    $stmt->bindParam(':created_at', $created_at);
                     $status = $stmt->execute();
 
                     if ($status) {

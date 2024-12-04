@@ -47,7 +47,7 @@ const Details = () => {
       <div className="mt-5 p-4 border flex">
         {destination.destination_image ? (
           <img
-            src={`/${destination.destination_image}`}
+            src={`http://localhost:3000/backend/${destination.destination_image}`}
             alt="img"
             width={600}
           />
@@ -68,7 +68,7 @@ const Details = () => {
             <b>Description:</b> {destination.description}
           </p>
           <p>
-            <b>Bookings:</b> {destination.booking}
+            <b>Bookings:</b> 
           </p>
         </div>
       </div>

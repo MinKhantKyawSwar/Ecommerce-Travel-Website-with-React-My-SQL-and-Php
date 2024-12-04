@@ -17,11 +17,7 @@ const ManageProfile = () => {
     role: userInfo.role,
     phone: userInfo.phone,
     password: userInfo.password,
-    country: userInfo.country,
-    city: userInfo.city,
-    Tour_Package: userInfo.Tour_Package,
-    profile_image : userInfo.profile_image,
-    Created_At: userInfo.Created_At,
+    profile_image : "",
   };
 
   const AuthFormSchema = Yup.object({
@@ -54,29 +50,30 @@ const ManageProfile = () => {
   
 
   const submitHandler = async (values) => {
-    const { email, prev_password, username, phone, country, city, profile_image } = values;
+    const { email, username, phone, password, profile_image } = values;
     let url = "http://localhost:3000/backend/editProfile.php";
 
     const data = {
       username,
       email,
-      role,
       phone,
       password,
-      country,
-      city,
-      Tour_Package,
       profile_image,
-      Created_At,
     };
+
     try {
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("username", username);
+      formData.append("phone", phone);
+      if (profile_image) formData.append("profile_image", profile_image); // Append profile image if it's changed
       const response = await axios.post(url, data, {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
       });
 
-      console.log(data);
+      console.log("here");
 
       const toastFire = (message) => {
         toast.success(message, {
@@ -109,8 +106,7 @@ const ManageProfile = () => {
       if (response.data.status === 0) {
         toastError(response.data.message);
       } else if (response.data.status === 1) {
-        // console.log(response.data.username);
-        updateToken(response.data.token);
+        console.log(response.data.username);
         toastFire(response.data.message);
         setTimeout(() => setRedirect(true), 2000);
       } else if (response.data.status == 6) {
@@ -149,7 +145,7 @@ const ManageProfile = () => {
       enableReinitialize={true}
     >
       {({ isSubmitting }) => (
-        <Form className="w-1/2 mx-auto" method="POST">
+        <Form className="w-1/2 mx-auto" method="post" encType="multipart/form-data">
           <h1 className="text-center font-semibold text-4xl my-4 text-teal-600">
             {/* {isLogin ? "Login" : "Register"} */}
             Manage Profile
@@ -195,85 +191,21 @@ const ManageProfile = () => {
                 />
                 <StyledErrorMessage name="phone" />
               </div>
-              <div className="mb-3">
-                <label htmlFor="country" className="font-medium block" >
-                Country
-              </label>
-                <Field
-                  type="text"
-                  name="country"
-                  id="country"
-                  values ={initialValues.country}
-                  className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
-                />
-                <StyledErrorMessage name="country" />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="city" className="font-medium block">
-                City
-              </label>
-                <Field
-                  type="text"
-                  name="city"
-                  id="city"
-                  className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
-                  values={userInfo.city }
-                />
-                <StyledErrorMessage name="city" />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="city" className="font-medium block">
-                Country
-              </label>
-                <Field
-                  type="text"
-                  name="profile_image"
-                  id="profile_image"
-                  values={userInfo.country}
-                  className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
-                />
-                <StyledErrorMessage name="profile_image" />
-              </div>
 
-          {/* <div className="mb-3">
-            <label htmlFor="prev-password" className="font-medium block">
-              Previous Password
-            </label>
-            <Field
-              type="password"
-              name="prev-password"
-              id="prev-password"
-              className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
-            />
-            <StyledErrorMessage name="prev-password" />
-          </div>
+          {/* Profile Image Upload */}
           <div className="mb-3">
-            <label htmlFor="new_password" className="font-medium block">
-              New password
-            </label>
-            <Field
-              type="password"
-              name="new-password"
-              id="new_password"
-              className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
-            />
-            <StyledErrorMessage name="new_password" />
-          </div> */}
-          {/* <label
-          htmlFor="upload"
-          className="p-2 rounded-md border-dashed border-2 border-blue-600font-medium my-3 text-blue-600 cursor-pointer"
-        >
-          Upload from device
-        </label>
-        <input
-          type="file"
-          hidden
-          id="upload"
-          name="profile_image"
-          multiple
-          accept="image/png, image/jpeg, image/jpg"
-          onChange={() => onChangeHandler(event)}
-        /> */}
+              <label htmlFor="profile_image" className="font-medium block">
+                Profile Image
+              </label>
+              <input
+                type="file"
+                id="profile_image"
+                name="profile_image"
+                className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
+                accept="image/*"
+                onChange={(event) => setFieldValue("profile_image", event.currentTarget.files[0])}
+              />
+            </div>
           <button
             className="text-white bg-teal-600 py-4 font-medium w-full text-center"
             type="submit"
