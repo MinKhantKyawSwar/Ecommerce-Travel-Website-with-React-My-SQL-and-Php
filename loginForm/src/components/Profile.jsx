@@ -1,18 +1,18 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { UserContext } from '../utils/UserContext';
-import axios from 'axios';
-import { Navigate } from 'react-router-dom';
+import React, { useContext, useState, useEffect } from "react";
+import { UserContext } from "../utils/UserContext";
+import axios from "axios";
 
 const Profile = () => {
   const { token, userInfo, setUserInfo } = useContext(UserContext);
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    phone: '',
+    username: "",
+    email: "",
+    phone: "",
     profile_image: null, // Store the file directly
   });
   const [loading, setLoading] = useState(true); // Add loading state
+  const [fileData, setFileData] = useState([]);
 
   // Use useEffect to set formData when userInfo changes (initial loading)
   useEffect(() => {
@@ -24,8 +24,23 @@ const Profile = () => {
         profile_image: userInfo.profile_image, // Set profile image file path
       });
       setLoading(false); // Set loading to false once userInfo is available
+      setFileData(userInfo.profile_image);
     }
   }, [userInfo]);
+
+  // useEffect(() => {
+  //   const fetchFiles = async () => {
+  //     try {
+  //       const response = await axios.get('http://localhost:3000/backend/login.php');
+  //       setFileData(userInfo.profile_image); // Assume the response is an array of files
+  //       console.log(userInfo.profile_image);
+  //     } catch (error) {
+  //       console.error('Error fetching files:', error);
+  //     }
+  //   };
+
+  //   fetchFiles();
+  // }, []);
 
   // Handler for form field changes
   const handleInputChange = (e) => {
@@ -60,13 +75,13 @@ const Profile = () => {
     const url = "http://localhost:3000/backend/editProfile.php";
 
     const formDataToSend = new FormData();
-    formDataToSend.append('username', username);
-    formDataToSend.append('email', email);
-    formDataToSend.append('phone', phone);
+    formDataToSend.append("username", username);
+    formDataToSend.append("email", email);
+    formDataToSend.append("phone", phone);
     if (profile_image) {
-      formDataToSend.append('profile_image', profile_image); // Append the file object
+      formDataToSend.append("profile_image", profile_image); // Append the file object
     } else {
-      formDataToSend.append('profile_image', "");
+      formDataToSend.append("profile_image", "");
     }
 
     try {
@@ -78,89 +93,132 @@ const Profile = () => {
 
       if (response.data.status === 1) {
         console.log(response.data);
-        setUserInfo(response.data.userInfo); // Update user info in context
+        setUserInfo(response.data.userInfo);
         setEditMode(false); // Close edit mode
+        window.location.reload();
       } else {
         console.log(response.data.message); // Show error if something goes wrong
       }
     } catch (error) {
-      console.error("Error:", error.response ? error.response.data : error.message);
+      console.error(
+        "Error:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
-  // Wait until loading is false to render the profile
   if (loading) {
     return <p>Loading user info...</p>; // Show a loading message while waiting for user data
   }
 
   return (
-    <div>
-      <div>
-        {/* Check if userInfo is loaded */}
+    <div className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-lg">
+      <div className="text-center mb-6">
         {userInfo ? (
           <>
-            <img 
-              src={`http://localhost:3000/backend/pictures/profile/${userInfo.profile_image}`} 
-              alt="profile" 
-            />
+            <div className="text-center absolute right-50">
+              <button
+                onClick={EditHandler}
+                className="text-green-600 font-medium py-2 px-10 mt-4 rounded-lg border border-green-600 hover:bg-green-600 hover:text-white transition duration-200"
+              >
+                {editMode ? "Go Back" : "Edit"}
+              </button>
+            </div>
             {!editMode ? (
               <>
-                <p>Username: {userInfo.username}</p>
-                <p>Email: {userInfo.email}</p>
-                <p>Phone: {userInfo.phone}</p>
+                <div className="flex justify-center mb-4">
+                  <img
+                    src={`http://localhost:3000/backend/${userInfo.profile_image}`}
+                    alt="profile"
+                    className="rounded-full w-32 h-32 border-4 border-teal-600 object-cover"
+                  />
+                </div>
+                <h2 className="text-2xl font-semibold text-gray-800">
+                  {userInfo.username}
+                </h2>
+                <p className="text-gray-600">Email: {userInfo.email}</p>
+                <p className="text-gray-600">Phone: {userInfo.phone}</p>
               </>
             ) : (
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="mb-3">
-                  <label htmlFor="username" className="font-medium block">Username</label>
+                  <label
+                    htmlFor="profile_image"
+                    className="font-medium block text-gray-700 mb-2"
+                  >
+                    Profile Image
+                  </label>
+                  <div className="flex flex-col items-center">
+                    <img
+                      src={`http://localhost:3000/backend/${fileData}`}
+                      alt="profile"
+                      className="rounded-full w-32 h-32 mb-4 border-4 border-teal-600 object-cover"
+                    />
+                    <input
+                      type="file"
+                      name="profile_image"
+                      id="profile_image"
+                      onChange={handleFileChange}
+                      className="text-lg py-2 w-3/4 rounded-lg border border-teal-600 bg-white text-black"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="mb-3">
+                  <label
+                    htmlFor="username"
+                    className="font-medium block text-gray-700"
+                  >
+                    Username
+                  </label>
                   <input
                     type="text"
                     name="username"
                     id="username"
                     value={formData.username}
                     onChange={handleInputChange}
-                    className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
+                    className="text-lg border-2 border-teal-600 py-2 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600"
                   />
                 </div>
 
                 <div className="mb-3">
-                  <label htmlFor="email" className="font-medium block">Email</label>
+                  <label
+                    htmlFor="email"
+                    className="font-medium block text-gray-700"
+                  >
+                    Email
+                  </label>
                   <input
                     type="email"
                     name="email"
                     id="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
+                    className="text-lg border-2 border-teal-600 py-2 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600"
                   />
                 </div>
 
                 <div className="mb-3">
-                  <label htmlFor="phone" className="font-medium block">Phone</label>
+                  <label
+                    htmlFor="phone"
+                    className="font-medium block text-gray-700"
+                  >
+                    Phone
+                  </label>
                   <input
                     type="text"
                     name="phone"
                     id="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label htmlFor="profile_image" className="font-medium block">Profile Image</label>
-                  <input
-                    type="file"
-                    name="profile_image"
-                    id="profile_image"
-                    onChange={handleFileChange}
-                    className="text-lg py-1 w-full rounded-lg"
+                    className="text-lg border-2 border-teal-600 py-2 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="text-white bg-teal-600 py-4 font-medium w-full text-center"
+                  className="text-white bg-teal-600 py-3 font-medium w-full rounded-lg hover:bg-teal-700 transition duration-200"
                 >
                   Save Changes
                 </button>
@@ -168,17 +226,8 @@ const Profile = () => {
             )}
           </>
         ) : (
-          <p>Loading user info...</p>
+          <p className="text-gray-600">Loading user info...</p>
         )}
-      </div>
-
-      <div className="pt-5">
-        <button
-          onClick={EditHandler}
-          className="text-green-600 font-medium py-2 px-20 mt-10 rounded hover:bg-green-600 hover:text-white"
-        >
-          {editMode ? 'Cancel' : 'Edit'}
-        </button>
       </div>
     </div>
   );

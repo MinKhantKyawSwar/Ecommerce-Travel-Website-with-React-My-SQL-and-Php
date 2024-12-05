@@ -25,11 +25,11 @@ switch ($method) {
                 $targetFilePath = $saveLocation . uniqid() . '_' . $fileName; // Unique name for the file
 
                 // Check if the file is an image (optional)
-                $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
-                if (!in_array($fileType, ['jpg', 'jpeg', 'png', 'jfif'])) {
-                    echo json_encode(['status' => 0, 'message' => 'Invalid file type']);
-                    exit;
-                }
+                // $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+                // if (!in_array($fileType, ['jpg', 'jpeg', 'png', 'jfif'])) {
+                //     echo json_encode(['status' => 0, 'message' => 'Invalid file type']);
+                //     exit;
+                // }
 
                 // Move the uploaded file to the target directory
                 if (move_uploaded_file($file['tmp_name'], $targetFilePath)) {
