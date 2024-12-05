@@ -13,6 +13,22 @@ const Profile = () => {
   });
   const [loading, setLoading] = useState(true); // Add loading state
   const [fileData, setFileData] = useState([]);
+  const [previewImage, setPreviewImage] = useState(null); // State for preview image
+  const [borderColor, setBorderColor] = useState("border-teal-600"); // State for border color
+
+  // Array of color options
+  const colorOptions = [
+    "border-teal-600",
+    "border-red-600",
+    "border-blue-600",
+    "border-yellow-600",
+    "border-green-600",
+    "border-purple-600",
+    "border-pink-600",
+    "border-orange-600",
+    "border-gray-600",
+    "border-indigo-600",
+  ];
 
   // Use useEffect to set formData when userInfo changes (initial loading)
   useEffect(() => {
@@ -25,22 +41,11 @@ const Profile = () => {
       });
       setLoading(false); // Set loading to false once userInfo is available
       setFileData(userInfo.profile_image);
+      setPreviewImage(
+        `http://localhost:3000/backend/${userInfo.profile_image}`
+      ); // Set initial preview image
     }
   }, [userInfo]);
-
-  // useEffect(() => {
-  //   const fetchFiles = async () => {
-  //     try {
-  //       const response = await axios.get('http://localhost:3000/backend/login.php');
-  //       setFileData(userInfo.profile_image); // Assume the response is an array of files
-  //       console.log(userInfo.profile_image);
-  //     } catch (error) {
-  //       console.error('Error fetching files:', error);
-  //     }
-  //   };
-
-  //   fetchFiles();
-  // }, []);
 
   // Handler for form field changes
   const handleInputChange = (e) => {
@@ -59,6 +64,7 @@ const Profile = () => {
         ...prevData,
         profile_image: file, // Store the entire file object
       }));
+      setPreviewImage(URL.createObjectURL(file)); // Create a preview URL for the selected file
     }
   };
 
@@ -112,7 +118,9 @@ const Profile = () => {
   }
 
   return (
-    <div className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-lg">
+    <div
+      className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-lg"
+    >
       <div className="text-center mb-6">
         {userInfo ? (
           <>
@@ -130,7 +138,7 @@ const Profile = () => {
                   <img
                     src={`http://localhost:3000/backend/${userInfo.profile_image}`}
                     alt="profile"
-                    className="rounded-full w-32 h-32 border-4 border-teal-600 object-cover"
+                    className={`rounded-full w-32 h-32 border-4 ${borderColor} object-cover`}
                   />
                 </div>
                 <h2 className="text-2xl font-semibold text-gray-800">
@@ -138,6 +146,7 @@ const Profile = () => {
                 </h2>
                 <p className="text-gray-600">Email: {userInfo.email}</p>
                 <p className="text-gray-600">Phone: {userInfo.phone}</p>
+                <p className="text-gray-600">Role: {userInfo.role}</p>
               </>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -150,9 +159,9 @@ const Profile = () => {
                   </label>
                   <div className="flex flex-col items-center">
                     <img
-                      src={`http://localhost:3000/backend/${fileData}`}
+                      src={previewImage} // Use the preview image URL
                       alt="profile"
-                      className="rounded-full w-32 h-32 mb-4 border-4 border-teal-600 object-cover"
+                      className={`rounded-full w-32 h-32 mb-4 border-4 ${borderColor} object-cover`}
                     />
                     <input
                       type="file"
@@ -164,58 +173,77 @@ const Profile = () => {
                     />
                   </div>
                 </div>
-
                 <div className="mb-3">
-                  <label
-                    htmlFor="username"
-                    className="font-medium block text-gray-700"
-                  >
-                    Username
-                  </label>
-                  <input
-                    type="text"
-                    name="username"
-                    id="username"
-                    value={formData.username}
-                    onChange={handleInputChange}
-                    className="text-lg border-2 border-teal-600 py-2 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600"
-                  />
-                </div>
+  <label
+    htmlFor="border_color"
+    className="font-medium block text-gray-700"
+  >
+    Border Color
+  </label>
+  <select
+    name="border_color"
+    id="border_color"
+    onChange={(e) => setBorderColor(e.target.value)}
+    className="text-lg border-2 border-teal-600 py-2 w-1/2 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600" // Adjusted width
+  >
+    {colorOptions.map((color) => (
+      <option key={color} value={color}>
+        {color.replace("border-", "").replace("-600", "")}
+      </option>
+    ))}
+  </select>
+</div>
 
-                <div className="mb-3">
-                  <label
-                    htmlFor="email"
-                    className="font-medium block text-gray-700"
-                  >
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className="text-lg border-2 border-teal-600 py-2 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600"
-                  />
-                </div>
+<div className="mb-3">
+  <label
+    htmlFor="username"
+    className="font-medium block text-gray-700"
+  >
+    Username
+  </label>
+  <input
+    type="text"
+    name="username"
+    id="username"
+    value={formData.username}
+    onChange={handleInputChange}
+    className="text-lg border-2 border-teal-600 py-2 w-1/2 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600" // Adjusted width
+  />
+</div>
 
-                <div className="mb-3">
-                  <label
-                    htmlFor="phone"
-                    className="font-medium block text-gray-700"
-                  >
-                    Phone
-                  </label>
-                  <input
-                    type="text"
-                    name="phone"
-                    id="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    className="text-lg border-2 border-teal-600 py-2 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600"
-                  />
-                </div>
+<div className="mb-3">
+  <label
+    htmlFor="email"
+    className="font-medium block text-gray-700"
+  >
+    Email
+  </label>
+  <input
+    type="email"
+    name="email"
+    id="email"
+    value={formData.email}
+    onChange={handleInputChange}
+    className="text-lg border-2 border-teal-600 py-2 w-1/2 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600" // Adjusted width
+  />
+</div>
 
+<div className="mb-3">
+  <label
+    htmlFor="phone"
+    className="font-medium block text-gray-700"
+  >
+    Phone
+  </label>
+  <input
+    type="text"
+    name="phone"
+    id="phone"
+    value={formData.phone}
+    onChange={handleInputChange}
+    className="text-lg border-2 border-teal-600 py-2 w-1/2 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600" // Adjusted width
+  />
+</div>
                 <button
                   type="submit"
                   className="text-white bg-teal-600 py-3 font-medium w-full rounded-lg hover:bg-teal-700 transition duration-200"

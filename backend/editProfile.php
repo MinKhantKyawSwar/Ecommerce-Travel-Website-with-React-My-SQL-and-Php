@@ -16,7 +16,7 @@ switch ($method) {
     case "POST":
         try {
             // Check if the file is uploaded
-            // if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === 0) {
+            if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === 0) {
 
                 // Get the file details
                 $file = $_FILES['profile_image'];
@@ -25,11 +25,11 @@ switch ($method) {
                 $targetFilePath = $saveLocation . uniqid() . '_' . $fileName; // Unique name for the file
 
                 // Check if the file is an image (optional)
-                // $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
-                // if (!in_array($fileType, ['jpg', 'jpeg', 'png', 'jfif'])) {
-                //     echo json_encode(['status' => 0, 'message' => 'Invalid file type']);
-                //     exit;
-                // }
+                $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+                if (!in_array($fileType, ['jpg', 'jpeg', 'png'])) {
+                    echo json_encode(['status' => 0, 'message' => 'Invalid file type']);
+                    exit;
+                }
 
                 // Move the uploaded file to the target directory
                 if (move_uploaded_file($file['tmp_name'], $targetFilePath)) {
@@ -42,6 +42,18 @@ switch ($method) {
                     // Connect to the database
                     $conn = $db->connect();
 
+                    // Fetch the current profile image
+                    $sql1 = "SELECT profile_image FROM users WHERE email = :email";
+                    $stmt = $conn->prepare($sql1);
+                    $stmt->bindParam(':email', $email);
+                    $stmt->execute();
+                    $product = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                    // Check if there is a previous profile image and unlink it
+                    if (!empty($product["profile_image"]) && file_exists($product["profile_image"])) {
+                        unlink($product["profile_image"]);
+                    }
+
                     // Prepare the SQL statement to update user data
                     $sql = "UPDATE users SET username = :username, email = :email, phone = :phone, profile_image = :profile_image WHERE email = :email";
                     $stmt = $conn->prepare($sql);
@@ -50,14 +62,13 @@ switch ($method) {
                     $stmt->bindParam(':email', $email);
                     $stmt->bindParam(':username', $username);
                     $stmt->bindParam(':phone', $phone);
-                    $stmt->bindParam(':profile_image', $profile_image);
+                    $stmt->bindParam(':profile_image', $profile_image); // Bind the new profile image path
 
                     // Execute the statement
                     $success = $stmt->execute();
-
                     // Send the response back
                     if ($success) {
-                        $response = ['status' => 1, 'message' => 'User updated successfully'];
+                        $response = ['status' => 1, 'message' => 'User  updated successfully'];
                     } else {
                         $response = ['status' => 0, 'message' => 'Failed to update user'];
                     }
@@ -67,9 +78,9 @@ switch ($method) {
                 } else {
                     echo json_encode(['status' => 0, 'message' => 'File upload failed']);
                 }
-            // } else {
-            //     echo json_encode(['status' => 0, 'message' => 'No file uploaded or upload error']);
-            // }
+            } else {
+                echo json_encode(['status' => 0, 'message' => 'No file uploaded or upload error']);
+            }
         } catch (PDOException $e) {
             echo json_encode(['status' => 0, 'message' => 'Error: ' . $e->getMessage()]);
         }
