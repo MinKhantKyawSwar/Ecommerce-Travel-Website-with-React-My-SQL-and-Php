@@ -72,7 +72,7 @@ const Index = () => {
               className="border-2 px-3 py-2 m-2"
               onClick={() => handleDetails(destination.destination_id)}
             >
-              Details
+              Check more
             </button>
           </li>
         ))}

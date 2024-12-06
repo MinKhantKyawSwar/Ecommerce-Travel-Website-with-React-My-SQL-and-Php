@@ -8,6 +8,7 @@ import Profile from "./components/Profile";
 import ManageProfile from "./components/ManageProfile";
 import { UserContextProvider } from "./utils/UserContext";
 import Details from "./components/Details";
+import PackageDetails from "./components/PackageDetails";
 
 function App() {
   const router = createBrowserRouter([
@@ -34,6 +35,10 @@ function App() {
         {
           path : "/destination/:id",
           element: <Details/>
+        },
+        {
+          path : "/destination/:id/package/:id",
+          element: <PackageDetails/>
         },
         {
           path: "/profile/manage-profile",

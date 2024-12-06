@@ -34,23 +34,14 @@ const AuthForm = ({ isLogin }) => {
     email: Yup.string()
       .required("Email is required.")
       .email("Please enter a valid email."),
-    // phone: Yup.number()
-    //   .required("Phone is required.")
-    //   .integer(),
     password: Yup.string()
       .min(4, "Password is too short.")
-      .required("Password is required."),
-    // city: Yup.string()
-    //   .required("City is required.")
-    //   .min(3, "City is too short."),
-    // country: Yup.string()
-    // .required("Country is required.")
-    // .min(3, "Country is too short."),
+      .required("Password is required.")
   });
   
 
   const submitHandler = async (values) => {
-    const { email, password, username, phone, country, city } = values;
+    const { email, password, username, phone} = values;
     let url = "http://localhost:3000/backend/register.php";
 
     if (isLogin) {
@@ -60,7 +51,7 @@ const AuthForm = ({ isLogin }) => {
     const data = {
       username,
       email,
-      role: "user",
+      role: "customer",
       phone,
       password,
       profile_image : "",

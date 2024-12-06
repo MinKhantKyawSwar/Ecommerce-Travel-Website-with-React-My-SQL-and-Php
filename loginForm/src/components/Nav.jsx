@@ -11,7 +11,7 @@ const Nav = () => {
 
   const logoutHandler = () => {
     updateToken(null);
-    localStorage.removeItem("token");
+    localStorage.removeItem("token", "user_id", "username");
     localStorage.removeItem("user_id");
     localStorage.removeItem("username");
     setUserInfo("");
