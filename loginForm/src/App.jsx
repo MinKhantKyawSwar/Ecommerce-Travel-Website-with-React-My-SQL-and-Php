@@ -10,6 +10,7 @@ import { UserContextProvider } from "./utils/UserContext";
 import Details from "./components/Details";
 import PackageDetails from "./components/PackageDetails";
 import SavedPackages from "./components/SavedPackages";
+import Booking from "./components/Booking";
 
 function App() {
   const router = createBrowserRouter([
@@ -48,6 +49,10 @@ function App() {
         {
           path: "/saved-packages",
           element: <SavedPackages/>
+        },
+        {
+          path: "/booking/:id",
+          element: <Booking/>
         }
       ],
     },

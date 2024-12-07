@@ -1,9 +1,12 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const SavedPackages = () => {
   const [error, setError] = useState(null);
   const [savedItem, setSavedItem] = useState([]);
+
+  const navigate = useNavigate();
 
   const getSavedItem = async (user_id) => {
     try {
@@ -24,6 +27,9 @@ const SavedPackages = () => {
     } catch (err) {
       setError("Failed to fetch packages: " + err.message);
     }
+  };
+  const handleBooking = async (id) => {
+    navigate(`/booking/${id}`);
   };
 
   let user_id = localStorage.getItem("user_id");
@@ -67,7 +73,8 @@ const SavedPackages = () => {
                 <span className="font-medium">Saved At:</span> {item.saved_at}
               </p>
               <div className="flex space-x-2">
-                <button className="bg-green-500 text-white rounded-lg px-4 py-2 hover:bg-green-600 transition duration-200">
+                <button className="bg-green-500 text-white rounded-lg px-4 py-2 hover:bg-green-600 transition duration-200"
+                  onClick={(_)=> handleBooking(item.package)}>
                   Order
                 </button>
                 <button className="bg-red-500 text-white rounded-lg px-4 py-2 hover:bg-red-600 transition duration-200">

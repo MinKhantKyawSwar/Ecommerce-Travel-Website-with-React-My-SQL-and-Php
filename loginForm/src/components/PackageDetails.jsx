@@ -10,17 +10,17 @@ const PackageDetails = () => {
   const { id } = useParams();
 
   const fetchData = async (id) => {
+    const package_id = Number(id);
     try {
       setLoading(true);
       const response = await axios.get(
         `http://localhost:3000/backend/getPackages.php`,
         {
           headers: {
-            "Package-Id": id,
+            "Package-Id": package_id,
           },
         }
       );
-      console.log(response.data.data);
 
       if (response.data.status === 1) {
         setPackageDetails(response.data.data[0]);

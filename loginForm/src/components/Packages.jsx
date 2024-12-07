@@ -34,36 +34,40 @@ const Packages = ({ destination_id, activeTab }) => {
     localStorage.setItem("activeTab", activeTab);
     navigate(`package/${id}`);
   };
+  const handleBooking = async (id) => {
+    localStorage.removeItem("activeTab", activeTab);
+    navigate(`/booking/${id}`);
+  };
 
-  const savedItemHandler = async (id)=>{
+  const savedItemHandler = async (id) => {
     const user_id = Number(localStorage.getItem("user_id"));
 
     const data = {
-      package : id,
-      user : user_id,
-      saved_at : new Date().toLocaleString()
-    }
+      package: id,
+      user: user_id,
+      saved_at: new Date().toLocaleString(),
+    };
     try {
       const response = await axios.post(
-        `http://localhost:3000/backend/getSavedPackages.php`,data,
+        `http://localhost:3000/backend/getSavedPackages.php`,
+        data,
         {
           headers: {
             "Content-Type": "application/json",
           },
         }
       );
-      // console.log(response) // Set packages data
 
       if (response.data.status === 1) {
-        console.log(response) // Set packages data
+        // console.log(response);
+        alert("successfully saved") 
       } else {
         setError("item does not saved");
       }
     } catch (err) {
       setError("Failed to fetch packages: " + err.message);
     }
-  }
-
+  };
 
   useEffect(() => {
     if (destination_id) {
@@ -72,25 +76,32 @@ const Packages = ({ destination_id, activeTab }) => {
   }, [destination_id]);
 
   return (
-    <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
-      {error && <p className="text-red-500">{error}</p>}
+    <div className=" p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
       {!error && packages.length > 0 ? (
         <>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
             {packages.length} packages Available
           </p>
-          <div className="flex items-start gap-20">
+          <div className="flex gap-10">
             {packages.map((pkg, index) => (
-              <div key={pkg.package_id}>
-                <button onClick={(_)=> savedItemHandler(pkg.package_id)}> {
-                isSaved ? "saved" : "save"
-                }</button>
-                <p className="font-medium text-2xl">
-                  <br />
+              <div
+                key={pkg.package_id}
+                className="border rounded-lg p-4 shadow-md w-full md:w-1/3"
+              >
+                <button
+                  onClick={() => savedItemHandler(pkg.package_id)}
+                  className={`mb-2 px-4 py-2 rounded ${
+                    isSaved
+                      ? "bg-green-500 text-white"
+                      : "bg-blue-500 text-white"
+                  }`}
+                >
+                  {isSaved ? "Saved" : "Save"}
+                </button>
+                <p className="font-medium text-xl mb-2">
                   {index + 1}. {pkg.package_name}
-                  <br />
                 </p>
-                <p className="text-sm">
+                <p className="text-sm mb-4">
                   <b>Price:</b> ${pkg.price}
                   <br />
                   <b>Facilities:</b> {pkg.facilities}
@@ -100,20 +111,31 @@ const Packages = ({ destination_id, activeTab }) => {
                   <b>Activities:</b> {pkg.activities}
                   <br />
                   <b>Duration:</b> {pkg.duration}
-                  <br />
+                </p>
+                <div className="flex justify-between">
                   <button
-                    className="border-2 px-3 py-2 m-2"
-                    onClick={() => handleDetails(pkg.package_id)}
+                    className="border-2 border-blue-500 text-blue-500 px-3 py-2 rounded hover:bg-blue-500 hover:text-white transition"
+                    onClick={() => {handleDetails(pkg.package_id)}}
                   >
                     Check More
                   </button>
-                </p>
+                  <button
+                    className="border-2 border-green-500 text-green-500 px-3 py-2 rounded hover:bg-green-500 hover:text-white transition"
+                    onClick={() => handleBooking(pkg.package_id)}
+                  >
+                    Book Package
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         </>
       ) : (
-        !error && <p>No packages available for this destination.</p>
+        !error && (
+          <p className="text-red-500">
+            No packages available for this destination.
+          </p>
+        )
       )}
     </div>
   );
