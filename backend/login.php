@@ -18,7 +18,6 @@ switch ($method) {
             $data = json_decode($eData);
             $email = $data->email;
             $password = $data->password;
-
             
             // Connection to database
             $conn = $db->connect();

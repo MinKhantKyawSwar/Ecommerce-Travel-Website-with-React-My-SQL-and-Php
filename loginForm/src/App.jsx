@@ -9,6 +9,7 @@ import ManageProfile from "./components/ManageProfile";
 import { UserContextProvider } from "./utils/UserContext";
 import Details from "./components/Details";
 import PackageDetails from "./components/PackageDetails";
+import SavedPackages from "./components/SavedPackages";
 
 function App() {
   const router = createBrowserRouter([
@@ -43,6 +44,10 @@ function App() {
         {
           path: "/profile/manage-profile",
           element: <ManageProfile/>
+        },
+        {
+          path: "/saved-packages",
+          element: <SavedPackages/>
         }
       ],
     },

@@ -71,6 +71,9 @@ const Nav = () => {
         <div className="flex gap-3">
           {token ? (
             <>
+            <Link to={"/saved-packages"} className="w-10 px-12 text-blue-600 font-medium py-2">
+                Saved
+              </Link>
               <Link to={"/profile"} className="w-10 text-blue-600 font-medium py-2">
                 Profile
               </Link>

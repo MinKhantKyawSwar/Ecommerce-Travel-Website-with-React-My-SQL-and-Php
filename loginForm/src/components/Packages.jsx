@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 const Packages = ({ destination_id, activeTab }) => {
   const [packages, setPackages] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [isSaved, setIsSaved] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -35,6 +35,36 @@ const Packages = ({ destination_id, activeTab }) => {
     navigate(`package/${id}`);
   };
 
+  const savedItemHandler = async (id)=>{
+    const user_id = Number(localStorage.getItem("user_id"));
+
+    const data = {
+      package : id,
+      user : user_id,
+      saved_at : new Date().toLocaleString()
+    }
+    try {
+      const response = await axios.post(
+        `http://localhost:3000/backend/getSavedPackages.php`,data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      // console.log(response) // Set packages data
+
+      if (response.data.status === 1) {
+        console.log(response) // Set packages data
+      } else {
+        setError("item does not saved");
+      }
+    } catch (err) {
+      setError("Failed to fetch packages: " + err.message);
+    }
+  }
+
+
   useEffect(() => {
     if (destination_id) {
       findPackage(destination_id); // Call the function when destination_id changes
@@ -52,6 +82,9 @@ const Packages = ({ destination_id, activeTab }) => {
           <div className="flex items-start gap-20">
             {packages.map((pkg, index) => (
               <div key={pkg.package_id}>
+                <button onClick={(_)=> savedItemHandler(pkg.package_id)}> {
+                isSaved ? "saved" : "save"
+                }</button>
                 <p className="font-medium text-2xl">
                   <br />
                   {index + 1}. {pkg.package_name}
