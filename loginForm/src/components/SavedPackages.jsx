@@ -1,12 +1,14 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Slide, ToastContainer } from "react-toastify";
 
 const SavedPackages = () => {
   const [error, setError] = useState(null);
   const [savedItem, setSavedItem] = useState([]);
 
   const navigate = useNavigate();
+
 
   const getSavedItem = async (user_id) => {
     try {
@@ -28,6 +30,31 @@ const SavedPackages = () => {
       setError("Failed to fetch packages: " + err.message);
     }
   };
+
+
+  const deleteSavedItem = async (savedItemId) => {
+    console.log(savedItemId)
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/backend/getSavedPackages.php`,
+        {
+          headers: {
+            "Saved-PackageId": savedItemId,
+          },
+        }
+      );
+
+      if (response.data.status === 1) {
+        setSavedItem((prevItems) => prevItems.filter(item => item.saved_id !== savedItemId));
+        alert("Successfully deleted!");
+      } else {
+        setError("Item does not saved");
+      }
+    } catch (err) {
+      setError("Failed to fetch packages: " + err.message);
+    }
+  };
+
   const handleBooking = async (id, index) => {
     navigate(`/booking/${id}`);
   };
@@ -39,6 +66,7 @@ const SavedPackages = () => {
 
   return (
     <div>
+    
       <div className="text-lg font-bold">Saved Packages</div>
 
       {savedItem.length > 0 ? (
@@ -77,7 +105,8 @@ const SavedPackages = () => {
                   onClick={(_)=> handleBooking(item.package, index)}>
                   Order
                 </button>
-                <button className="bg-red-500 text-white rounded-lg px-4 py-2 hover:bg-red-600 transition duration-200">
+                <button className="bg-red-500 text-white rounded-lg px-4 py-2 hover:bg-red-600 transition duration-200"
+                 onClick={(_)=> deleteSavedItem(item.saved_id)}>  
                   Remove
                 </button>
               </div>

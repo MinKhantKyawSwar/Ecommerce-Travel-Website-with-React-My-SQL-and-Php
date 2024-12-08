@@ -11,13 +11,14 @@ const Booking = () => {
   const [payment, setPayment] = useState([]);
   const [region, setRegion] = useState([]);
   const [addOn, setAddOn] = useState([]);
+  const [discount, setDiscount] = useState([]);
+  const [discountAdded, setDiscountAdded] = useState(false);
+  const [priceAfterDiscount, setPriceAfterDiscount] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [currentPackage, setCurrentPackage] = useState([]);
 
   const navigate = useNavigate();
   const { id } = useParams(); // package id from url
-
-  
 
   const initialValues = {
     user_id: "",
@@ -36,7 +37,8 @@ const Booking = () => {
   const AuthFormSchema = Yup.object({
     city: Yup.string().required("City is required."),
     country: Yup.string().required("Country is required."),
-    number_of_people: Yup.number().min(1,"You must at book for at least 1 person.")
+    number_of_people: Yup.number()
+      .min(1, "You must at book for at least 1 person.")
       .max(15, "Select Possible amount of people")
       .required("Number of People is required"),
     region: Yup.string().required("Region is required."),
@@ -49,7 +51,7 @@ const Booking = () => {
         "http://localhost:3000/backend/getBooking.php",
         {
           headers: {
-            "Region": "",
+            Region: "",
           },
         }
       );
@@ -73,7 +75,7 @@ const Booking = () => {
         "http://localhost:3000/backend/getBooking.php",
         {
           headers: {
-            "Payment": "",
+            Payment: "",
           },
         }
       );
@@ -97,7 +99,7 @@ const Booking = () => {
         "http://localhost:3000/backend/getBooking.php",
         {
           headers: {
-            "Add_on": "",
+            Add_on: "",
           },
         }
       );
@@ -106,6 +108,30 @@ const Booking = () => {
         console.log(response.data);
       } else if (response.data.status === 1) {
         setAddOn(response.data.data);
+      }
+    } catch (error) {
+      console.error(
+        "Error:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
+
+  const getDiscountInfo = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/backend/getBooking.php",
+        {
+          headers: {
+            Discount: "",
+          },
+        }
+      );
+
+      if (response.data.status === 0) {
+        console.log(response.data);
+      } else if (response.data.status === 1) {
+        setDiscount(response.data.data);
       }
     } catch (error) {
       console.error(
@@ -130,8 +156,7 @@ const Booking = () => {
         console.log(response.data);
       } else if (response.data.status === 1) {
         setTotalPrice(response.data.data[0].price);
-        setCurrentPackage(response.data.data[0])
-
+        setCurrentPackage(response.data.data[0]);
       }
     } catch (error) {
       console.error(
@@ -140,43 +165,10 @@ const Booking = () => {
       );
     }
   };
-  
-  // const calculateTotalPrice = (e) => {
-  //   let allCharges = 0;
-  //   let regionalPrice = 0;
-  //   let addOnPrice = 0;
-  //   let totalPeople = 1;
-    
-  //   const { name } = e.target;
-  //   if(name === "region"){
-  //     region.map((region, index)=>{
-  //       if(region.region_id==e.target.value){
-  //         if(region.region_name == currentPackage.region){
-  //           regionalPrice =  currentPackage.price;
-  //         } 
-  //         else{
-  //           regionalPrice = currentPackage.other_region_price;
-  //         } 
-  //       }
-  //     })
-  //   }
-  //   if(name === "add_on"){
-  //     addOn.map((add_on, index)=>{
-  //       // console.log(add_on.add_on===e.target.value)
-  //       if(add_on.add_on===e.target.value){
-  //         addOnPrice  = add_on.price;
-  //       }
-  //     })
-     
-  //   } 
-  //   if(name === "number_of_people"){
-  //     totalPeople = e.target.value;
-  //   } 
-  //   setTotalPrice(regionalPrice);
-  //   allCharges = (totalPrice + addOnPrice) * totalPeople;
-  //   setTotalPrice(allCharges)
-  // };
 
+  const [totalPeople, setTotalPeople] = useState(1);
+  const [selectedRegion, setSelectedRegion] = useState("");
+  const [selectedAddOn, setSelectedAddOn] = useState("");
 
   const calculateTotalPrice = (e) => {
     try {
@@ -184,42 +176,70 @@ const Booking = () => {
       let basePrice = currentPackage.price || 0;
       let regionalPrice = basePrice;
       let addOnPrice = 0;
-      let totalPeople = 1;
-  
-      // Regional Price Calculation
+      let discountedPercentage = 0;
+
+      // Update selected region
       if (name === "region" && value) {
-        const selectedRegion = region.find(r => r.region_id == value);
-        if (selectedRegion) {
-          regionalPrice = (selectedRegion.region_name === currentPackage.region) 
-            ? currentPackage.price 
-            : (currentPackage.other_region_price);
+        setSelectedRegion(value);
+        const selectedRegionData = region.find((r) => r.region_id == value);
+        if (selectedRegionData) {
+          regionalPrice =
+            selectedRegionData.region_name === currentPackage.region
+              ? currentPackage.price
+              : currentPackage.other_region_price;
         }
       }
-  
-      // Add-on Price Calculation
-      if (name === "add_on" && value) {
-        const selectedAddOn = addOn.find(add => add.add_on === value);
-        if (selectedAddOn) {
-          addOnPrice = selectedAddOn.price;
+
+      // Update selected add-on
+      else if (name === "add_on" && value) {
+        setSelectedAddOn(value);
+        const selectedAddOnData = addOn.find((add) => add.add_on === value);
+        if (selectedAddOnData) {
+          addOnPrice = selectedAddOnData.price;
         }
       }
-  
-      // Number of People Calculation
-      if (name === "number_of_people") {
-        totalPeople = Math.max(1, parseInt(value) || 1);
+
+      // Update number of people
+      else if (name === "number_of_people") {
+        const newTotalPeople = Math.max(1, parseInt(value) || 1);
+        setTotalPeople(newTotalPeople);
+        // Calculate total price immediately after updating totalPeople
+        let calculatedTotalPrice = Math.round(
+          (regionalPrice + addOnPrice) * newTotalPeople
+        );
+        setTotalPrice(calculatedTotalPrice);
+        return; // Exit early to avoid recalculating below
       }
-  
-      // Total Price Calculation
-      let calculatedTotalPrice = Math.round((regionalPrice + addOnPrice) * totalPeople);
-      setTotalPrice(calculatedTotalPrice);
-  
+
+      if (name === "discount" && value) {
+        setDiscountAdded(true);
+        const selectedDiscountData = discount.find(
+          (discount) => discount.discount_name === value
+        );
+        if (selectedDiscountData) {
+          discountedPercentage = selectedDiscountData.percentage;
+        }
+        console.log(discountedPercentage);
+        let calculatedTotalPrice = Math.round(
+          (regionalPrice + addOnPrice) * totalPeople
+        );
+        setTotalPrice(calculatedTotalPrice);
+        setPriceAfterDiscount(
+          calculateTotalPrice * (discountedPercentage / 100)
+        );
+      } else {
+        // Total Price Calculation
+        let calculatedTotalPrice = Math.round(
+          (regionalPrice + addOnPrice) * totalPeople
+        );
+        setTotalPrice(calculatedTotalPrice);
+      }
     } catch (error) {
       console.error("Price calculation error:", error);
       // Fallback to base price
       setTotalPrice(currentPackage.price || 0);
     }
   };
-
 
   const submitHandler = async (values) => {
     const {
@@ -231,7 +251,7 @@ const Booking = () => {
       add_on,
       discount,
     } = values;
-    
+
     const data = {
       user_id: localStorage.getItem("user_id"),
       package: Number(id),
@@ -284,6 +304,7 @@ const Booking = () => {
     getRegionInfo();
     getAddOnInfo();
     getPackageInfo();
+    getDiscountInfo();
   }, []);
 
   return (
@@ -307,7 +328,11 @@ const Booking = () => {
         onSubmit={submitHandler}
       >
         {({ isSubmitting }) => (
-          <Form className="w-2/3 mx-auto" method="POST" onChange={ calculateTotalPrice}>
+          <Form
+            className="w-2/3 mx-auto"
+            method="POST"
+            onChange={calculateTotalPrice}
+          >
             <h1 className="text-center font-semibold text-4xl my-4 text-teal-600">
               Order Form
             </h1>
@@ -347,7 +372,7 @@ const Booking = () => {
                   className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
                 >
                   <option value="" label="Select one option" required />
-                   {region.map((region) => (
+                  {region.map((region) => (
                     <option
                       key={region.region_id}
                       value={region.region_id}
@@ -420,11 +445,20 @@ const Booking = () => {
                   Discount
                 </label>
                 <Field
-                  type="text"
+                  as="select"
                   name="discount"
                   id="discount"
                   className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
-                />
+                >
+                  <option value="" label="Select one option" required />
+                  {discount.map((discountData) => (
+                    <option
+                      key={discountData.discount_id}
+                      value={discountData.discount_name}
+                      label={discountData.discount_name}
+                    />
+                  ))}
+                </Field>
                 <StyledErrorMessage name="discount" />
               </div>
             </div>
