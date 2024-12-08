@@ -34,7 +34,7 @@ switch ($method) {
                     $response = ['status' => 0, 'message' => "No packages found.", "destination" => $destination_id];
                 }
             } else if (isset($headers['Package-Id'])) {
-                $package_id = $headers['Package-Id'];
+                $package_id = (int) $headers['Package-Id'];
 
                 $conn = $db->connect();
                 $getPackageDetails = "
@@ -71,7 +71,7 @@ switch ($method) {
                 if ($packageDetail) {
                     $response = ['status' => 1, 'message' => "Data found", 'data' => $packageDetail];
                 } else {
-                    $response = ['status' => 0, 'message' => "No packages found.", "package_id" => $package_id];
+                    $response = ['status' => 0, 'message' => "No packages found.", "package_id" => $packageDetail];
                 }
             } else {
                 $response = ['status' => 0, 'message' => "Destination-ID header missing."];
@@ -81,4 +81,4 @@ switch ($method) {
         }
         echo json_encode($response);
         break;
-}
+    }

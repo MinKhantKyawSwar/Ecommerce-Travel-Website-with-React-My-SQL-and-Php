@@ -28,7 +28,7 @@ const SavedPackages = () => {
       setError("Failed to fetch packages: " + err.message);
     }
   };
-  const handleBooking = async (id) => {
+  const handleBooking = async (id, index) => {
     navigate(`/booking/${id}`);
   };
 
@@ -74,7 +74,7 @@ const SavedPackages = () => {
               </p>
               <div className="flex space-x-2">
                 <button className="bg-green-500 text-white rounded-lg px-4 py-2 hover:bg-green-600 transition duration-200"
-                  onClick={(_)=> handleBooking(item.package)}>
+                  onClick={(_)=> handleBooking(item.package, index)}>
                   Order
                 </button>
                 <button className="bg-red-500 text-white rounded-lg px-4 py-2 hover:bg-red-600 transition duration-200">
