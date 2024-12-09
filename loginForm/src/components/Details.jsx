@@ -2,29 +2,19 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Packages from "./Packages";
-import StarRating from "./StarRating";
+import Reviews from "./Reviews";
 
 const Details = () => {
   const [destination, setDestination] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState(
-    localStorage.getItem("activeTab")
-      ? localStorage.getItem("activeTab")
-      : "overview" // Retrieve from localStorage or default
+    localStorage.getItem("activeTab") || "overview"
   );
-  const [prevReview, setPrevReview] = useState([]);
-  const [showReviewForm, setShowReviewForm] = useState(false); // State for form visibility
-
-  // to get data from form
-  const [reviewTitle, setReviewTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [rating, setRating] = useState(0);
 
   const navigate = useNavigate();
   const { id } = useParams();
 
-  // Fetch details of a single destination
   const findById = async () => {
     try {
       const response = await axios.get(
@@ -43,10 +33,6 @@ const Details = () => {
     }
   };
 
-  useEffect(() => {
-    findById();
-  }, [id]);
-
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
@@ -56,88 +42,36 @@ const Details = () => {
     navigate(-1);
   };
 
-  const getPrevReview = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:3000/backend/getReview.php`,
-        {
-          headers: {
-            "Destination-Id": id,
-          },
-        }
-      );
 
-      if (response.data.status === 1) {
-        setPrevReview(response.data.data);
-      } else {
-        setError("No details found for this destination");
-      }
-    } catch (err) {
-      setError("Failed to fetch details: " + err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    findById();
+  }, [id]);
 
-  const handleAddReview = async (e) => {
-    e.preventDefault(); // Prevent default form submission
-    const data = {
-      reviewTitle: reviewTitle,
-      description,
-      rating,
-      created_at: new Date(),
-      userId: Number(localStorage.getItem("user_id")),
-      destination: id,
-    };
+  if (loading) return <div className="text-center mt-10">Loading...</div>;
 
-    try {
-      const response = await axios.post(
-        `http://localhost:3000/backend/getReview.php`,
-        data,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.data.status === 1) {
-        setPrevReview([...prevReview, response.data.data]); // Add new review to the list
-        setReviewTitle(""); // Reset form fields
-        setDescription("");
-        setRating(0);
-      } else {
-        setError("Failed to add review");
-      }
-    } catch (err) {
-      setError("Failed to add review: " + err.message);
-    }
-  };
-
-  useEffect((_) => {
-    getPrevReview();
-  }, []);
+  if (error)
+    return <div className="text-red-500 text-center mt-10">{error}</div>;
 
   return (
     <>
       <button
-        className="border-2 px-3 py-2 m-2"
-        onClick={() => goBackHandler()}
+        className="border-2 px-4 py-2 m-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-all duration-200"
+        onClick={goBackHandler}
       >
         Go Back
       </button>
 
-      <div className="mt-5 p-4 border flex">
+      <div className="mt-5 p-4 border flex flex-col md:flex-row">
         {destination.destination_image ? (
           <img
             src={`http://localhost:3000/backend/${destination.destination_image}`}
-            alt="img"
-            width={600}
+            alt="Destination"
+            className="w-full md:w-1/2 rounded-lg shadow-lg"
           />
         ) : (
-          <p>No Image Available For now</p>
+          <p className="text-gray-500">No Image Available For now</p>
         )}
-        <div>
+        <div className="md:ml-4 mt-4 md:mt-0">
           <h2 className="text-2xl font-medium underline">
             Destination Details
           </h2>
@@ -151,44 +85,25 @@ const Details = () => {
             <b>Description:</b> {destination.description}
           </p>
           <p>
-            <b>Bookings:</b>
+            <b>Bookings:</b> {/* Add booking details here */}
           </p>
         </div>
       </div>
 
-      <div className=" mb-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
         <ul className="flex flex-wrap -mb-px text-sm font-medium text-center items-center justify-center">
-          <li className="me-2">
-            <button
-              className={`inline-block p-4 border-b-2 rounded-t-lg ${
-                activeTab === "overview" ? "border-blue-500 text-blue-500" : ""
-              }`}
-              onClick={() => handleTabClick("overview")}
-            >
-              Overview
-            </button>
-          </li>
-
-          <li className="me-2">
-            <button
-              className={`inline-block p-4 border-b-2 rounded-t-lg ${
-                activeTab === "packages" ? "border-blue-500 text-blue-500" : ""
-              }`}
-              onClick={() => handleTabClick("packages")}
-            >
-              Travel Packages
-            </button>
-          </li>
-          <li>
-            <button
-              className={`inline-block p-4 border-b-2 rounded-t-lg ${
-                activeTab === "faq" ? "border-blue-500 text-blue-500" : ""
-              }`}
-              onClick={() => handleTabClick("faq")}
-            >
-              FAQ
-            </button>
-          </li>
+          {["overview", "packages", "faq"].map((tab) => (
+            <li className="me-2" key={tab}>
+              <button
+                className={`inline-block p-4 border-b-2 rounded-t-lg ${
+                  activeTab === tab ? "border-blue-500 text-blue-500" : ""
+                }`}
+                onClick={() => handleTabClick(tab)}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </button>
+            </li>
+          ))}
         </ul>
       </div>
 
@@ -199,86 +114,7 @@ const Details = () => {
               Location, Best time to Visit, Weather, Local Currency, Language,
               review, tips
             </p>
-            <div className="mt-10">
-              <h1 className="text-white text-xl font-bold">Reviews</h1>
-              <div className="mt-4 space-y-4">
-                {prevReview.length > 0 ? (
-                  prevReview.map((review, index) => (
-                    <div
-                      key={index}
-                      className="bg-gray-800 rounded-lg p-6 shadow-lg"
-                    >
-                      <div className="flex items-center mb-4">
-                        <img
-                          src={`http://localhost:3000/backend/${review.profile_image}`}
-                          alt="Profile Image"
-                          className="w-10 h-10 rounded-full border-2 border-gray-600 mr-4"
-                        />
-                        <h1 className="text-white text-lg font-bold">
-                          {review.username}
-                        </h1>
-                        <div className="flex items mb-4"></div>
-                      </div>
-                      <h2 className="text-2xl font-semibold text-white">
-                        {review.review_title}
-                      </h2>
-                      <p className="text-lg text-yellow-400 mb-2">
-                        Rating: {review.rating}
-                      </p>
-                      <p className="font-medium text-gray-300 mb-2">
-                        Date: {new Date(review.created_at).toLocaleDateString()}
-                      </p>
-                      <p className="text-sm text-gray-200">
-                        {review.description}
-                      </p>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-xl text-gray-300">No reviews yet.</div>
-                )}
-              </div>
-              <button
-                onClick={() => setShowReviewForm(!showReviewForm)} // Toggle form visibility
-                className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-200"
-              >
-                {showReviewForm ? "Cancel" : "Add Review"}
-              </button>
-              {showReviewForm && ( // Conditionally render the form
-                <form onSubmit={handleAddReview} className="mt-6">
-                  <input
-                    type="text"
-                    value={reviewTitle}
-                    onChange={(e) => setReviewTitle(e.target.value)}
-                    placeholder="Review Title"
-                    className="w-full p-2 rounded-md bg-gray-600 text-white"
-                  />
-                  <StarRating setRating={setRating} />{" "}
-                  {/* Assuming StarRating accepts a setRating prop */}
-                  <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Add your review..."
-                    className="w-full p-2 rounded-md bg-gray-600 text-white"
-                    rows="3"
-                  />
-                  <button
-                    type="submit"
-                    className="mt-2 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-200"
-                  >
-                    Submit Review
-                  </button>
-                </form>
-              )}
-            </div>
-          </div>
-        )}
-        {activeTab === "facilities" && (
-          <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Accomodations(hotels, room features, assibility, family features),
-              Dining, Transportation & parking, fun events, spa, guide, pet
-              policies, wifi,
-            </p>
+            <Reviews id={id}/>
           </div>
         )}
         {activeTab === "packages" && (

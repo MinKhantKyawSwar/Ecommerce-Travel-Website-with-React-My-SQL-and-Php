@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
-const StarRating = () => {
-  const [rating, setRating] = useState(0);
+const StarRating = ({ setRating }) => {
+  const [rating, setLocalRating] = useState(0);
 
   const handleClick = (value) => {
-    setRating(value);
-    return value;
+    setLocalRating(value);
+    setRating(value); // Call the passed function to update the rating in Details
   };
 
   return (
@@ -25,3 +25,4 @@ const StarRating = () => {
 };
 
 export default StarRating;
+
