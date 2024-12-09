@@ -55,7 +55,7 @@ switch ($method) {
             $saved_at = $data->saved_at;
 
             $conn = $db->connect();
-            $setSavedItems = "INSERT INTO saveditems (user, package, saved_at) VALUES (:user, :package, :saved_at)";
+            $setSavedItems = "INSERT INTO ";
             $stmt = $conn->prepare($setSavedItems);
             $stmt->bindParam(':user', $user);
             $stmt->bindParam(':package', $package);

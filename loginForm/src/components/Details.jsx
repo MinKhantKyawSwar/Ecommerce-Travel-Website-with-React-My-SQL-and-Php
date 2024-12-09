@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Packages from "./Packages";
+import StarRating from "./StarRating";
 
 const Details = () => {
   const [destination, setDestination] = useState({});
@@ -13,6 +14,12 @@ const Details = () => {
       : "overview" // Retrieve from localStorage or default
   );
   const [prevReview, setPrevReview] = useState([]);
+  const [showReviewForm, setShowReviewForm] = useState(false); // State for form visibility
+
+  // to get data from form
+  const [reviewTitle, setReviewTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [rating, setRating] = useState(0);
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -61,7 +68,6 @@ const Details = () => {
       );
 
       if (response.data.status === 1) {
-        console.log(response.data.data);
         setPrevReview(response.data.data);
       } else {
         setError("No details found for this destination");
@@ -73,7 +79,40 @@ const Details = () => {
     }
   };
 
-  const handleAddReview = () => {};
+  const handleAddReview = async (e) => {
+    e.preventDefault(); // Prevent default form submission
+    const data = {
+      reviewTitle: reviewTitle,
+      description,
+      rating,
+      created_at: new Date(),
+      userId: Number(localStorage.getItem("user_id")),
+      destination: id,
+    };
+
+    try {
+      const response = await axios.post(
+        `http://localhost:3000/backend/getReview.php`,
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.data.status === 1) {
+        setPrevReview([...prevReview, response.data.data]); // Add new review to the list
+        setReviewTitle(""); // Reset form fields
+        setDescription("");
+        setRating(0);
+      } else {
+        setError("Failed to add review");
+      }
+    } catch (err) {
+      setError("Failed to add review: " + err.message);
+    }
+  };
 
   useEffect((_) => {
     getPrevReview();
@@ -166,48 +205,70 @@ const Details = () => {
                 {prevReview.length > 0 ? (
                   prevReview.map((review, index) => (
                     <div
-                    key={index}
-                    className="bg-gray-800 rounded-lg p-6 shadow-lg"
-                  >
-                    <div className="flex items-center mb-4">
-                      <img
-                        src={`http://localhost:3000/backend/${review.profile_image}`}
-                        alt="Profile Image"
-                        className="w-16 h-16 rounded-full border-2 border-gray-600 mr-4"
-                      />
+                      key={index}
+                      className="bg-gray-800 rounded-lg p-6 shadow-lg"
+                    >
+                      <div className="flex items-center mb-4">
+                        <img
+                          src={`http://localhost:3000/backend/${review.profile_image}`}
+                          alt="Profile Image"
+                          className="w-10 h-10 rounded-full border-2 border-gray-600 mr-4"
+                        />
+                        <h1 className="text-white text-lg font-bold">
+                          {review.username}
+                        </h1>
+                        <div className="flex items mb-4"></div>
+                      </div>
                       <h2 className="text-2xl font-semibold text-white">
                         {review.review_title}
                       </h2>
+                      <p className="text-lg text-yellow-400 mb-2">
+                        Rating: {review.rating}
+                      </p>
+                      <p className="font-medium text-gray-300 mb-2">
+                        Date: {new Date(review.created_at).toLocaleDateString()}
+                      </p>
+                      <p className="text-sm text-gray-200">
+                        {review.description}
+                      </p>
                     </div>
-                    <p className="text-lg text-yellow-400 mb-2">
-                      Rating: {review.rating}
-                    </p>
-                    <p className="font-medium text-gray-300 mb-2">
-                      Date: {new Date(review.created_at).toLocaleDateString()}
-                    </p>
-                    <p className="text-sm text-gray-200">
-                      {review.description}
-                    </p>
-                  </div>
                   ))
                 ) : (
                   <div className="text-xl text-gray-300">No reviews yet.</div>
                 )}
               </div>
-              <form onSubmit={handleAddReview} className="mt-6">
-                <textarea
-                  onChange={(e) => setNewReview(e.target.value)}
-                  placeholder="Add your review..."
-                  className="w-full p-2 rounded-md bg-gray-600 text-white"
-                  rows="3"
-                />
-                <button
-                  type="submit"
-                  className="mt-2 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-200"
-                >
-                  Submit Review
-                </button>
-              </form>
+              <button
+                onClick={() => setShowReviewForm(!showReviewForm)} // Toggle form visibility
+                className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-200"
+              >
+                {showReviewForm ? "Cancel" : "Add Review"}
+              </button>
+              {showReviewForm && ( // Conditionally render the form
+                <form onSubmit={handleAddReview} className="mt-6">
+                  <input
+                    type="text"
+                    value={reviewTitle}
+                    onChange={(e) => setReviewTitle(e.target.value)}
+                    placeholder="Review Title"
+                    className="w-full p-2 rounded-md bg-gray-600 text-white"
+                  />
+                  <StarRating setRating={setRating} />{" "}
+                  {/* Assuming StarRating accepts a setRating prop */}
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Add your review..."
+                    className="w-full p-2 rounded-md bg-gray-600 text-white"
+                    rows="3"
+                  />
+                  <button
+                    type="submit"
+                    className="mt-2 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-200"
+                  >
+                    Submit Review
+                  </button>
+                </form>
+              )}
             </div>
           </div>
         )}
