@@ -39,6 +39,7 @@ const PackageDetails = () => {
     localStorage.getItem("activeTab");
   };
 
+
   useEffect(() => {
     fetchData(id);
   }, [id]);
@@ -160,6 +161,7 @@ const PackageDetails = () => {
           </div>
         )}
       </div>
+      
     </div>
   );
 };

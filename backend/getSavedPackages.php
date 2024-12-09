@@ -84,6 +84,7 @@ switch ($method) {
         }
         echo json_encode($response);
         break;
+
         case "DELETE":
             try {
                 // Retrieve all headers
@@ -106,6 +107,7 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "User-Id header missing."];
                 }
+
             } catch (PDOException $e) {
                 $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
             }

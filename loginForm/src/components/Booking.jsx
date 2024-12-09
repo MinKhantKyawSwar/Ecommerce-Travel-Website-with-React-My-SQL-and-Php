@@ -13,9 +13,18 @@ const Booking = () => {
   const [addOn, setAddOn] = useState([]);
   const [discount, setDiscount] = useState([]);
   const [discountAdded, setDiscountAdded] = useState(false);
-  const [priceAfterDiscount, setPriceAfterDiscount] = useState(0);
+  const [discountedPrice, setDiscountedPrice] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [currentPackage, setCurrentPackage] = useState([]);
+  const [totalPeople, setTotalPeople] = useState(1);
+  const [selectedRegionPrice, setSelectedRegionPrice] = useState(
+    currentPackage.price
+  );
+  const [selectedAddOnPrice, setSelectedAddOnPrice] = useState(0);
+  const [selectedDiscountPercentage, setSelectedDiscountPercentage] =
+    useState(0);
+  const [addOnId, setAddOnId] = useState(0);
+  const [discountId, setDiscountId] = useState(0);
 
   const navigate = useNavigate();
   const { id } = useParams(); // package id from url
@@ -166,11 +175,7 @@ const Booking = () => {
     }
   };
 
-  const [totalPeople, setTotalPeople] = useState(1);
-  const [selectedRegion, setSelectedRegion] = useState("");
-  const [selectedAddOn, setSelectedAddOn] = useState("");
-
-  const calculateTotalPrice = (e) => {
+  const getDataChange = (e) => {
     try {
       const { name, value } = e.target;
       let basePrice = currentPackage.price || 0;
@@ -180,35 +185,30 @@ const Booking = () => {
 
       // Update selected region
       if (name === "region" && value) {
-        setSelectedRegion(value);
         const selectedRegionData = region.find((r) => r.region_id == value);
         if (selectedRegionData) {
           regionalPrice =
             selectedRegionData.region_name === currentPackage.region
               ? currentPackage.price
               : currentPackage.other_region_price;
+          setSelectedRegionPrice(regionalPrice);
         }
       }
 
       // Update selected add-on
-      else if (name === "add_on" && value) {
-        setSelectedAddOn(value);
+      if (name === "add_on" && value) {
         const selectedAddOnData = addOn.find((add) => add.add_on === value);
         if (selectedAddOnData) {
           addOnPrice = selectedAddOnData.price;
+          setAddOnId(selectedAddOnData.add_on_id);
+          setSelectedAddOnPrice(addOnPrice);
         }
       }
 
       // Update number of people
-      else if (name === "number_of_people") {
+      if (name === "number_of_people") {
         const newTotalPeople = Math.max(1, parseInt(value) || 1);
         setTotalPeople(newTotalPeople);
-        // Calculate total price immediately after updating totalPeople
-        let calculatedTotalPrice = Math.round(
-          (regionalPrice + addOnPrice) * newTotalPeople
-        );
-        setTotalPrice(calculatedTotalPrice);
-        return; // Exit early to avoid recalculating below
       }
 
       if (name === "discount" && value) {
@@ -218,26 +218,33 @@ const Booking = () => {
         );
         if (selectedDiscountData) {
           discountedPercentage = selectedDiscountData.percentage;
+          setSelectedDiscountPercentage(discountedPercentage);
+          setDiscountId(selectedDiscountData.discount_id);
         }
-        console.log(discountedPercentage);
-        let calculatedTotalPrice = Math.round(
-          (regionalPrice + addOnPrice) * totalPeople
-        );
-        setTotalPrice(calculatedTotalPrice);
-        setPriceAfterDiscount(
-          calculateTotalPrice * (discountedPercentage / 100)
-        );
-      } else {
-        // Total Price Calculation
-        let calculatedTotalPrice = Math.round(
-          (regionalPrice + addOnPrice) * totalPeople
-        );
-        setTotalPrice(calculatedTotalPrice);
       }
     } catch (error) {
       console.error("Price calculation error:", error);
-      // Fallback to base price
-      setTotalPrice(currentPackage.price || 0);
+    }
+  };
+
+  const calculateTotalPrice = () => {
+    let totalPriceCalculation = 0;
+    let priceAfterDiscountCalculation = 0;
+    if (discountAdded) {
+      totalPriceCalculation = Math.round(
+        (selectedRegionPrice + selectedAddOnPrice) * totalPeople
+      );
+      priceAfterDiscountCalculation = Math.round(
+        totalPriceCalculation * (selectedDiscountPercentage / 100)
+      );
+
+      setTotalPrice(totalPriceCalculation - priceAfterDiscountCalculation);
+      setDiscountedPrice(totalPriceCalculation);
+    } else {
+      totalPriceCalculation = Math.round(
+        (selectedRegionPrice + selectedAddOnPrice) * totalPeople
+      );
+      setTotalPrice(totalPriceCalculation);
     }
   };
 
@@ -261,9 +268,9 @@ const Booking = () => {
       region,
       payment_method,
       number_of_people,
-      add_on,
-      discount,
-      total_price,
+      add_on: addOnId,
+      discount: discountId,
+      total_price: totalPrice,
     };
 
     try {
@@ -282,7 +289,7 @@ const Booking = () => {
       } else if (response.data.status === 1) {
         console.log(response.data);
         toast.success(response.data.message);
-        setTimeout(() => setRedirect(true), 2000);
+        setTimeout(() => setRedirect(true), 1500);
       } else if (response.data.status === 6) {
         toast.error(response.data.message);
       }
@@ -295,10 +302,6 @@ const Booking = () => {
     }
   };
 
-  if (redirect) {
-    return <Navigate to={"/"} />;
-  }
-
   useEffect(() => {
     getPaymentInfo();
     getRegionInfo();
@@ -306,6 +309,19 @@ const Booking = () => {
     getPackageInfo();
     getDiscountInfo();
   }, []);
+
+  useEffect(
+    (_) => {
+      calculateTotalPrice();
+    },
+    [
+      selectedAddOnPrice,
+      selectedDiscountPercentage,
+      selectedRegionPrice,
+      selectedAddOnPrice,
+      totalPeople,
+    ]
+  );
 
   return (
     <>
@@ -329,47 +345,47 @@ const Booking = () => {
       >
         {({ isSubmitting }) => (
           <Form
-            className="w-2/3 mx-auto"
+            className="w-full max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg"
             method="POST"
-            onChange={calculateTotalPrice}
+            onChange={getDataChange}
           >
             <h1 className="text-center font-semibold text-4xl my-4 text-teal-600">
               Order Form
             </h1>
-            <div className="flex justify-between">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="mb-3">
-                <label htmlFor="city" className="font-medium block">
+                <label htmlFor="city" className="font-medium block mb-1">
                   City
                 </label>
                 <Field
                   type="text"
                   name="city"
                   id="city"
-                  className="text-lg border border-teal-600 py-1 w-full rounded-lg"
+                  className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                 />
                 <StyledErrorMessage name="city" />
               </div>
               <div className="mb-3">
-                <label htmlFor="country" className="font-medium block">
+                <label htmlFor="country" className="font-medium block mb-1">
                   Country
                 </label>
                 <Field
                   type="text"
                   name="country"
                   id="country"
-                  className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
+                  className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                 />
                 <StyledErrorMessage name="country" />
               </div>
               <div className="mb-3">
-                <label htmlFor="region" className="font-medium block">
+                <label htmlFor="region" className="font-medium block mb-1">
                   Region
                 </label>
                 <Field
                   as="select"
                   name="region"
                   id="region"
-                  className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
+                  className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                 >
                   <option value="" label="Select one option" required />
                   {region.map((region) => (
@@ -383,16 +399,19 @@ const Booking = () => {
                 <StyledErrorMessage name="region" />
               </div>
             </div>
-            <div className="flex justify-between gap-10">
-              <div className="mb-3 w-1/2">
-                <label htmlFor="payment_method" className="font-medium block">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="mb-3">
+                <label
+                  htmlFor="payment_method"
+                  className="font-medium block mb-1"
+                >
                   Payment Method
                 </label>
                 <Field
                   as="select"
                   name="payment_method"
                   id="payment_method"
-                  className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
+                  className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                 >
                   <option value="" label="Select one option" required />
                   {payment.map((paymentMethod) => (
@@ -405,29 +424,32 @@ const Booking = () => {
                 </Field>
                 <StyledErrorMessage name="payment_method" />
               </div>
-              <div className="mb-3 w-1/2">
-                <label htmlFor="number_of_people" className="font-medium block">
+              <div className="mb-3">
+                <label
+                  htmlFor="number_of_people"
+                  className="font-medium block mb-1"
+                >
                   Number Of People
                 </label>
                 <Field
                   type="number"
                   name="number_of_people"
                   id="number_of_people"
-                  className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
+                  className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                 />
                 <StyledErrorMessage name="number_of_people" />
               </div>
             </div>
-            <div className="flex justify-between gap-10">
-              <div className="mb-3 w-3/4">
-                <label htmlFor="add_on" className="font-medium block">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="mb-3">
+                <label htmlFor="add_on" className="font-medium block mb-1">
                   Add on
                 </label>
                 <Field
                   as="select"
                   name="add_on"
                   id="add_on"
-                  className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
+                  className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                 >
                   <option value="" label="Select one option" required />
                   {addOn.map((add_on) => (
@@ -441,14 +463,14 @@ const Booking = () => {
                 <StyledErrorMessage name="add_on" />
               </div>
               <div className="mb-3">
-                <label htmlFor="discount" className="font-medium block">
+                <label htmlFor="discount" className="font-medium block mb-1">
                   Discount
                 </label>
                 <Field
                   as="select"
                   name="discount"
                   id="discount"
-                  className="text-lg border-2 border-teal-600 py-1 w-full rounded-lg"
+                  className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                 >
                   <option value="" label="Select one option" required />
                   {discount.map((discountData) => (
@@ -462,12 +484,23 @@ const Booking = () => {
                 <StyledErrorMessage name="discount" />
               </div>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between items-center mt-4">
               <h2 className="text-2xl font-semibold">Total Price</h2>
-              <p>{totalPrice}</p>
+              {discountedPrice && selectedDiscountPercentage !== 0 ? (
+                <div>
+                  <p className="text-lg font-medium">$ {totalPrice}</p>
+                  <p className="text-red-600 font-medium text-lg">
+                    <del>${discountedPrice}</del>
+                  </p>
+                </div>
+              ) : selectedDiscountPercentage === 0 ? (
+                <p className="font-medium text-lg">${totalPrice}</p>
+              ) : (
+                <p className="font-medium text-lg">${totalPrice}</p>
+              )}
             </div>
             <button
-              className="text-white bg-teal-600 py-4 font-medium w-full text-center"
+              className="text-white bg-teal-600 py-4 font-medium w-full text-center mt-4 rounded-lg hover:bg-teal-700 transition duration-200"
               type="submit"
             >
               Order
@@ -475,6 +508,7 @@ const Booking = () => {
           </Form>
         )}
       </Formik>
+      {redirect && <Navigate to={"/"} />}
     </>
   );
 };
