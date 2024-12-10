@@ -110,14 +110,17 @@ switch ($method) {
 
     case "DELETE":
         try {
+            $headers = getallheaders();
+            // Check if "User -Id" header exists
+            if (isset($headers['Review_Id'])) {
+                $reviewId = $headers['Review_Id'];
+            }
             // Retrieve all data
-            $data = json_decode($eData);
-            $review_id = $data->reviewId; // ID of the review to delete
 
             $conn = $db->connect();
-            $deleteReview = "DELETE FROM review WHERE id = :review_id";
+            $deleteReview = "DELETE FROM review WHERE review_id= :review_id";
             $stmt = $conn->prepare($deleteReview);
-            $stmt->bindParam(':review_id', $review_id, PDO::PARAM_INT);
+            $stmt->bindParam(':review_id', $reviewId);
             $status = $stmt->execute();
 
             if ($status) {
