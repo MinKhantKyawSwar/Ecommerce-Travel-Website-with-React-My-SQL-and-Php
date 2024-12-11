@@ -188,7 +188,7 @@ const Booking = () => {
         const selectedRegionData = region.find((r) => r.region_id == value);
         if (selectedRegionData) {
           regionalPrice =
-            selectedRegionData.region_name === currentPackage.region
+            selectedRegionData.region_name == currentPackage.region
               ? currentPackage.price
               : currentPackage.other_region_price;
           setSelectedRegionPrice(regionalPrice);

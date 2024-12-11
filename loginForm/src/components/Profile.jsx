@@ -13,6 +13,7 @@ const Profile = () => {
   });
   const [loading, setLoading] = useState(true); // Add loading state
   const [fileData, setFileData] = useState([]);
+  const [bookedData, setBookedData] = useState([]);
   const [previewImage, setPreviewImage] = useState(null); // State for preview image
   const [borderColor, setBorderColor] = useState("border-teal-600"); // State for border color
 
@@ -46,6 +47,27 @@ const Profile = () => {
       ); // Set initial preview image
     }
   }, [userInfo]);
+
+  useEffect(() => {
+    const fetchBookingData = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/backend/getBooking.php", {
+          headers: {
+            "User_Id": localStorage.getItem("user_id"),
+          },
+        });
+        if (response.data.status === 1) {
+          setBookedData(response.data.data); // Assuming the response contains bookings
+        } else {
+          console.error(response.data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching booking data:", error);
+      }
+    };
+
+    fetchBookingData();
+  }, []);
 
   // Handler for form field changes
   const handleInputChange = (e) => {
@@ -118,9 +140,8 @@ const Profile = () => {
   }
 
   return (
-    <div
-      className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-lg"
-    >
+    <>
+    <div className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-lg">
       <div className="text-center mb-6">
         {userInfo ? (
           <>
@@ -174,76 +195,76 @@ const Profile = () => {
                   </div>
                 </div>
                 <div className="mb-3">
-  <label
-    htmlFor="border_color"
-    className="font-medium block text-gray-700"
-  >
-    Border Color
-  </label>
-  <select
-    name="border_color"
-    id="border_color"
-    onChange={(e) => setBorderColor(e.target.value)}
-    className="text-lg border-2 border-teal-600 py-2 w-1/2 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600" // Adjusted width
-  >
-    {colorOptions.map((color) => (
-      <option key={color} value={color}>
-        {color.replace("border-", "").replace("-600", "")}
-      </option>
-    ))}
-  </select>
-</div>
+                  <label
+                    htmlFor="border_color"
+                    className="font-medium block text-gray-700"
+                  >
+                    Border Color
+                  </label>
+                  <select
+                    name="border_color"
+                    id="border_color"
+                    onChange={(e) => setBorderColor(e.target.value)}
+                    className="text-lg border-2 border-teal-600 py-2 w-1/2 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600" // Adjusted width
+                  >
+                    {colorOptions.map((color) => (
+                      <option key={color} value={color}>
+                        {color.replace("border-", "").replace("-600", "")}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-<div className="mb-3">
-  <label
-    htmlFor="username"
-    className="font-medium block text-gray-700"
-  >
-    Username
-  </label>
-  <input
-    type="text"
-    name="username"
-    id="username"
-    value={formData.username}
-    onChange={handleInputChange}
-    className="text-lg border-2 border-teal-600 py-2 w-1/2 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600" // Adjusted width
-  />
-</div>
+                <div className="mb-3">
+                  <label
+                    htmlFor="username"
+                    className="font-medium block text-gray-700"
+                  >
+                    Username
+                  </label>
+                  <input
+                    type="text"
+                    name="username"
+                    id="username"
+                    value={formData.username}
+                    onChange={handleInputChange}
+                    className="text-lg border-2 border-teal-600 py-2 w-1/2 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600" // Adjusted width
+                  />
+                </div>
 
-<div className="mb-3">
-  <label
-    htmlFor="email"
-    className="font-medium block text-gray-700"
-  >
-    Email
-  </label>
-  <input
-    type="email"
-    name="email"
-    id="email"
-    value={formData.email}
-    onChange={handleInputChange}
-    className="text-lg border-2 border-teal-600 py-2 w-1/2 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600" // Adjusted width
-  />
-</div>
+                <div className="mb-3">
+                  <label
+                    htmlFor="email"
+                    className="font-medium block text-gray-700"
+                  >
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="text-lg border-2 border-teal-600 py-2 w-1/2 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600" // Adjusted width
+                  />
+                </div>
 
-<div className="mb-3">
-  <label
-    htmlFor="phone"
-    className="font-medium block text-gray-700"
-  >
-    Phone
-  </label>
-  <input
-    type="text"
-    name="phone"
-    id="phone"
-    value={formData.phone}
-    onChange={handleInputChange}
-    className="text-lg border-2 border-teal-600 py-2 w-1/2 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600" // Adjusted width
-  />
-</div>
+                <div className="mb-3">
+                  <label
+                    htmlFor="phone"
+                    className="font-medium block text-gray-700"
+                  >
+                    Phone
+                  </label>
+                  <input
+                    type="text"
+                    name="phone"
+                    id="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    className="text-lg border-2 border-teal-600 py-2 w-1/2 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600" // Adjusted width
+                  />
+                </div>
                 <button
                   type="submit"
                   className="text-white bg-teal-600 py-3 font-medium w-full rounded-lg hover:bg-teal-700 transition duration-200"
@@ -258,6 +279,28 @@ const Profile = () => {
         )}
       </div>
     </div>
+    <div className="mt-2 rounded-lg px-4 py-4 bg-gray-100">
+  <h2 className="text-xl font-semibold mb-4">Previous Booked Trips</h2>
+  {bookedData.length > 0 ? (
+    <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {bookedData.map((booking, index) => (
+        <li key={index} className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-300">
+          <img src={`http://localhost:3000/backend/${booking.destination_image}`} alt={booking.package_name} className="w-full h-32 object-cover rounded-t-lg" />
+          <h3 className="text-lg font-bold mt-2">{booking.package_name}</h3>
+          <p className="text-gray-600">{booking.destination_name}</p>
+          <div className="flex items-center justify-between mt-2">
+            <span className="text-sm text-gray-500">People: {booking.number_of_people}</span>
+            <span className="text-sm text-gray-500">Add-ons: {booking.add_on}</span>
+          </div>
+          <p className="text-lg font-semibold mt-2">Total Price: ${booking.total_price}</p>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p className="text-gray-500">No booked trips found.</p>
+  )}
+</div>
+    </>
   );
 };
 

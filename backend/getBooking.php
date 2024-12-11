@@ -56,8 +56,7 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "No packages found.", "destination" => $destination_id];
                 }
-            }
-            else if (isset($headers['Region'])) {
+            } else if (isset($headers['Region'])) {
 
                 // Connection to database
                 $conn = $db->connect();
@@ -72,8 +71,7 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "No packages found."];
                 }
-            }
-            else if (isset($headers['Payment'])) {
+            } else if (isset($headers['Payment'])) {
 
                 // Connection to database
                 $conn = $db->connect();
@@ -88,8 +86,7 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "No packages found."];
                 }
-            } 
-            else if (isset($headers['Add_on'])) {
+            } else if (isset($headers['Add_on'])) {
                 // Connection to database
                 $conn = $db->connect();
                 $getAddOnInfo = "SELECT * from add_on";
@@ -103,8 +100,7 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "No packages found."];
                 }
-            } 
-            else if (isset($headers['Discount'])) {
+            } else if (isset($headers['Discount'])) {
 
                 // Connection to database
                 $conn = $db->connect();
@@ -119,8 +115,7 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "No packages found."];
                 }
-            } 
-            else if (isset($headers['Package-Id'])) {
+            } else if (isset($headers['Package-Id'])) {
                 $package_id = (int) $headers['Package-Id'];
 
                 $conn = $db->connect();
@@ -160,76 +155,107 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "No packages found.", "package_id" => $packageDetail];
                 }
+            } else if (isset($headers['User_Id'])) {
+                $user_id = (int) $headers['User_Id'];
+
+                // Connection to database
+                $conn = $db->connect();
+                $getBookedData = "SELECT 
+                                    booking.*,
+                                    package.*,
+                                    destination.*,
+                                    add_on.*
+                                    from booking 
+                                    JOIN 
+                                        package ON package.package_id = booking.package
+                                    JOIN 
+                                        destination ON destination.destination_id = package.destination
+                                    JOIN 
+                                        add_on ON add_on.add_on_id = booking.add_on
+                                    where booking.user = :user_id";
+                $stmt = $conn->prepare($getBookedData);
+                $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+                $stmt->execute();
+
+                $bookingData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                if ($bookingData) {
+                    $response = ['status' => 1, 'message' => "Data found", 'data' => $bookingData];
+                } else {
+                    $response = ['status' => 0, 'message' => "No data found."];
+                }
             } else {
-                $response = ['status' => 0, 'message' => "Destination-ID header missing."];
+                $response = ['status' => 0, 'message' => "Header missing."];
             }
         } catch (PDOException $e) {
             $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
         }
         echo json_encode($response);
         break;
-        
-        case "POST":
-            try {
-                // Decode the JSON data
-                $data = json_decode($eData);
-        
-                // Validate required fields
-                if (empty($data->user_id) || empty($data->package) || empty($data->booking_date) || 
-                    empty($data->city) || empty($data->country) || empty($data->region) || 
-                    empty($data->payment_method) || empty($data->number_of_people) || 
-                    empty($data->add_on) || empty($data->discount) || empty($data->total_price)) {
-                    throw new Exception("All fields are required.");
-                }
-        
-                // Assign variables
-                $user = $data->user_id;
-                $package = $data->package;
-                $booking_date = $data->booking_date;
-                $city = $data->city;
-                $country = $data->country;
-                $region = $data->region;
-                $payment_method = $data->payment_method;
-                $number_of_people = $data->number_of_people;
-                $add_on = $data->add_on;
-                $discount = $data->discount;
-                $total_price = $data->total_price;
-        
-                // Connection to database
-                $conn = $db->connect();
-        
-                // Adding data into database
-                $sql = "INSERT INTO booking(user, package, booking_date, city, country, region, payment_method, number_of_people, add_on, discount, total_price) VALUES 
-                (:user, :package, :booking_date, :city, :country, :region, :payment_method, :number_of_people, :add_on, :discount, :total_price)";
-                
-                $stmt = $conn->prepare($sql);
-                $stmt->bindParam(':user', $user);
-                $stmt->bindParam(':package', $package);
-                $stmt->bindParam(':booking_date', $booking_date);
-                $stmt->bindParam(':city', $city);
-                $stmt->bindParam(':country', $country);
-                $stmt->bindParam(':region', $region);
-                $stmt->bindParam(':payment_method', $payment_method);
-                $stmt->bindParam(':number_of_people', $number_of_people);
-                $stmt->bindParam(':add_on', $add_on);
-                $stmt->bindParam(':discount', $discount);
-                $stmt->bindParam(':total_price', $total_price);
-                
-                // Execute the statement
-                if ($stmt->execute()) {
-                    $response = ['status' => 1, 'message' => "Successfully Booked!"];
-                } else {
-                    $response = ['status' => 0, 'message' => "Failed to create booking! Please try again."];
-                }
-            } catch (Exception $e) {
-                // Catch general exceptions
-                $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
-            } catch (PDOException $e) {
-                // Catch database-related exceptions
-                $response = ['status' => 0, 'message' => "Database Error: " . $e->getMessage()];
+
+    case "POST":
+        try {
+            // Decode the JSON data
+            $data = json_decode($eData);
+
+            // Validate required fields
+            if (
+                empty($data->user_id) || empty($data->package) || empty($data->booking_date) ||
+                empty($data->city) || empty($data->country) || empty($data->region) ||
+                empty($data->payment_method) || empty($data->number_of_people) ||
+                empty($data->add_on) || empty($data->discount) || empty($data->total_price)
+            ) {
+                throw new Exception("All fields are required.");
             }
-        
-            // Return the response as JSON
-            echo json_encode($response);
-            break;
+
+            // Assign variables
+            $user = $data->user_id;
+            $package = $data->package;
+            $booking_date = $data->booking_date;
+            $city = $data->city;
+            $country = $data->country;
+            $region = $data->region;
+            $payment_method = $data->payment_method;
+            $number_of_people = $data->number_of_people;
+            $add_on = $data->add_on;
+            $discount = $data->discount;
+            $total_price = $data->total_price;
+
+            // Connection to database
+            $conn = $db->connect();
+
+            // Adding data into database
+            $sql = "INSERT INTO booking(user, package, booking_date, city, country, region, payment_method, number_of_people, add_on, discount, total_price) VALUES 
+                (:user, :package, :booking_date, :city, :country, :region, :payment_method, :number_of_people, :add_on, :discount, :total_price)";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':user', $user);
+            $stmt->bindParam(':package', $package);
+            $stmt->bindParam(':booking_date', $booking_date);
+            $stmt->bindParam(':city', $city);
+            $stmt->bindParam(':country', $country);
+            $stmt->bindParam(':region', $region);
+            $stmt->bindParam(':payment_method', $payment_method);
+            $stmt->bindParam(':number_of_people', $number_of_people);
+            $stmt->bindParam(':add_on', $add_on);
+            $stmt->bindParam(':discount', $discount);
+            $stmt->bindParam(':total_price', $total_price);
+
+            // Execute the statement
+            if ($stmt->execute()) {
+                $response = ['status' => 1, 'message' => "Successfully Booked!"];
+            } else {
+                $response = ['status' => 0, 'message' => "Failed to create booking! Please try again."];
+            }
+        } catch (Exception $e) {
+            // Catch general exceptions
+            $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
+        } catch (PDOException $e) {
+            // Catch database-related exceptions
+            $response = ['status' => 0, 'message' => "Database Error: " . $e->getMessage()];
+        }
+
+        // Return the response as JSON
+        echo json_encode($response);
+        break;
 }
