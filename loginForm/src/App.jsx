@@ -11,6 +11,7 @@ import Details from "./components/Details";
 import PackageDetails from "./components/PackageDetails";
 import SavedPackages from "./components/SavedPackages";
 import Booking from "./components/Booking";
+import Explore from "./components/Explore";
 
 function App() {
   const router = createBrowserRouter([
@@ -53,6 +54,10 @@ function App() {
         {
           path: "/booking/:id",
           element: <Booking/>
+        },
+        {
+          path: "/explore",
+          element: <Explore/>
         }
       ],
     },
