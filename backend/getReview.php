@@ -81,19 +81,22 @@ switch ($method) {
 
     case "PUT":
         try {
-            // Retrieve all data
-            $data = json_decode($eData);
-            $review_id = $data->reviewId; // ID of the review to update
+            $data = json_decode(json: $eData);
+            $review_id = $data->review_id;
             $review_title = $data->reviewTitle;
             $description = $data->description;
             $rating = $data->rating;
+            $created_at = $data->created_at;
+            $user = $data->userId;
+            $destination = $data->destination;
 
             $conn = $db->connect();
-            $updateReview = "UPDATE review SET review_title = :review_title, description = :description, rating = :rating WHERE id = :review_id";
+            $updateReview = "UPDATE review SET review_title = :review_title, description = :description, rating = :rating WHERE review_id = :review_id AND destination = :destination";
             $stmt = $conn->prepare($updateReview);
             $stmt->bindParam(':review_title', $review_title);
             $stmt->bindParam(':description', $description);
             $stmt->bindParam(':rating', $rating);
+            $stmt->bindParam(':destination', $destination);
             $stmt->bindParam(':review_id', $review_id, PDO::PARAM_INT);
             $status = $stmt->execute();
 
