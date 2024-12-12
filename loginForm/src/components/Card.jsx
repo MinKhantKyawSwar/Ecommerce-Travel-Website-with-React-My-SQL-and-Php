@@ -7,7 +7,6 @@ const Card = ({
 }) => {
   const { user } = useSelector((state) => state.reducer.user);
 
-
   return (
     <div className="bg-white p-4 rounded-lg">
       {product.images[0] ? (

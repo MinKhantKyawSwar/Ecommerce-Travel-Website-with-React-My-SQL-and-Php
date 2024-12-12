@@ -12,6 +12,7 @@ import PackageDetails from "./components/PackageDetails";
 import SavedPackages from "./components/SavedPackages";
 import Booking from "./components/Booking";
 import Explore from "./components/Explore";
+import Admin from "./pages/admin/Index";
 
 function App() {
   const router = createBrowserRouter([
@@ -58,6 +59,10 @@ function App() {
         {
           path: "/explore",
           element: <Explore/>
+        },
+        {
+          path: "/admin",
+          element: <Admin/>
         }
       ],
     },

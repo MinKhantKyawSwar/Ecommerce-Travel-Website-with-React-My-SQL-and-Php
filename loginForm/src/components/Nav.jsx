@@ -4,7 +4,7 @@ import { UserContext } from "../utils/UserContext";
 import axios from "axios";
 
 const Nav = () => {
-  const { token, updateToken, userInfo, setUserInfo, deleteToken } = useContext(UserContext);
+  const { token, updateToken,userInfo, setUserInfo, deleteToken } = useContext(UserContext);
   const navigate = useNavigate();
 
   const [username, setUsername] = useState(""); // State for username
@@ -74,9 +74,18 @@ const Nav = () => {
             <Link to={"/saved-packages"} className="w-10 px-12 text-blue-600 font-medium py-2">
                 Saved
               </Link>
-              <Link to={"/profile"} className="w-10 text-blue-600 font-medium py-2">
+              {
+                userInfo.role === "customer" && 
+                <Link to={"/profile"} className="w-10 text-blue-600 font-medium py-2">
                 Profile
               </Link>
+              }
+              {
+                userInfo.role === "admin" && 
+                <Link to={"/admin"} className="w-30 text-blue-600 font-medium py-2">
+                Admin Dashboard
+              </Link>
+              }
               <button
                 type="button"
                 className="w-20 text-blue-600 font-medium py-2 rounded hover:bg-blue-600 hover:text-white"

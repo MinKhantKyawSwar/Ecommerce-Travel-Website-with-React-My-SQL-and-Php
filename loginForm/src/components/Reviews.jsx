@@ -78,6 +78,11 @@ const Reviews = ({ id }) => {
 
   const handleAddReview = async (e) => {
     e.preventDefault();
+
+    if (rating === 0) {
+      setError("Rating is required");
+      return; // Prevent form submission
+    }
     const data = {
       reviewTitle,
       description,
@@ -116,6 +121,12 @@ const Reviews = ({ id }) => {
     const reviewToEdit = prevReview.find(
       (review) => review.review_id === reviewId
     );
+
+    if (rating === 0) {
+      setError("Rating is required");
+      return; // Prevent form submission
+    }
+    
     if (reviewToEdit) {
       setReviewTitle(reviewToEdit.review_title);
       setDescription(reviewToEdit.description);
