@@ -2,21 +2,55 @@ import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../utils/UserContext";
 import { useNavigate } from "react-router-dom";
 import { FaHome, FaBox, FaQuestionCircle, FaUser } from "react-icons/fa"; // Importing icons
+import axios from "axios";
+import Dashboard from "./Dashboard";
+import Transactions from "./Transactions";
+import ManageDestination from "./ManageDestination";
+import ManageCustomer from "./ManageCustomer";
+import Profile from "./Profile";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
-  const { userInfo } = useContext(UserContext);
+  const [adminInfo, setAdminInfo] = useState({});
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  const getUserInfo = async (user_id) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/backend/adminInfo.php`,
+        {
+          headers: {
+            User_Id: user_id,
+          },
+        }
+      );
+
+      if (response.data.status === 1) {
+        setAdminInfo(response.data.data[0]);
+      } else {
+        setError("There was an error fetching data.");
+      }
+    } catch (err) {
+      setError("Failed to fetch packages: " + err.message);
+    }
+  };
+
   const isAdmin = () => {
-    if (userInfo && userInfo.role !== "admin") {
+    if (adminInfo.role !== "admin") {
       navigate("/");
     }
   };
 
   useEffect(() => {
-    isAdmin();
-  }, [userInfo]);
+    if(adminInfo.role){
+      isAdmin();
+    }
+  }, [adminInfo]);
+
+  useEffect(() => {
+    getUserInfo(Number(localStorage.getItem("user_id")));
+  }, []);
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -30,9 +64,9 @@ const Index = () => {
           {[
             { name: "dashboard", icon: <FaHome /> },
             { name: "transactions", icon: <FaBox /> },
-            { name: "Manage Products", icon: <FaQuestionCircle /> },
-            { name: "manageCustomers", icon: <FaQuestionCircle /> },
-            { name: "profile", icon: <FaUser /> },
+            { name: "Manage Destination", icon: <FaQuestionCircle /> },
+            { name: "Manage Customers", icon: <FaQuestionCircle /> },
+            { name: "Profile", icon: <FaUser /> },
           ].map(({ name, icon }) => (
             <li key={name}>
               <button
@@ -54,55 +88,19 @@ const Index = () => {
       {/* Content Area */}
       <div className="w-4/5 p-4">
         {activeTab === "dashboard" && (
-          <div className="p-4 rounded-lg bg-white dark:bg-gray-800 shadow-md">
-            <h2 className="text-lg font-semibold mb-2">Dashboard</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Location, Best time to Visit, Weather, Local Currency, Language,
-              review, tips
-            </p>
-          </div>
+          <Dashboard/>
         )}
         {activeTab === "transactions" && (
-          <div className="p-4 rounded-lg bg-white dark:bg-gray-800 shadow-md">
-            <h2 className="text-lg font-semibold mb-2">Transactions</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Hi</p>
-          </div>
+          <Transactions />
         )}
-        {activeTab === "Manage Products" && (
-          <div className="p-4 rounded-lg bg-white dark:bg-gray-800 shadow-md">
-            <h2 className="text-lg font-semibold mb-2">Manage Products</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              This is some placeholder content for the{" "}
-              <strong className="font-medium text-gray-800 dark:text-white">
-                Manage Products tab
-              </strong>
-              .
-            </p>
-          </div>
+        {activeTab === "Manage Destination" && (
+          <ManageDestination/>
         )}
-        {activeTab === "manageCustomers" && (
-          <div className="p-4 rounded-lg bg-white dark:bg-gray-800 shadow-md">
-            <h2 className="text-lg font-semibold mb-2">Manage Customers</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              This is some placeholder content for the{" "}
-              <strong className="font-medium text-gray-800 dark:text-white">
-                Manage Customers tab
-              </strong>
-              .
-            </p>
-          </div>
+        {activeTab === "Manage Customers" && (
+          <ManageCustomer/>
         )}
-        {activeTab === "profile" && (
-          <div className="p-4 rounded-lg bg-white dark:bg-gray-800 shadow-md">
-            <h2 className="text-lg font-semibold mb-2">Profile</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              This is some placeholder content for the{" "}
-              <strong className="font-medium text-gray-800 dark:text-white">
-                Profile tab
-              </strong>
-              .
-            </p>
-          </div>
+        {activeTab === "Profile" && (
+          <Profile/>
         )}
       </div>
     </div>

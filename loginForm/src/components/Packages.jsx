@@ -52,7 +52,7 @@ const Packages = ({ destination_id, activeTab }) => {
         `http://localhost:3000/backend/getSavedPackages.php`,
         data,
         {
-          headers: {
+          headers: {  
             "Content-Type": "application/json",
           },
         }

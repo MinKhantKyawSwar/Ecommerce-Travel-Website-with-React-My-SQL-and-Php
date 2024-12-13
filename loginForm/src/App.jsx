@@ -13,6 +13,7 @@ import SavedPackages from "./components/SavedPackages";
 import Booking from "./components/Booking";
 import Explore from "./components/Explore";
 import Admin from "./pages/admin/Index";
+import DestinationForm from "./pages/admin/DestinationForm";
 
 function App() {
   const router = createBrowserRouter([
@@ -63,6 +64,9 @@ function App() {
         {
           path: "/admin",
           element: <Admin/>
+        },{
+          path: "/admin/manage-destination",
+          element: <DestinationForm/>
         }
       ],
     },

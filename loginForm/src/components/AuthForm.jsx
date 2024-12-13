@@ -17,7 +17,7 @@ const AuthForm = ({ isLogin }) => {
     role: "user",
     phone: "",
     password: "",
-    profile_image: "",
+    profile_image: "/pictures/profile/defaultProfile.png",
     created_at: null,
   };
 
@@ -50,7 +50,7 @@ const AuthForm = ({ isLogin }) => {
       role: "customer",
       phone,
       password,
-      profile_image: "",
+      profile_image: "/pictures/profile/defaultProfile.png",
       created_at: new Date().toLocaleString(),
     };
 
