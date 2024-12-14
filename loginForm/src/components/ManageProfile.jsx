@@ -147,7 +147,6 @@ const ManageProfile = () => {
       {({ isSubmitting }) => (
         <Form className="w-1/2 mx-auto" method="post" encType="multipart/form-data">
           <h1 className="text-center font-semibold text-4xl my-4 text-teal-600">
-            {/* {isLogin ? "Login" : "Register"} */}
             Manage Profile
           </h1>
           {isLogin && (

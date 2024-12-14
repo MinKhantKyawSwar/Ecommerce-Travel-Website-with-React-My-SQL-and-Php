@@ -19,7 +19,6 @@ const ManageCustomer = () => {
           return 0;
         });
         setCustomers(sortedCustomers);
-        console.log(sortedCustomers);
       } else {
         setError("No data found");
       }
@@ -56,7 +55,7 @@ const ManageCustomer = () => {
                     Email
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Created At
+                    Role
                   </th>
                   <th scope="col" className="px-6 py-3">
                     Action
@@ -85,15 +84,15 @@ const ManageCustomer = () => {
                     <td className="px-6 py-4">{customer.username}</td>
                     <td className="px-6 py-4">{customer.email}</td>
                     <td className="px-6 py-4">{customer.role}</td>
-                    <td className="flex gap-4 px-6 py-4">
-                      {/* <button
+                    <td className="flex gap-4 px-6 py-6">
+                      <button
                         onClick={() =>
                           navigate(`/destination/${destination.destination_id}`)
                         } // Navigate to the destination details page
                         className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                       >
                         Details
-                      </button> */}
+                      </button>
                       <a
                         href="#"
                         className="font-medium text-red-600 dark:text-red-500 hover:underline"
