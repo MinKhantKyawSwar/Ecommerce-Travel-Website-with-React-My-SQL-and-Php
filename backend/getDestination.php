@@ -33,8 +33,7 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "Failed to find!"];
                 }
-            }
-            else {
+            } else {
                 // Query to fetch all destinations
                 $getAllDestinations = "SELECT * FROM destination";
                 $stmt = $conn->prepare($getAllDestinations);
@@ -52,7 +51,37 @@ switch ($method) {
                         'status' => 0,
                         'message' => "No destinations found"
                     ];
-                } 
+                }
+            }
+        } catch (PDOException $e) {
+            $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
+        }
+        echo json_encode($response);
+        break;
+    case "POST":
+        try {
+            $data = json_decode($eData);
+
+            // connection to database
+            $conn = $db->connect();
+
+            // Query to fetch all destinations
+            $getAllDestinations = "SELECT * FROM destination";
+            $stmt = $conn->prepare($getAllDestinations);
+            $stmt->execute();
+            $allDestinations = $stmt->fetchAll(PDO::FETCH_ASSOC); // Fetch all rows
+
+            if (!empty($allDestinations)) {
+                $response = [
+                    'status' => 1,
+                    'message' => "Data found",
+                    'data' => $allDestinations
+                ];
+            } else {
+                $response = [
+                    'status' => 0,
+                    'message' => "No destinations found"
+                ];
             }
         } catch (PDOException $e) {
             $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];

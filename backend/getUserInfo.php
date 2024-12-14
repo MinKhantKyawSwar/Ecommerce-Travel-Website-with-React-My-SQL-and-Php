@@ -36,7 +36,7 @@ switch ($method) {
             }
             else {
                 // Query to fetch all destinations
-                $getAllUsersInfo = "SELECT * FROM users";
+                $getAllUsersInfo = "SELECT * FROM users where role = 'customer'";
                 $stmt = $conn->prepare($getAllUsersInfo);
                 $stmt->execute();
                 $allUsersInfo = $stmt->fetchAll(PDO::FETCH_ASSOC); // Fetch all rows

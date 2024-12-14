@@ -19,17 +19,47 @@ const DestinationForm = () => {
   const [savedImages, setSavedImages] = useState([]);
   const [selectedImagesCount, setSelectedImagesCount] = useState(0);
 
+  const handleImageChange = (event) => {
+    const file = event.currentTarget.files[0];
+    if (file && file.type.startsWith("image/")) {
+      setSelectedImage(URL.createObjectURL(file));
+      setError("");
+      setFieldValue("destination_image", file);
+    } else {
+      setError("Please select a valid image file.");
+      setSelectedImage(null);
+    }
+  };
+
   const onChangeHandler = (event) => {
-    const seletedImages = event.target.files;
-    const seletedImagesArray = Array.from(seletedImages);
+    const selectedImages = event.target.files;
+    const selectedImagesArray = Array.from(selectedImages);
 
-    //update selected images count
-    setSelectedImagesCount((prev) => prev + seletedImagesArray.length);
+    const toastError = (message) => {
+      toast.error(message, {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Slide,
+      });
+    };
 
-    setImages((prev) => [...prev, ...seletedImagesArray]);
+    // Check if the total number of selected images exceeds three
+    if (images.length + selectedImagesArray.length > 3) {
+      toastError("You can only upload a maximum of 3 images.");
+      return; // Exit the function if the limit is exceeded
+    }
 
-    const previewImagesArray = seletedImagesArray.map((img) => {
-      console.log(img)
+    // Update selected images count
+    setSelectedImagesCount((prev) => prev + selectedImagesArray.length);
+    setImages((prev) => [...prev, ...selectedImagesArray]);
+
+    const previewImagesArray = selectedImagesArray.map((img) => {
       return URL.createObjectURL(img);
     });
     setPreviewImages((prev) => prev.concat(previewImagesArray));
@@ -38,19 +68,20 @@ const DestinationForm = () => {
   const deleteHandler = (img) => {
     const indexToDelete = previewImages.findIndex((e) => e === img);
 
-    // update selected images count
+    // Update selected images count
     setSelectedImagesCount((prev) => prev - 1);
 
     if (indexToDelete !== -1) {
-      const updatedSeletedImages = [...images];
-      updatedSeletedImages.splice(indexToDelete, 1);
+      const updatedSelectedImages = [...images];
+      updatedSelectedImages.splice(indexToDelete, 1);
 
-      setImages(updatedSeletedImages);
+      setImages(updatedSelectedImages);
       setPreviewImages((prevImg) => prevImg.filter((e) => e !== img));
 
       URL.revokeObjectURL(img);
     }
   };
+
   const initialValues = {
     destination_name: "",
     country: "",
@@ -72,18 +103,6 @@ const DestinationForm = () => {
     category: Yup.string().required("Type is required."),
     accomodation: Yup.string().required("Type is required."),
   });
-
-  const handleImageChange = (event) => {
-    const file = event.currentTarget.files[0];
-    if (file && file.type.startsWith("image/")) {
-      setSelectedImage(URL.createObjectURL(file));
-      setError("");
-      setFieldValue("destination_image", file);
-    } else {
-      setError("Please select a valid image file.");
-      setSelectedImage(null);
-    }
-  };
 
   const submitHandler = async (values) => {
     const {
@@ -221,14 +240,14 @@ const DestinationForm = () => {
                       alt={`Preview ${index}`}
                       className="w-full h-full object-cover rounded-md"
                     />
-                    <button
+                    <a
                       width={30}
                       height={25}
-                      className="absolute z-20 top-0 right-0 text-red-400 hover:text-red-600"
+                      className="absolute z-20 top-0 right-0 text-red-400 hover:text-red-600 cursor-pointer"
                       onClick={() => deleteHandler(img)}
                     >
                       X
-                    </button>
+                    </a>
                   </div>
                 ))}
               </div>
