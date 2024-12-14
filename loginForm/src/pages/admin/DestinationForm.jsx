@@ -4,7 +4,7 @@ import axios from "axios";
 import { Bounce, Slide, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 // import { XMarkIcon } from "@heroicons/react/24/solid";
 import StyledErrorMessage from "../../components/StyledErrorMessage";
 
@@ -14,23 +14,76 @@ const DestinationForm = () => {
   const [error, setError] = useState("");
   const [category, setCategory] = useState([]);
   const [redirect, setRedirect] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
   const [previewImages, setPreviewImages] = useState([]);
   const [images, setImages] = useState([]);
   const [savedImages, setSavedImages] = useState([]);
   const [selectedImagesCount, setSelectedImagesCount] = useState(0);
+  const [accommodationImage, setAccommodationImage] = useState(null);
 
-  const handleImageChange = (event) => {
-    const file = event.currentTarget.files[0];
-    if (file && file.type.startsWith("image/")) {
-      setSelectedImage(URL.createObjectURL(file));
-      setError("");
-      setFieldValue("destination_image", file);
-    } else {
-      setError("Please select a valid image file.");
-      setSelectedImage(null);
+  const navigate = useNavigate();
+
+  const getAllRegion = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/backend/getBooking.php",
+        {
+          headers: {
+            Region: region,
+          },
+        }
+      );
+      if (response.data.status === 0) {
+        console.log(response.data.message);
+      } else if (response.data.status === 1) {
+        setRegion(response.data.data);
+      }
+    } catch (error) {
+      console.error(
+        "Error:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
+  const getAllCategories = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/backend/getCategory.php",
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.data.status === 0) {
+        console.log(response.data.message);
+      } else if (response.data.status === 1) {
+        setCategory(response.data.data);
+      }
+    } catch (error) {
+      console.error(
+        "Error:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
+
+  //for accommodation
+  const handleImageChange = (event) => {
+    const file = event.currentTarget.files[0];
+    if (file) {
+      setAccommodationImage(file);
+      setImagePreview(URL.createObjectURL(file)); // Create a preview URL
+    }
+  };
+
+  const handleDeleteImage = () => {
+    setAccommodationImage(null);
+    setImagePreview(null);
+  };
+
+  // for destination images
   const onChangeHandler = (event) => {
     const selectedImages = event.target.files;
     const selectedImagesArray = Array.from(selectedImages);
@@ -49,7 +102,6 @@ const DestinationForm = () => {
       });
     };
 
-    // Check if the total number of selected images exceeds three
     if (images.length + selectedImagesArray.length > 3) {
       toastError("You can only upload a maximum of 3 images.");
       return; // Exit the function if the limit is exceeded
@@ -88,11 +140,11 @@ const DestinationForm = () => {
     region: "",
     description: "",
     category: "",
-    accomodation: "",
+    accommodation: "",
     destination_image: "",
     destination_second_image: "",
     destination_third_image: "",
-    accomodation_image: "",
+    accommodation_image: "",
   };
 
   const AuthFormSchema = Yup.object({
@@ -101,7 +153,7 @@ const DestinationForm = () => {
     region: Yup.string().required("Region is required."),
     description: Yup.string().required("Description is required."),
     category: Yup.string().required("Type is required."),
-    accomodation: Yup.string().required("Type is required."),
+    accommodation: Yup.string().required("Type is required."),
   });
 
   const submitHandler = async (values) => {
@@ -111,32 +163,40 @@ const DestinationForm = () => {
       region,
       description,
       category,
-      accomodation,
+      accommodation,
       destination_image,
       destination_second_image,
       destination_third_image,
-      accomodation_image,
+      accommodation_image,
     } = values;
 
     let url = "http://localhost:3000/backend/getDestination.php";
 
-    const data = {
-      destination_name,
-      country,
-      region,
-      description,
-      category,
-      accomodation,
-      destination_image,
-      destination_second_image,
-      destination_third_image,
-      accomodation_image,
-    };
-
     try {
-      const response = await axios.post(url, data, {
+      const formData = new FormData();
+      formData.append("destination_name", destination_name);
+      formData.append("country", country);
+      formData.append("region", region);
+      formData.append("description", description);
+      formData.append("category", category);
+      formData.append("accommodation", accommodation);
+      console.log(images[0]);
+      if (images[0]) {
+        formData.append("destination_image", images[0]);
+      }
+      if (images[1]) {
+        formData.append("destination_second_image", images[1]);
+      }
+      if (images[2]) {
+        formData.append("destination_third_image", images[2]);
+      }
+      if (accommodationImage) {
+        formData.append("accommodation_image", accommodationImage);
+      }
+
+      const response = await axios.post(url, formData, {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
       });
 
@@ -171,9 +231,7 @@ const DestinationForm = () => {
       if (response.data.status === 0) {
         toastError(response.data.message);
       } else if (response.data.status === 1) {
-        updateToken(response.data.token);
         toastFire(response.data.message);
-        setTimeout(() => setRedirect(true), 2000);
       } else if (response.data.status == 6) {
         toastError(response.data.message);
       }
@@ -185,13 +243,42 @@ const DestinationForm = () => {
     }
   };
 
+  const goBackHandler = () => {
+    localStorage.removeItem("activeTab");
+    navigate(-1);
+  };
+
   if (redirect) {
-    // return <Navigate to={isLogin ? "/" : "/login"} />;
+    return <Navigate to={`/admin`} />;
   }
+
+  useEffect(() => {
+    getAllCategories();
+    getAllRegion();
+  }, []);
 
   return (
     <>
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Slide}
+      />
       <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+        <button
+          className="text-blue-600 font-medium py-2 px-10 mt-4 rounded-lg border border-blue-600 hover:bg-blue-600 hover:text-white transition duration-200"
+          onClick={goBackHandler}
+        >
+          Go Back
+        </button>
         <Formik
           initialValues={initialValues}
           validationSchema={AuthFormSchema}
@@ -199,14 +286,14 @@ const DestinationForm = () => {
         >
           {({ isSubmitting }) => (
             <Form
-              className="space-y-4"
+              className="space-y-6" // Increased spacing
               method="post"
               encType="multipart/form-data"
             >
               <h1 className="text-center font-semibold text-3xl my-4 text-blue-600">
                 Destination Form
               </h1>
-              <div className="mb-3">
+              <div className="mb-4">
                 <label htmlFor="destination_name" className="font-medium block">
                   Destination Name
                 </label>
@@ -214,7 +301,6 @@ const DestinationForm = () => {
                   type="text"
                   name="destination_name"
                   id="destination_name"
-                  values={initialValues.destination_name}
                   className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                 />
                 <StyledErrorMessage name="destination_name" />
@@ -229,22 +315,30 @@ const DestinationForm = () => {
                 accept="image/png, image/jpeg, image/jpg"
                 onChange={onChangeHandler}
               />
-              <label htmlFor="upload" className="cursor-pointer text-blue-500">
-                Upload Images
+              <label
+                htmlFor="upload"
+                className="inline-flex items-center justify-center px-4 py-2 mt-2 text-white bg-blue-500 border border-transparent rounded-md shadow-sm cursor-pointer hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+              >
+                Upload Destination Images
+                {3 - selectedImagesCount === 0
+                  ? ""
+                  : ` (* add ${3 - selectedImagesCount} more images *)`}
               </label>
-              <div className="flex gap-2 mt-4">
+              <div className="flex flex-wrap gap-2 mt-4">
                 {previewImages.map((img, index) => (
-                  <div key={index} className="basis-1/6 h-29 relative">
+                  <div
+                    key={index}
+                    className="relative basis-1/4 h-24 overflow-hidden rounded-md border border-gray-300 shadow-md"
+                  >
                     <img
                       src={img}
                       alt={`Preview ${index}`}
-                      className="w-full h-full object-cover rounded-md"
+                      className="w-full h-full object-cover"
                     />
                     <a
-                      width={30}
-                      height={25}
-                      className="absolute z-20 top-0 right-0 text-red-400 hover:text-red-600 cursor-pointer"
+                      className="absolute top-1 right-1 cursor-pointer text-red-400 hover:text-red-600"
                       onClick={() => deleteHandler(img)}
+                      aria-label="Delete image"
                     >
                       X
                     </a>
@@ -252,7 +346,7 @@ const DestinationForm = () => {
                 ))}
               </div>
 
-              <div className="mb-3">
+              <div className="mb-4">
                 <label htmlFor="country" className="font-medium block">
                   Country
                 </label>
@@ -260,13 +354,12 @@ const DestinationForm = () => {
                   type="text"
                   name="country"
                   id="country"
-                  values={initialValues.country}
                   className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                 />
                 <StyledErrorMessage name="country" />
               </div>
 
-              <div className="mb-3">
+              <div className="mb-4">
                 <label htmlFor="region" className="font-medium block mb-1">
                   Region
                 </label>
@@ -274,7 +367,6 @@ const DestinationForm = () => {
                   as="select"
                   name="region"
                   id="region"
-                  values={initialValues.region}
                   className="text-lg border border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
                   <option value="" label="Select one option" required />
@@ -289,22 +381,21 @@ const DestinationForm = () => {
                 <StyledErrorMessage name="region" />
               </div>
 
-              <div className="mb-3">
+              <div className="mb-4">
                 <label htmlFor="description" className="font-medium block">
                   Description
                 </label>
                 <Field
-                  as="textarea" // Change this line to use a textarea
+                  as="textarea"
                   name="description"
                   id="description"
-                  values={initialValues.description}
                   className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
-                  rows="4" // You can specify the number of rows for the textarea
+                  rows="4"
                 />
                 <StyledErrorMessage name="description" />
               </div>
 
-              <div className="mb-3">
+              <div className="mb-4">
                 <label htmlFor="category" className="font-medium block mb-1">
                   Category
                 </label>
@@ -312,7 +403,6 @@ const DestinationForm = () => {
                   as="select"
                   name="category"
                   id="category"
-                  values={initialValues.category}
                   className="text-lg border border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
                   <option value="" label="Select one option" required />
@@ -324,22 +414,62 @@ const DestinationForm = () => {
                     />
                   ))}
                 </Field>
-                <StyledErrorMessage name="region" />
+                <StyledErrorMessage name="category" />
               </div>
 
-              <div className="mb-3">
-                <label htmlFor="accomodation" className="font-medium block">
-                  Accomodation
+              <div className="mb-4">
+                <label htmlFor="accommodation" className="font-medium block">
+                  Accommodation
                 </label>
                 <Field
                   type="text"
-                  name="accomodation"
-                  id="accomodation"
-                  values={initialValues.accomodation}
+                  name="accommodation"
+                  id="accommodation"
                   className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                 />
-                <StyledErrorMessage name="accomodation" />
+                <StyledErrorMessage name="accommodation" />
               </div>
+
+              <div className="mb-4">
+                <input
+                  type="file"
+                  hidden
+                  id="accommodation_image"
+                  name="accommodation_image"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+                <label
+                  htmlFor="accommodation_image"
+                  className="inline-flex items-center justify-center px-4 py-2 mt-2 text-white bg-blue-500 border border-transparent rounded-md shadow-sm cursor-pointer hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+                >
+                  Upload Accommodation Image
+                </label>
+                {imagePreview && (
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    <div className="relative basis-1/4 h-24 overflow-hidden rounded-md border border-gray-300 shadow-md">
+                      <img
+                        src={imagePreview}
+                        alt="Accommodation Preview"
+                        className="w-full h-full object-cover"
+                      />
+                      <a
+                        className="absolute top-1 right-1 cursor-pointer text-red-400 hover:text-red-600"
+                        onClick={handleDeleteImage}
+                        aria-label="Delete image"
+                      >
+                        X
+                      </a>
+                    </div>
+                  </div>
+                )}
+                {accommodationImage && (
+                  <p className="mt-2 text-sm text-gray-600">
+                    Selected file: {accommodationImage.name}
+                  </p>
+                )}
+              </div>
+
               <button
                 className="text-white bg-blue-600 py-3 font-medium w-full text-center rounded-lg hover:bg-teal-700 transition duration-200"
                 type="submit"

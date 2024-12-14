@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../utils/UserContext";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaHome, FaBox, FaQuestionCircle, FaUser } from "react-icons/fa"; // Importing icons
 import axios from "axios";
@@ -10,7 +9,9 @@ import ManageCustomer from "./ManageCustomer";
 import Profile from "./Profile";
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeTabKey, setActiveTabKey] = useState(
+    localStorage.getItem("activeTabKey") || "dashboard"
+  );
   const [adminInfo, setAdminInfo] = useState({});
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -42,68 +43,81 @@ const Index = () => {
     }
   };
 
+  // Save active tab to localStorage whenever it changes
   useEffect(() => {
-    if(adminInfo.role){
-      isAdmin();
-    }
-  }, [adminInfo]);
-
-  useEffect(() => {
-    getUserInfo(Number(localStorage.getItem("user_id")));
-  }, []);
+    localStorage.setItem("activeTabKey", activeTabKey);
+  }, [activeTabKey]);
 
   const handleTabClick = (tab) => {
-    setActiveTab(tab);
+    setActiveTabKey(tab);
+  };
+  const goBackHandler = () => {
+    localStorage.removeItem("activeTabKey");
+    navigate(-1);
   };
 
-  return (
-    <div className="flex flex-col md:flex-row">
-      {/* Sidebar */}
-      <div className="w-1/5 bg-gray-50 dark:bg-gray-800 p-4 shadow-xl">
-        <ul className="flex flex-col space-y-2">
-          {[
-            { name: "dashboard", icon: <FaHome /> },
-            { name: "transactions", icon: <FaBox /> },
-            { name: "Manage Destination", icon: <FaQuestionCircle /> },
-            { name: "Manage Customers", icon: <FaQuestionCircle /> },
-            { name: "Profile", icon: <FaUser /> },
-          ].map(({ name, icon }) => (
-            <li key={name}>
-              <button
-                className={`flex items-center w-full text-left p-2 rounded-lg transition-colors duration-200 ${
-                  activeTab === name
-                    ? "bg-blue-500 text-white"
-                    : "text-gray-800 dark:text-white hover:bg-blue-100 dark:hover:bg-blue-700"
-                }`}
-                onClick={() => handleTabClick(name)}
-              >
-                <span className="mr-2">{icon}</span>
-                {name.charAt(0).toUpperCase() + name.slice(1)}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
+  useEffect(() => {
+    if (adminInfo.role) {
+      isAdmin();
+    }
+  }, [adminInfo, navigate]);
 
-      {/* Content Area */}
-      <div className="w-4/5 p-4">
-        {activeTab === "dashboard" && (
-          <Dashboard/>
-        )}
-        {activeTab === "transactions" && (
-          <Transactions />
-        )}
-        {activeTab === "Manage Destination" && (
-          <ManageDestination/>
-        )}
-        {activeTab === "Manage Customers" && (
-          <ManageCustomer/>
-        )}
-        {activeTab === "Profile" && (
-          <Profile/>
-        )}
+  useEffect(() => {
+    const userId = Number(localStorage.getItem("user_id"));
+    if (userId) {
+      getUserInfo(userId);
+    } else {
+      setError("User ID not found in local storage.");
+    }
+  }, []);
+
+  return (
+    <>
+      <button
+        class="text-blue-600 font-medium py-2 px-10 mt-4 rounded-lg border border-blue-600 hover:bg-blue-600 hover:text-white transition duration-200"
+        onClick={goBackHandler}
+      >
+        Go Back
+      </button>
+
+      <div className="flex flex-col md:flex-row">
+        {/* Sidebar */}
+        <div className="w-1/5 bg-gray-50 dark:bg-gray-800 p-4 shadow-xl">
+          <ul className="flex flex-col space-y-2">
+            {[
+              { name: "dashboard", icon: <FaHome /> },
+              { name: "transactions", icon: <FaBox /> },
+              { name: "Manage Destination", icon: <FaQuestionCircle /> },
+              { name: "Manage Customers", icon: <FaQuestionCircle /> },
+              { name: "Profile", icon: <FaUser /> },
+            ].map(({ name, icon }) => (
+              <li key={name}>
+                <button
+                  className={`flex items-center w-full text-left p-2 rounded-lg transition-colors duration-200 ${
+                    activeTabKey === name
+                      ? "bg-blue-500 text-white"
+                      : "text-gray-800 dark:text-white hover:bg-blue-100 dark:hover:bg-blue-700"
+                  }`}
+                  onClick={() => handleTabClick(name)}
+                >
+                  <span className="mr-2">{icon}</span>
+                  {name.charAt(0).toUpperCase() + name.slice(1)}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Content Area */}
+        <div className="w-4/5 p-4">
+          {activeTabKey === "dashboard" && <Dashboard />}
+          {activeTabKey === "transactions" && <Transactions />}
+          {activeTabKey === "Manage Destination" && <ManageDestination />}
+          {activeTabKey === "Manage Customers" && <ManageCustomer />}
+          {activeTabKey === "Profile" && <Profile />}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

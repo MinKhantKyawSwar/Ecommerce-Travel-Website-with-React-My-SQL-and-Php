@@ -64,14 +64,14 @@ const ManageProfile = () => {
       formData.append("email", email);
       formData.append("username", username);
       formData.append("phone", phone);
-      if (profile_image) formData.append("profile_image", profile_image); // Append profile image if it's changed
+      if (profile_image) {
+        formData.append("profile_image", profile_image);
+      }
       const response = await axios.post(url, data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-
-      console.log("here");
 
       const toastFire = (message) => {
         toast.success(message, {
@@ -105,7 +105,6 @@ const ManageProfile = () => {
       } else if (response.data.status === 1) {
         console.log(response.data.username);
         toastFire(response.data.message);
-        setTimeout(() => setRedirect(true), 2000);
       } else if (response.data.status == 6) {
         toastError(response.data.message);
       }

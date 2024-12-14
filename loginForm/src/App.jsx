@@ -67,7 +67,7 @@ function App() {
         },{
           path: "/admin/manage-destination",
           element: <DestinationForm/>
-        }
+        },
       ],
     },
   ]);
