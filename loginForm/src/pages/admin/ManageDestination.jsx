@@ -4,9 +4,11 @@ import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const ManageDestination = () => {
   const [destinations, setDestinations] = useState([]);
-  const [selectedDestination, setSelectedDestination] = useState(null);
+  const [packages, setPackages] = useState({}); // Change to an object
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [openDropdown, setOpenDropdown] = useState(null);
+
   const navigate = useNavigate(); // Initialize useNavigate
 
   const getDestinations = async () => {
@@ -27,21 +29,64 @@ const ManageDestination = () => {
     }
   };
 
-  const findDestinationById = async (id) => {
+  const getPackages = async (id) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/backend/getDestination.php?id=${id}`
+        "http://localhost:3000/backend/getPackages.php",
+        {
+          headers: {
+            "Destination-ID": id,
+          },
+        }
       );
 
       if (response.data.status === 1) {
-        setSelectedDestination(response.data.data);
+        // Store packages in the object with destination ID as key
+        setPackages((prevPackages) => ({
+          ...prevPackages,
+          [id]: response.data.data,
+        }));
       } else {
-        setError("No details found for this destination");
+        setError("No data found");
+      }
+    } catch (err) {
+      setError("Failed to fetch data: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteById = async (id) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/backend/getDestination.php`,
+        {
+          headers: {
+            Destination_Id: id,
+          },
+        }
+      );
+
+      if (response.data.status === 1) {
+        window.location.reload();
+      } else {
+        setError("Cannot delete this destination!");
       }
     } catch (err) {
       setError("Failed to fetch details: " + err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Drop down for each table row
+  const toggleDropdown = async (index, id) => {
+    setOpenDropdown(openDropdown === index ? null : index);
+    if (openDropdown !== index) {
+      // Fetch packages only if they are not already fetched
+      if (!packages[id]) {
+        await getPackages(id);
+      }
     }
   };
 
@@ -57,12 +102,11 @@ const ManageDestination = () => {
       </div>
       <div>
         <div className="flex gap-10 p-4 rounded-lg bg-white dark:bg-gray-800 shadow-md mt-4">
-          <button className="text-green-600 font-medium py-2 px-10 mt-4 rounded-lg border border-green-600 hover:bg-green-600 hover:text-white transition duration-200" 
-            onClick={()=>navigate(`/admin/manage-destination`)}>
+          <button
+            className="w-full text-green-600 font-medium py-2 px-10 mt-4 rounded-lg border border-green-600 hover:bg-green-600 hover:text-white transition duration-200"
+            onClick={() => navigate(`/admin/manage-destination`)}
+          >
             Add
-          </button>
-          <button className="text-green-600 font-medium py-2 px-10 mt-4 rounded-lg border border-green-600 hover:bg-green-600 hover:text-white transition duration-200">
-            Edit
           </button>
         </div>
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -81,7 +125,7 @@ const ManageDestination = () => {
                 <th scope="col" className="px-6 py-3">
                   Region
                 </th>
-                <th scope="col" className="px-6 py-3">
+                <th scope="col" className="flex justify-center py-3">
                   Action
                 </th>
               </tr>
@@ -97,26 +141,120 @@ const ManageDestination = () => {
                   </th>
                   <td className="px-6 py-4">{destination.destination_name}</td>
                   <td className="px-6 py-4">{destination.country}</td>
-                  <td className="px-6 py-4">{destination.region}</td>
+                  <td className="px-6 py-4">{destination.region_name}</td>
                   <td className="flex gap-4 py-4">
                     <button
                       onClick={() =>
                         navigate(`/destination/${destination.destination_id}`)
-                      } // Navigate to the destination details page
+                      }
                       className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                     >
                       Details
                     </button>
                     <button
                       onClick={() =>
-                        navigate(`/admin/manage-destination/${destination.destination_id}`)
-                      } 
+                        toggleDropdown(index, destination.destination_id)
+                      }
+                    >
+                      {openDropdown === index ? (
+                        <p className="font-medium text-blue-600 hover:underline">
+                          {"Hide"}
+                        </p>
+                      ) : (
+                        <p className="font-medium text-blue-600 hover:underline">
+                          {"Packages"}
+                        </p>
+                      )}
+                    </button>
+                    <button
+                      onClick={() =>
+                        navigate(
+                          `/admin/manage-destination/${destination.destination_id}`
+                        )
+                      }
                       className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                     >
                       Edit
                     </button>
+                    <button
+                      onClick={() => deleteById(destination.destination_id)}
+                      className="font-medium text-red-600 dark:text-blue-500 hover:underline"
+                    >
+                      Delete{" "}
+                    </button>
                   </td>
                 </tr>
+                {openDropdown === index && (
+                  <tr>
+                    <td colSpan="5">
+                      <div className="bg-gray-100 rounded">
+                        {openDropdown === index && (
+                          <tr>
+                            <td colSpan="5" className="px-6 py-4 w-screen">
+                              <div className="bg-gray-100 rounded shadow-md p-4">
+                                <h3 className="font-semibold mb-2">Packages</h3>
+                                <ul className="list-disc pl-5">
+                                  {packages[destination.destination_id]?.map(
+                                    (packageItem, packageIndex) => (
+                                      <li
+                                        key={packageIndex}
+                                        className="py-2 border-b border-gray-300"
+                                      >
+                                        <div className="flex justify-between">
+                                          <span>
+                                            {packageItem.package_name}
+                                          </span>
+                                          <span>{packageItem.price}</span>
+                                        </div>
+                                        <div className="text-sm text-gray-500">
+                                          Other Region Price:{" "}
+                                          {packageItem.other_region_price} |
+                                          Duration: {packageItem.duration}
+                                        </div>
+                                        <div className="flex gap-2 mt-2">
+                                          <button
+                                            onClick={() =>
+                                              navigate(
+                                                `/package/${packageItem.package_id}`
+                                              )
+                                            } // Assuming package_id is available
+                                            className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                          >
+                                            Details
+                                          </button>
+                                          <button
+                                            onClick={() =>
+                                              navigate(
+                                                `/admin/manage-package/${packageItem.package_id}`
+                                              )
+                                            } // Assuming package_id is available
+                                            className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                          >
+                                            Edit
+                                          </button>
+                                          <button
+                                            onClick={() =>
+                                              deletePackageById(
+                                                packageItem.package_id
+                                              )
+                                            } // Implement deletePackageById function
+                                            className="font-medium text-red-600 dark:text-blue-500 hover:underline"
+                                          >
+                                            Delete
+                                          </button>
+                                        </div>
+                                      </li>
+                                    )
+                                  ) || <p>No packages available</p>}
+                                </ul>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                )}
               </tbody>
             ))}
           </table>

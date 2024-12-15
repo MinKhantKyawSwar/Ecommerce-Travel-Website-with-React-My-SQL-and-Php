@@ -11,21 +11,20 @@ import StyledErrorMessage from "../../components/StyledErrorMessage";
 const DestinationForm = () => {
   const [region, setRegion] = useState([]);
   const [previousDestination, setPreviousDestination] = useState([]);
-  const [error, setError] = useState("");
   const [category, setCategory] = useState([]);
   const [redirect, setRedirect] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
-  const [previewImages, setPreviewImages] = useState([]);
-  const [images, setImages] = useState([]);
-  const [savedImages, setSavedImages] = useState([]);
-  const [selectedImagesCount, setSelectedImagesCount] = useState(0);
-  const [accommodationImage, setAccommodationImage] = useState(null);
+  const [previewImages, setPreviewImages] = useState([]); //store preview images in array
+  const [images, setImages] = useState([]); // store images in array
+  const [selectedImagesCount, setSelectedImagesCount] = useState(0); // store image count
+  const [accommodationImage, setAccommodationImage] = useState(null); // store accommodation images
   const [isEdit, setIsEdit] = useState(false);
 
   const navigate = useNavigate();
 
   const { id } = useParams();
 
+  // getting region info
   const getAllRegion = async () => {
     try {
       const response = await axios.get(
@@ -49,6 +48,7 @@ const DestinationForm = () => {
     }
   };
 
+  // getting category info
   const getAllCategories = async () => {
     try {
       const response = await axios.get(
@@ -72,6 +72,7 @@ const DestinationForm = () => {
     }
   };
 
+  //getting previous destination info
   const getPrevDestinationInfo = async () => {
     try {
       const response = await axios.get(
@@ -95,25 +96,25 @@ const DestinationForm = () => {
     }
   };
 
-  //for accommodation
+  //for accommodation image change from form
   const handleImageChange = (event) => {
     const file = event.currentTarget.files[0];
     if (file) {
       setAccommodationImage(file);
-      setImagePreview(URL.createObjectURL(file)); // Create a preview URL
+      setImagePreview(URL.createObjectURL(file)); // Create a preview URL for image
     }
   };
 
-  console.log(imagePreview)
+  // deleting accommodation image
   const handleDeleteImage = () => {
     setAccommodationImage(null);
     setImagePreview(null);
   };
 
-  // for destination images
-  const onChangeHandler = (event) => {
-    const selectedImages = event.target.files;
-    const selectedImagesArray = Array.from(selectedImages);
+  // for destination images change from form
+  const onChangeHandler = (event, index) => {
+    const selectedImages = event.target.files; // selecting image
+    const selectedImagesArray = Array.from(selectedImages); // destructure and selecting each image
 
     const toastError = (message) => {
       toast.error(message, {
@@ -129,6 +130,7 @@ const DestinationForm = () => {
       });
     };
 
+    // checking images size
     if (images.length + selectedImagesArray.length > 3) {
       toastError("You can only upload a maximum of 3 images.");
       return; // Exit the function if the limit is exceeded
@@ -136,31 +138,47 @@ const DestinationForm = () => {
 
     // Update selected images count
     setSelectedImagesCount((prev) => prev + selectedImagesArray.length);
-    setImages((prev) => [...prev, ...selectedImagesArray]);
+
+    //  update the specific index for replaced image
+    if (index !== undefined) {
+      const updatedImages = [...images];
+      updatedImages[index] = selectedImagesArray[0]; // Replace the image at the specified index
+      setImages(updatedImages);
+    } else {
+      setImages((prev) => [...prev, ...selectedImagesArray]);
+    }
 
     const previewImagesArray = selectedImagesArray.map((img) => {
       return URL.createObjectURL(img);
     });
-    setPreviewImages((prev) => prev.concat(previewImagesArray));
+
+    //update the specific index for replaced image preview
+    if (index !== undefined) {
+      const updatedPreviewImages = [...previewImages];
+      updatedPreviewImages[index] = previewImagesArray[0]; // Replace the preview at the specified index
+      setPreviewImages(updatedPreviewImages);
+    } else {
+      setPreviewImages((prev) => prev.concat(previewImagesArray));
+    }
   };
 
-  const deleteHandler = (img) => {
-    const indexToDelete = previewImages.findIndex((e) => e === img);
+  //  deleting for destination image
+  const deleteHandler = (index) => {
+    const updatedSelectedImages = [...images];
+    const updatedPreviewImages = [...previewImages];
 
     // Update selected images count
     setSelectedImagesCount((prev) => prev - 1);
 
-    if (indexToDelete !== -1) {
-      const updatedSelectedImages = [...images];
-      updatedSelectedImages.splice(indexToDelete, 1);
+    // Remove the image at the specified index
+    updatedSelectedImages.splice(index, 1);
+    updatedPreviewImages.splice(index, 1);
 
-      setImages(updatedSelectedImages);
-      setPreviewImages((prevImg) => prevImg.filter((e) => e !== img));
-
-      URL.revokeObjectURL(img);
-    }
+    setImages(updatedSelectedImages);
+    setPreviewImages(updatedPreviewImages);
   };
 
+  // initial values either from database or ""
   const initialValues = {
     destination_name: previousDestination.destination_name || "",
     country: previousDestination.country || "",
@@ -175,6 +193,7 @@ const DestinationForm = () => {
     accommodation_image: previousDestination.accommodation_image || "",
   };
 
+  // auth schema for input validation with Yup
   const AuthFormSchema = Yup.object({
     destination_name: Yup.string().required("Destination Name is required."),
     country: Yup.string().required("Country is required."),
@@ -192,9 +211,15 @@ const DestinationForm = () => {
       description,
       category,
       accommodation,
-    } = values;
+    } = values; // destructuring data from input form
 
-    let url = "http://localhost:3000/backend/getDestination.php";
+    // creating url for editing and creating destination
+    let url;
+    if (isEdit) {
+      url = "http://localhost:3000/backend/editDestination.php";
+    } else {
+      url = "http://localhost:3000/backend/getDestination.php";
+    }
 
     // Validation for required fields
     const requiredImagesCount = 3; // Assuming you need 3 destination images
@@ -232,6 +257,7 @@ const DestinationForm = () => {
     }
 
     try {
+      // formdata to send to backend
       const formData = new FormData();
       formData.append("id", id);
       formData.append("destination_name", destination_name);
@@ -254,25 +280,13 @@ const DestinationForm = () => {
 
       // Append accommodation image
       formData.append("accommodation_image", accommodationImage);
-      console.log(images[0])
-      console.log(images[1])
-      console.log(images[2])
 
-      let response;
-      // Send the form data to the server
-      if (!isEdit) {
-        response = await axios.post(url, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-      } else {
-        response = await axios.put(url, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-      }
+      // Send the form data to the backend
+      const response = await axios.post(url, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       // Handle response status
       if (response.data.status === 0) {
@@ -320,6 +334,7 @@ const DestinationForm = () => {
       );
     }
   };
+  
   const goBackHandler = () => {
     navigate(-1);
   };
@@ -344,7 +359,7 @@ const DestinationForm = () => {
         destination_image,
         destination_second_image,
         destination_third_image,
-        accommodation_image, // Add this line
+        accommodation_image,
       } = previousDestination;
 
       const previews = [];
@@ -382,6 +397,7 @@ const DestinationForm = () => {
       setImages(previews);
       setSelectedImagesCount(previews.length);
     }
+    console.log(images);
   }, [previousDestination]);
 
   if (redirect) {

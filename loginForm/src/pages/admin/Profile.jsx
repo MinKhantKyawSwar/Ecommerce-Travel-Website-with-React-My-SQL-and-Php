@@ -193,7 +193,6 @@ const Profile = () => {
                         id="profile_image"
                         onChange={handleFileChange}
                         className="text-lg py-2 w-3/4 rounded-lg border border-teal-600 bg-white text-black"
-                        required
                       />
                     </div>
                   </div>

@@ -44,7 +44,16 @@ switch ($method) {
                 }
             } else {
                 // Query to fetch all destinations
-                $getAllDestinations = "SELECT * FROM destination";
+                $getAllDestinations = "SELECT 
+                                            destination.*,
+                                            category.*,
+                                            region.*
+                                      FROM 
+                                            destination
+                                      JOIN 
+                                            category ON destination.category = category.category_id
+                                      JOIN 
+                                            region ON destination.region = region.region_id";
                 $stmt = $conn->prepare($getAllDestinations);
                 $stmt->execute();
                 $allDestinations = $stmt->fetchAll(PDO::FETCH_ASSOC); // Fetch all rows
@@ -83,7 +92,7 @@ switch ($method) {
                 $uploadErrors[] = 'Third destination image is missing or there was an upload error.';
             }
             if (!isset($_FILES['accommodation_image']) || $_FILES['accommodation_image']['error'] !== 0) {
-                $uploadErrors[] = 'Accommodation image is missing or there was an upload error.';
+                $uploadErrors[] = "Accommodation image is missing or there was an upload error.";
             }
 
             // If there are any upload errors, return them
@@ -195,135 +204,29 @@ switch ($method) {
             echo json_encode(['status' => 0, 'message' => 'Error: ' . $e->getMessage()]);
         }
         break;
-
-    case "PUT":
-        try {
-            // Initialize an array to hold error messages
-            $uploadErrors = [];
-
-            // Check if the files are uploaded and handle errors
-            if (!isset($_FILES['destination_image']) || $_FILES['destination_image']['error'] !== 0) {
-                $uploadErrors[] = 'Destination image is missing or there was an upload error.';
-            }
-            if (!isset($_FILES['destination_second_image']) || $_FILES['destination_second_image']['error'] !== 0) {
-                $uploadErrors[] = 'Second destination image is missing or there was an upload error.';
-            }
-            if (!isset($_FILES['destination_third_image']) || $_FILES['destination_third_image']['error'] !== 0) {
-                $uploadErrors[] = 'Third destination image is missing or there was an upload error.';
-            }
-            if (!isset($_FILES['accommodation_image']) || $_FILES['accommodation_image']['error'] !== 0) {
-                $uploadErrors[] = 'Accommodation image is missing or there was an upload error.';
-            }
-
-            // If there are any upload errors, return them
-            if (!empty($uploadErrors)) {
-                echo json_encode(['status' => 0, 'message' => implode(' ', $uploadErrors)]);
-                exit;
-            }
-
-            // Proceed with file processing if no errors
-            $destinationSaveLocation = 'pictures/destination_image/'; // Directory to save the image
-            $accommodationSaveLocation = 'pictures/accommodation/'; // Directory to save the image
-
-            // Get the file details and move them
-            $destination_image_file = $_FILES['destination_image'];
-            $destination_image_fileName = basename($destination_image_file['name']);
-            $destinationTargetFilePath = $destinationSaveLocation . uniqid() . '_' . $destination_image_fileName;
-
-            $destination_second_image_file = $_FILES['destination_second_image'];
-            $destination_second_image_fileName = basename($destination_second_image_file['name']);
-            $secondDestinationTargetFilePath = $destinationSaveLocation . uniqid() . '_' . $destination_second_image_fileName;
-
-            $destination_third_image_file = $_FILES['destination_third_image'];
-            $destination_third_image_fileName = basename($destination_third_image_file['name']);
-            $thirdDestinationTargetFilePath = $destinationSaveLocation . uniqid() . '_' . $destination_third_image_fileName;
-
-            $accommodation_image_file = $_FILES['accommodation_image'];
-            $accommodation_image_fileName = basename($accommodation_image_file['name']);
-            $accommodationTargetFilePath = $accommodationSaveLocation . uniqid() . '_' . $accommodation_image_fileName;
-
-            // Check if the file is an image (optional)
-            $fileTypes = ['jpg', 'jpeg', 'png'];
-            foreach ([$destinationTargetFilePath, $secondDestinationTargetFilePath, $thirdDestinationTargetFilePath, $accommodationTargetFilePath] as $filePath) {
-                $fileType = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-                if (!in_array($fileType, $fileTypes)) {
-                    echo json_encode(['status' => 0, 'message' => 'Invalid file type for one of the images.']);
-                    exit;
+    case "DELETE":
+            try {
+                $headers = getallheaders();
+                // Check if "User -Id" header exists
+                if (isset($headers['Destination_Id'])) {
+                    $destination_id = $headers['Destination_Id'];
                 }
-            }
-
-            // Move the uploaded files to the target directory
-            if (
-                move_uploaded_file($destination_image_file['tmp_name'], $destinationTargetFilePath) &&
-                move_uploaded_file($destination_second_image_file['tmp_name'], $secondDestinationTargetFilePath) &&
-                move_uploaded_file($destination_third_image_file['tmp_name'], $thirdDestinationTargetFilePath) &&
-                move_uploaded_file($accommodation_image_file['tmp_name'], $accommodationTargetFilePath)
-            ) {
-                // Read PUT data (assuming data is sent in the body)
-                parse_str(file_get_contents("php://input"), $_PUT);
-                $destination_name = $_PUT['destination_name'];
-                $country = $_PUT['country'];
-                $region = $_PUT['region'];
-                $description = $_PUT['description'];
-                $category = $_PUT['category'];
-                $accommodation = $_PUT['accommodation'];
-                $id = $_PUT['id'];
-
-                // Connect to the database
+                // Retrieve all data
+    
                 $conn = $db->connect();
-
-                // Fetch the current images to unlink them if they exist
-                $sql1 = "SELECT destination_image, destination_second_image, destination_third_image, accommodation_image FROM destination WHERE destination_id = :id";
-                $stmt = $conn->prepare($sql1);
-                $stmt->bindParam(':id', $id);
-                $stmt->execute();
-                $currentImages = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                // Unlink previous images if they exist
-                foreach ($currentImages as $image) {
-                    if (!empty($image) && file_exists($image)) {
-                        unlink($image);
-                    }
-                }
-
-                // Prepare the SQL statement to update the destination
-                $sql = "UPDATE destination 
-                        SET destination_name = :destination_name, country = :country, region = :region, description = :description,
-                            category = :category, accommodation = :accommodation, destination_image = :destination_image,
-                            destination_second_image = :destination_second_image, destination_third_image = :destination_third_image,
-                            accommodation_image = :accommodation_image 
-                        WHERE destination_id = :id";
-                $stmt = $conn->prepare($sql);
-
-                // Bind the parameters to the prepared statement
-                $stmt->bindParam(':destination_name', $destination_name);
-                $stmt->bindParam(':country', $country);
-                $stmt->bindParam(':region', $region);
-                $stmt->bindParam(':description', $description);
-                $stmt->bindParam(':category', $category);
-                $stmt->bindParam(':accommodation', $accommodation);
-                $stmt->bindParam(':destination_image', $destinationTargetFilePath);
-                $stmt->bindParam(':destination_second_image', $secondDestinationTargetFilePath);
-                $stmt->bindParam(':destination_third_image', $thirdDestinationTargetFilePath);
-                $stmt->bindParam(':accommodation_image', $accommodationTargetFilePath);
-                $stmt->bindParam(':id', $id);
-
-                // Execute the statement
-                $success = $stmt->execute();
-
-                // Send the response back
-                if ($success) {
-                    $response = ['status' => 1, 'message' => 'Destination updated successfully'];
+                $deleteDestination = "DELETE FROM destination WHERE destination_id= :destination_id";
+                $stmt = $conn->prepare($deleteDestination);
+                $stmt->bindParam(':destination_id', $destination_id);
+                $status = $stmt->execute();
+    
+                if ($status) {
+                    $response = ['status' => 1, 'message' => "Destination successfully deleted!"];
                 } else {
-                    $response = ['status' => 0, 'message' => 'Failed to update destination'];
+                    $response = ['status' => 0, 'message' => "Failed to delete Destination!"];
                 }
-
-                echo json_encode($response);
-            } else {
-                echo json_encode(['status' => 0, 'message' => 'File upload failed']);
+            } catch (PDOException $e) {
+                $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
             }
-        } catch (PDOException $e) {
-            echo json_encode(['status' => 0, 'message' => 'Error: ' . $e->getMessage()]);
-        }
-        break;
+            echo json_encode($response);
+            break;
 }
