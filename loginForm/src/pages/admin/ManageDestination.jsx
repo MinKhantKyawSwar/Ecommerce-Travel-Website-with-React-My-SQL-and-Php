@@ -107,12 +107,14 @@ const ManageDestination = () => {
                     >
                       Details
                     </button>
-                    <a
-                      href="#"
+                    <button
+                      onClick={() =>
+                        navigate(`/admin/manage-destination/${destination.destination_id}`)
+                      } 
                       className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                     >
                       Edit
-                    </a>
+                    </button>
                   </td>
                 </tr>
               </tbody>

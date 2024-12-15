@@ -74,7 +74,7 @@ const Index = () => {
   return (
     <>
       <button
-        class="text-blue-600 font-medium py-2 px-10 mt-4 rounded-lg border border-blue-600 hover:bg-blue-600 hover:text-white transition duration-200"
+        className="text-blue-600 font-medium py-2 px-10 mt-4 rounded-lg border border-blue-600 hover:bg-blue-600 hover:text-white transition duration-200"
         onClick={goBackHandler}
       >
         Go Back

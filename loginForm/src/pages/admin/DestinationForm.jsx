@@ -4,13 +4,13 @@ import axios from "axios";
 import { Bounce, Slide, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 // import { XMarkIcon } from "@heroicons/react/24/solid";
 import StyledErrorMessage from "../../components/StyledErrorMessage";
 
 const DestinationForm = () => {
   const [region, setRegion] = useState([]);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [previousDestination, setPreviousDestination] = useState([]);
   const [error, setError] = useState("");
   const [category, setCategory] = useState([]);
   const [redirect, setRedirect] = useState(false);
@@ -20,8 +20,11 @@ const DestinationForm = () => {
   const [savedImages, setSavedImages] = useState([]);
   const [selectedImagesCount, setSelectedImagesCount] = useState(0);
   const [accommodationImage, setAccommodationImage] = useState(null);
+  const [isEdit, setIsEdit] = useState(false);
 
   const navigate = useNavigate();
+
+  const { id } = useParams();
 
   const getAllRegion = async () => {
     try {
@@ -69,6 +72,29 @@ const DestinationForm = () => {
     }
   };
 
+  const getPrevDestinationInfo = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/backend/getDestination.php?id=${id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.data.status === 0) {
+        console.log(response.data.message);
+      } else if (response.data.status === 1) {
+        setPreviousDestination(response.data.data);
+      }
+    } catch (error) {
+      console.error(
+        "Error:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
+
   //for accommodation
   const handleImageChange = (event) => {
     const file = event.currentTarget.files[0];
@@ -78,6 +104,7 @@ const DestinationForm = () => {
     }
   };
 
+  console.log(imagePreview)
   const handleDeleteImage = () => {
     setAccommodationImage(null);
     setImagePreview(null);
@@ -135,16 +162,17 @@ const DestinationForm = () => {
   };
 
   const initialValues = {
-    destination_name: "",
-    country: "",
-    region: "",
-    description: "",
-    category: "",
-    accommodation: "",
-    destination_image: "",
-    destination_second_image: "",
-    destination_third_image: "",
-    accommodation_image: "",
+    destination_name: previousDestination.destination_name || "",
+    country: previousDestination.country || "",
+    region: previousDestination.region || "",
+    description: previousDestination.description || "",
+    category: previousDestination.category || "",
+    accommodation: previousDestination.accommodation || "",
+    destination_image: previousDestination.destination_image || "",
+    destination_second_image:
+      previousDestination.destination_second_image || "",
+    destination_third_image: previousDestination.destination_third_image || "",
+    accommodation_image: previousDestination.accommodation_image || "",
   };
 
   const AuthFormSchema = Yup.object({
@@ -164,44 +192,16 @@ const DestinationForm = () => {
       description,
       category,
       accommodation,
-      destination_image,
-      destination_second_image,
-      destination_third_image,
-      accommodation_image,
     } = values;
 
     let url = "http://localhost:3000/backend/getDestination.php";
 
-    try {
-      const formData = new FormData();
-      formData.append("destination_name", destination_name);
-      formData.append("country", country);
-      formData.append("region", region);
-      formData.append("description", description);
-      formData.append("category", category);
-      formData.append("accommodation", accommodation);
-      console.log(images[0]);
-      if (images[0]) {
-        formData.append("destination_image", images[0]);
-      }
-      if (images[1]) {
-        formData.append("destination_second_image", images[1]);
-      }
-      if (images[2]) {
-        formData.append("destination_third_image", images[2]);
-      }
-      if (accommodationImage) {
-        formData.append("accommodation_image", accommodationImage);
-      }
-
-      const response = await axios.post(url, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      const toastFire = (message) => {
-        toast.success(message, {
+    // Validation for required fields
+    const requiredImagesCount = 3; // Assuming you need 3 destination images
+    if (images.length < requiredImagesCount) {
+      toast.error(
+        `You must upload at least ${requiredImagesCount} destination images.`,
+        {
           position: "top-center",
           autoClose: 1000,
           hideProgressBar: false,
@@ -210,12 +210,73 @@ const DestinationForm = () => {
           draggable: true,
           progress: undefined,
           theme: "light",
-          transition: Bounce,
-        });
-      };
+          transition: Slide,
+        }
+      );
+      return; // Exit the function if validation fails
+    }
 
-      const toastError = (message) => {
-        toast.error(message, {
+    if (!accommodationImage) {
+      toast.error("You must upload an accommodation image.", {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Slide,
+      });
+      return; // Exit the function if validation fails
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("id", id);
+      formData.append("destination_name", destination_name);
+      formData.append("country", country);
+      formData.append("region", region);
+      formData.append("description", description);
+      formData.append("category", category);
+      formData.append("accommodation", accommodation);
+
+      // Append new destination images
+      if (images.length > 0) {
+        formData.append("destination_image", images[0]);
+      }
+      if (images.length > 1) {
+        formData.append("destination_second_image", images[1]);
+      }
+      if (images.length > 2) {
+        formData.append("destination_third_image", images[2]);
+      }
+
+      // Append accommodation image
+      formData.append("accommodation_image", accommodationImage);
+      console.log(images[0])
+      console.log(images[1])
+      console.log(images[2])
+
+      let response;
+      // Send the form data to the server
+      if (!isEdit) {
+        response = await axios.post(url, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+      } else {
+        response = await axios.put(url, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+      }
+
+      // Handle response status
+      if (response.data.status === 0) {
+        toast.error(response.data.message, {
           position: "top-center",
           autoClose: 1000,
           hideProgressBar: false,
@@ -226,14 +287,31 @@ const DestinationForm = () => {
           theme: "light",
           transition: Slide,
         });
-      };
-
-      if (response.data.status === 0) {
-        toastError(response.data.message);
       } else if (response.data.status === 1) {
-        toastFire(response.data.message);
-      } else if (response.data.status == 6) {
-        toastError(response.data.message);
+        toast.success(response.data.message, {
+          position: "top-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+        setRedirect(true); // Redirect after successful submission
+      } else if (response.data.status === 6) {
+        toast.error(response.data.message, {
+          position: "top-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Slide,
+        });
       }
     } catch (error) {
       console.error(
@@ -242,20 +320,73 @@ const DestinationForm = () => {
       );
     }
   };
-
   const goBackHandler = () => {
-    localStorage.removeItem("activeTab");
     navigate(-1);
   };
-
-  if (redirect) {
-    return <Navigate to={`/admin`} />;
-  }
 
   useEffect(() => {
     getAllCategories();
     getAllRegion();
   }, []);
+
+  useEffect(() => {
+    if (id) {
+      setIsEdit(true);
+      getPrevDestinationInfo();
+    } else {
+      setIsEdit(false);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (previousDestination) {
+      const {
+        destination_image,
+        destination_second_image,
+        destination_third_image,
+        accommodation_image, // Add this line
+      } = previousDestination;
+
+      const previews = [];
+      const pushImages = [];
+
+      if (destination_image) {
+        previews.push(`http://localhost:3000/backend/${destination_image}`);
+        pushImages.push(destination_image);
+      }
+      if (destination_second_image) {
+        previews.push(
+          `http://localhost:3000/backend/${destination_second_image}`
+        );
+        pushImages.push(destination_second_image);
+      }
+      if (destination_third_image) {
+        previews.push(
+          `http://localhost:3000/backend/${destination_third_image}`
+        );
+        pushImages.push(destination_third_image);
+      }
+
+      // Set the accommodation image if it exists
+      if (accommodation_image) {
+        setAccommodationImage(
+          `http://localhost:3000/backend/${accommodation_image}`
+        );
+
+        setImagePreview(`http://localhost:3000/backend/${accommodation_image}`); // Set the preview as well
+      }
+
+      setPreviewImages(previews);
+
+      // Also set the images state to keep track of the original images
+      setImages(previews);
+      setSelectedImagesCount(previews.length);
+    }
+  }, [previousDestination]);
+
+  if (redirect) {
+    return <Navigate to={`/admin`} />;
+  }
 
   return (
     <>
@@ -282,6 +413,7 @@ const DestinationForm = () => {
         <Formik
           initialValues={initialValues}
           validationSchema={AuthFormSchema}
+          enableReinitialize={true} // This allows the form to reinitialize when initialValues change
           onSubmit={submitHandler}
         >
           {({ isSubmitting }) => (
@@ -369,7 +501,7 @@ const DestinationForm = () => {
                   id="region"
                   className="text-lg border border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
-                  <option value="" label="Select one option" required />
+                  <option value="" label="Select one option" />
                   {region.map((region) => (
                     <option
                       key={region.region_id}
@@ -403,7 +535,8 @@ const DestinationForm = () => {
                   as="select"
                   name="category"
                   id="category"
-                  className="text-lg border border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="text-lg border border-blue- ```javascript
+600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
                   <option value="" label="Select one option" required />
                   {category.map((category) => (
