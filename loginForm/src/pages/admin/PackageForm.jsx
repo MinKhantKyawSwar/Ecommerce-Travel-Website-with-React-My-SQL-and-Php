@@ -29,7 +29,7 @@ const PackageForm = () => {
   const [flightImage, setFlightImage] = useState(null); // store flight images
   const [facilitiesImage, setFacilitiesImage] = useState(null); // store facilities images
   const [mealsImage, setMealsImage] = useState(null); // store accommodation images
-  const [activitiesImage, setactivitiesImage] = useState(null); // store accommodation images
+  const [activitiesImage, setActivitiesImage] = useState(null); // store accommodation images
   const [isEdit, setIsEdit] = useState(false);
 
   const navigate = useNavigate();
@@ -51,7 +51,6 @@ const PackageForm = () => {
         console.log(response.data.message);
       } else if (response.data.status === 1) {
         setGuideInfo(response.data.data);
-        console.log(response.data.data);
       }
     } catch (error) {
       console.error(
@@ -312,6 +311,50 @@ const PackageForm = () => {
     }
   }, [id]);
 
+  useEffect(() => {
+    if (previousPackage) {
+      const {
+        flight_image,
+        facilities_image,
+        meals_image,
+        activities_image
+      } = previousPackage;
+
+      
+      // Set the accommodation image if it exists
+      if (flight_image) {
+        setFlightImage(
+          `http://localhost:3000/backend/${flight_image}`
+        );
+        setFlightImagePreview(`http://localhost:3000/backend/${flight_image}`); // Set the preview as well
+      }
+
+      if (facilities_image) {
+        console.log(facilities_image)
+        setFacilitiesImage(
+          `http://localhost:3000/backend/${facilities_image}`
+        );
+        setFacilitiesImagePreview(`http://localhost:3000/backend/${facilities_image}`); // Set the preview as well
+      }
+
+      if (meals_image) {
+        console.log(meals_image);
+        setMealsImage(
+          `http://localhost:3000/backend/${meals_image}`
+        );
+        setMealsImagePreview(`http://localhost:3000/backend/${meals_image}`); // Set the preview as well
+      }
+
+      if (activities_image) {
+        console.log(activities_image);
+        setActivitiesImage(
+          `http://localhost:3000/backend/${activities_image}`
+        );
+        setActivitiesImagePreview(`http://localhost:3000/backend/${activities_image}`); // Set the preview as well
+      }
+    }
+  }, [previousPackage]);
+
   if (redirect) {
     return <Navigate to={`/admin`} />;
   }
@@ -476,13 +519,13 @@ const PackageForm = () => {
                 <input
                   type="file"
                   hidden
-                  id="facilities"
-                  name="facilities"
+                  id="facilities_image"
+                  name="facilities_image"
                   accept="image/*"
                   onChange={handleFacilitiesImageChange}
                 />
                 <label
-                  htmlFor="facilities"
+                  htmlFor="facilities_image"
                   className="inline-flex items-center justify-center px-4 py-2 mt-2 text-white bg-blue-500 border border-transparent rounded-md shadow-sm cursor-pointer hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
                 >
                   Upload Facilities Image
@@ -529,13 +572,13 @@ const PackageForm = () => {
                 <input
                   type="file"
                   hidden
-                  id="meals"
-                  name="meals"
+                  id="meals_image"
+                  name="meals_image"
                   accept="image/*"
                   onChange={handleMealsImageChange}
                 />
                 <label
-                  htmlFor="meals"
+                  htmlFor="meals_image"
                   className="inline-flex items-center justify-center px-4 py-2 mt-2 text-white bg-blue-500 border border-transparent rounded-md shadow-sm cursor-pointer hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
                 >
                   Upload Meals Image
@@ -582,13 +625,13 @@ const PackageForm = () => {
                 <input
                   type="file"
                   hidden
-                  id="activities"
-                  name="activities"
+                  id="activities_image"
+                  name="activities_image"
                   accept="image/*"
                   onChange={handleActivitiesImageChange}
                 />
                 <label
-                  htmlFor="activities"
+                  htmlFor="activities_image"
                   className="inline-flex items-center justify-center px-4 py-2 mt-2 text-white bg-blue-500 border border-transparent rounded-md shadow-sm cursor-pointer hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
                 >
                   Upload activities Image
