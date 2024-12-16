@@ -53,7 +53,7 @@ const Index = () => {
   };
   const goBackHandler = () => {
     localStorage.removeItem("activeTabKey");
-    navigate(-1);
+    navigate("/");
   };
 
   useEffect(() => {

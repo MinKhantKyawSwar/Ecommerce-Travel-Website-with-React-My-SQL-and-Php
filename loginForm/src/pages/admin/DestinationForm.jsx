@@ -13,7 +13,7 @@ const DestinationForm = () => {
   const [previousDestination, setPreviousDestination] = useState([]);
   const [category, setCategory] = useState([]);
   const [redirect, setRedirect] = useState(false);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null); // store preview image for accommodation
   const [previewImages, setPreviewImages] = useState([]); //store preview images in array
   const [images, setImages] = useState([]); // store images in array
   const [selectedImagesCount, setSelectedImagesCount] = useState(0); // store image count
@@ -551,8 +551,7 @@ const DestinationForm = () => {
                   as="select"
                   name="category"
                   id="category"
-                  className="text-lg border border-blue- ```javascript
-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="text-lg border border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
                   <option value="" label="Select one option" required />
                   {category.map((category) => (

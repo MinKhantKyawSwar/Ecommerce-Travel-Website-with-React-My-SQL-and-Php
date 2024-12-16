@@ -154,7 +154,7 @@ const PackageDetails = () => {
                   Description:
                 </p>
                 <p className="text-lg text-gray-600">
-                  {packageDetails.description}
+                  {packageDetails.guide_description}
                 </p>
               </div>
             </div>

@@ -31,7 +31,7 @@ switch ($method) {
                 if ($packages) {
                     $response = ['status' => 1, 'message' => "Data found", 'data' => $packages];
                 } else {
-                    $response = ['status' => 0, 'message' => "No packages found.", "destination" => $destination_id];
+                    $response = ['status' => 0, 'message' => "No packages found."];
                 }
             } else if (isset($headers['Package-Id'])) {
                 $package_id = (int) $headers['Package-Id'];
@@ -45,11 +45,12 @@ switch ($method) {
                     destination.region, 
                     destination.accommodation, 
                     destination.accommodation_image,
+                    tourguide.guide_id,
                     tourguide.guide_name,
                     tourguide.language,
                     tourguide.exp_years,
                     tourguide.guide_image,
-                    tourguide.description
+                    tourguide.description As guide_description
                 FROM 
                     package
                 JOIN 
@@ -81,4 +82,5 @@ switch ($method) {
         }
         echo json_encode($response);
         break;
+        
     }

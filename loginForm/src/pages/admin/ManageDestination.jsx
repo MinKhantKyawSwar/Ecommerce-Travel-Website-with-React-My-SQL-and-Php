@@ -186,72 +186,84 @@ const ManageDestination = () => {
                 </tr>
                 {openDropdown === index && (
                   <tr>
-                    <td colSpan="5">
-                      <div className="bg-gray-100 rounded">
-                        {openDropdown === index && (
-                          <tr>
-                            <td colSpan="5" className="px-6 py-4 w-screen">
-                              <div className="bg-gray-100 rounded shadow-md p-4">
-                                <h3 className="font-semibold mb-2">Packages</h3>
-                                <ul className="list-disc pl-5">
-                                  {packages[destination.destination_id]?.map(
-                                    (packageItem, packageIndex) => (
-                                      <li
-                                        key={packageIndex}
-                                        className="py-2 border-b border-gray-300"
-                                      >
-                                        <div className="flex justify-between">
-                                          <span>
-                                            {packageItem.package_name}
-                                          </span>
-                                          <span>{packageItem.price}</span>
-                                        </div>
-                                        <div className="text-sm text-gray-500">
-                                          Other Region Price:{" "}
-                                          {packageItem.other_region_price} |
-                                          Duration: {packageItem.duration}
-                                        </div>
-                                        <div className="flex gap-2 mt-2">
-                                          <button
-                                            onClick={() =>
-                                              navigate(
-                                                `/package/${packageItem.package_id}`
-                                              )
-                                            } // Assuming package_id is available
-                                            className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                                          >
-                                            Details
-                                          </button>
-                                          <button
-                                            onClick={() =>
-                                              navigate(
-                                                `/admin/manage-package/${packageItem.package_id}`
-                                              )
-                                            } // Assuming package_id is available
-                                            className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                                          >
-                                            Edit
-                                          </button>
-                                          <button
-                                            onClick={() =>
-                                              deletePackageById(
-                                                packageItem.package_id
-                                              )
-                                            } // Implement deletePackageById function
-                                            className="font-medium text-red-600 dark:text-blue-500 hover:underline"
-                                          >
-                                            Delete
-                                          </button>
-                                        </div>
-                                      </li>
-                                    )
-                                  ) || <p>No packages available</p>}
-                                </ul>
-                              </div>
-                            </td>
-                          </tr>
-                        )}
-                      </div>
+                    <td colSpan="5" className="bg-gray-100 rounded">
+                      {openDropdown === index && (
+                        <div className="bg-gray-100 rounded-lg shadow-md p-6">
+                          <h3 className="font-semibold text-lg mb-4">
+                            Packages
+                          </h3>
+                          <button
+                            onClick={() =>
+                              navigate(`/admin/manage-destination/packages`)
+                            }
+                            className="font-medium text-blue-600 hover:underline transition duration-200"
+                          >
+                            Add package
+                          </button>
+                          <ul className="list-disc pl-5">
+                            {packages[destination.destination_id]?.length >
+                            0 ? (
+                              packages[destination.destination_id].map(
+                                (packageItem, packageIndex) => (
+                                  <li
+                                    key={packageIndex}
+                                    className="py-4 border-b border-gray-300 transition duration-200 hover:bg-gray-200"
+                                  >
+                                    <div className="flex justify-between items-center">
+                                      <span className="font-medium text-gray-800">
+                                        {packageItem.package_name} ($
+                                        {packageItem.price})
+                                      </span>
+                                      <div className="flex gap-4">
+                                        <button
+                                          onClick={() =>
+                                            navigate(
+                                              `/destination/${packageItem.destination}/package/${packageItem.package_id}`
+                                            )
+                                          }
+                                          className="font-medium text-blue-600 hover:underline transition duration-200"
+                                        >
+                                          Details
+                                        </button>
+                                        <button
+                                          onClick={() =>
+                                            navigate(
+                                              `/admin/manage-destination/packages/${packageItem.package_id}`
+                                            )
+                                          }
+                                          className="font-medium text-blue-600 hover:underline transition duration-200"
+                                        >
+                                          Edit
+                                        </button>
+                                        <button
+                                          onClick={() =>
+                                            deletePackageById(
+                                              packageItem.package_id
+                                            )
+                                          }
+                                          className="font-medium text-red-600 hover:underline transition duration-200"
+                                        >
+                                          Delete
+                                        </button>
+                                      </div>
+                                    </div>
+                                    {/* <div className="text-sm text-gray-500 mt-2">
+                                            Other Region Price: $
+                                            {packageItem.other_region_price} |
+                                            Duration: {packageItem.duration}{" "}
+                                            days
+                                          </div> */}
+                                  </li>
+                                )
+                              )
+                            ) : (
+                              <p className="text-gray-500">
+                                No packages available
+                              </p>
+                            )}
+                          </ul>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 )}

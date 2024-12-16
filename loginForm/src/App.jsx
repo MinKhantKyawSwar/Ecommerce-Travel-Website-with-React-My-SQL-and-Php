@@ -14,6 +14,7 @@ import Booking from "./components/Booking";
 import Explore from "./components/Explore";
 import Admin from "./pages/admin/Index";
 import DestinationForm from "./pages/admin/DestinationForm";
+import PackageForm from "./pages/admin/PackageForm";
 
 function App() {
   const router = createBrowserRouter([
@@ -23,62 +24,72 @@ function App() {
       children: [
         {
           index: true,
-          element: <Index />
+          element: <Index />,
         },
         {
           path: "/register",
-          element:<Register/>
+          element: <Register />,
         },
         {
           path: "/login",
-          element: <Login/>
+          element: <Login />,
         },
         {
           path: "/profile",
-          element: <Profile/>
+          element: <Profile />,
         },
         {
-          path : "/destination/:id",
-          element: <Details/>
+          path: "/destination/:id",
+          element: <Details />,
         },
         {
-          path : "/destination/:id/package/:id",
-          element: <PackageDetails/>
+          path: "/destination/:id/package/:id",
+          element: <PackageDetails />,
         },
         {
           path: "/profile/manage-profile",
-          element: <ManageProfile/>
+          element: <ManageProfile />,
         },
         {
           path: "/saved-packages",
-          element: <SavedPackages/>
+          element: <SavedPackages />,
         },
         {
           path: "/booking/:id",
-          element: <Booking/>
+          element: <Booking />,
         },
         {
           path: "/explore",
-          element: <Explore/>
+          element: <Explore />,
         },
         {
           path: "/admin",
-          element: <Admin/>
-        },{
+          element: <Admin />,
+        },
+        {
           path: "/admin/manage-destination",
-          element: <DestinationForm/>
-        },{
+          element: <DestinationForm />,
+        },
+        {
           path: "/admin/manage-destination/:id",
-          element: <DestinationForm/>
+          element: <DestinationForm />,
+        },
+        {
+          path: "/admin/manage-destination/packages/",
+          element: <PackageForm />,
+        },
+        {
+          path: "/admin/manage-destination/packages/:id",
+          element: <PackageForm />,
         },
       ],
     },
   ]);
   return (
-  <UserContextProvider>
-    <RouterProvider router={router} />;
-  </UserContextProvider>
-  )
-};
+    <UserContextProvider>
+      <RouterProvider router={router} />;
+    </UserContextProvider>
+  );
+}
 
 export default App;
