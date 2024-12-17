@@ -56,9 +56,7 @@ switch ($method) {
                 JOIN 
                     destination ON package.destination = destination.destination_id
                 JOIN 
-                    tourguideassignment ON package.package_id = tourguideassignment.package_id
-                JOIN 
-                    tourguide ON tourguideassignment.guide_id = tourguide.guide_id
+                    tourguide ON tourguide.guide_id = package.tour_guide
                 WHERE 
                     package.package_id = :package_id;
 
@@ -127,7 +125,7 @@ switch ($method) {
             // Get the file details
             $activities_image_file = $_FILES['activities_image'];
             $activities_image_fileName = basename($activities_image_file['name']);
-            $activitiesTargetFilePath = $accommodationSaveLocation . uniqid() . '_' . $activities_image_fileName; // Unique name for the file
+            $activitiesTargetFilePath = $packageSaveLocation . uniqid() . '_' . $activities_image_fileName; // Unique name for the file
 
             // Check if the file is an image (optional)
             $fileTypes = ['jpg', 'jpeg', 'png'];
@@ -164,46 +162,50 @@ switch ($method) {
                 $description = $_POST['description'];
                 $price = $_POST['price'];
                 $other_region_price = $_POST['other_region_price'];
-                $flight_description = $_POST['flight_description'];
-                $accommodation = $_POST['accommodation'];
+                $flight_description = $_POST['flight_description'];;
                 $flight_image = $flightTargetFilePath;
                 $facilities = $_POST['facilities'];
-                $facility_image = $facilitiesTargetFilePath;
+                $facilities_image = $facilitiesTargetFilePath;
                 $meals = $_POST['meals'];
                 $meals_image = $mealsTargetFilePath;
                 $activities = $_POST['activities'];
                 $activities_image = $activitiesTargetFilePath;
-                $activities = $_POST['activities'];
                 $duration = $_POST['duration'];
-
+                $destination = $_POST['destination'];
+                $tour_guide = $_POST['guide_id'];
 
                 // Connect to the database
                 $conn = $db->connect();
 
                 // Prepare the SQL statement to insert new destination
-                $sql = "INSERT INTO destination (destination_name, country, region, description, category, accommodation, destination_image, destination_second_image, destination_third_image, accommodation_image) 
-                                     VALUES (:destination_name, :country, :region, :description, :category, :accommodation, :destination_image, :destination_second_image, :destination_third_image, :accommodation_image)";
+                $sql = "INSERT INTO package(package_name, description, price, other_region_price, flight_description, flight_image, facilities, facilities_image, meals, meals_image, activities, activities_image, duration, destination, tour_guide) VALUES 
+                             (:package_name, :description, :price, :other_region_price, :flight_description, :flight_image, :facilities, :facilities_image, :meals, :meals_image, :activities, :activities_image, :duration, :destination, :tour_guide)";
                 $stmt = $conn->prepare($sql);
 
                 // Bind the parameters to the prepared statement
-                $stmt->bindParam(':destination_name', $destination_name);
-                $stmt->bindParam(':country', $country);
-                $stmt->bindParam(':region', $region);
+                $stmt->bindParam(':package_name', $package_name);
                 $stmt->bindParam(':description', $description);
-                $stmt->bindParam(':category', $category);
-                $stmt->bindParam(':accommodation', $accommodation);
-                $stmt->bindParam(':destination_image', $destination_image);
-                $stmt->bindParam(':destination_second_image', $destination_second_image);
-                $stmt->bindParam(':destination_third_image', $destination_third_image);
-                $stmt->bindParam(':accommodation_image', $accommodation_image);
+                $stmt->bindParam(':price', $price);
+                $stmt->bindParam(':other_region_price', $other_region_price);
+                $stmt->bindParam(':flight_description', $flight_description);
+                $stmt->bindParam(':flight_image', $flight_image);
+                $stmt->bindParam(':facilities', $facilities);
+                $stmt->bindParam(':facilities_image', $facilities_image);
+                $stmt->bindParam(':meals', $meals);
+                $stmt->bindParam(':meals_image', $meals_image);
+                $stmt->bindParam(':activities', $activities);
+                $stmt->bindParam(':activities_image', $activities_image);
+                $stmt->bindParam(':duration', $duration);
+                $stmt->bindParam(':destination', $destination);
+                $stmt->bindParam(':tour_guide', $tour_guide);
 
                 // Execute the statement
                 $success = $stmt->execute();
                 // Send the response back
                 if ($success) {
-                    $response = ['status' => 1, 'message' => 'Destination added successfully'];
+                    $response = ['status' => 1, 'message' => 'Package added successfully'];
                 } else {
-                    $response = ['status' => 0, 'message' => 'Failed to add destination'];
+                    $response = ['status' => 0, 'message' => 'Failed to add package'];
                 }
 
                 echo json_encode($response);
@@ -218,21 +220,21 @@ switch ($method) {
         try {
             $headers = getallheaders();
             // Check if "User -Id" header exists
-            if (isset($headers['Destination_Id'])) {
-                $destination_id = $headers['Destination_Id'];
+            if (isset($headers['Package-Id'])) {
+                $package_id = $headers['Package-Id'];
             }
             // Retrieve all data
 
             $conn = $db->connect();
-            $deleteDestination = "DELETE FROM destination WHERE destination_id= :destination_id";
-            $stmt = $conn->prepare($deleteDestination);
-            $stmt->bindParam(':destination_id', $destination_id);
+            $deletePackage = "DELETE FROM package WHERE package_id= :package_id";
+            $stmt = $conn->prepare($deletePackage);
+            $stmt->bindParam(':package_id', $package_id);
             $status = $stmt->execute();
 
             if ($status) {
-                $response = ['status' => 1, 'message' => "Destination successfully deleted!"];
+                $response = ['status' => 1, 'message' => "Package successfully deleted!"];
             } else {
-                $response = ['status' => 0, 'message' => "Failed to delete Destination!"];
+                $response = ['status' => 0, 'message' => "Failed to delete Package!"];
             }
         } catch (PDOException $e) {
             $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];

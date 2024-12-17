@@ -3,12 +3,14 @@ import * as Yup from "yup";
 import axios from "axios";
 import { Bounce, Slide, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 // import { XMarkIcon } from "@heroicons/react/24/solid";
 import StyledErrorMessage from "../../components/StyledErrorMessage";
+import { UserContext } from "../../utils/UserContext";
 
 const PackageForm = () => {
+  const { destinationId: destination } = useContext(UserContext);
   const [packages, setPackages] = useState([]);
   const [region, setRegion] = useState([]);
 
@@ -71,11 +73,8 @@ const PackageForm = () => {
           },
         }
       );
-      if (response.data.status === 0) {
-        console.log(response.data.message);
-      } else if (response.data.status === 1) {
+      if (response.data.status === 1) {
         setPreviousPackage(response.data.data[0]);
-        console.log(response.data.data[0]);
       }
     } catch (error) {
       console.error(
@@ -149,14 +148,14 @@ const PackageForm = () => {
   const handleActivitiesImageChange = (event) => {
     const file = event.currentTarget.files[0];
     if (file) {
-      setactivitiesImage(file);
+      setActivitiesImage(file);
       setActivitiesImagePreview(URL.createObjectURL(file)); // Create a preview URL for image
     }
   };
 
   // deleting accommodation image
   const handleActivitiesDeleteImage = () => {
-    setactivitiesImage(null);
+    setActivitiesImage(null);
     setActivitiesImagePreview(null);
   };
 
@@ -211,6 +210,7 @@ const PackageForm = () => {
       meals,
       activities,
       duration,
+      guide_id,
     } = values; // destructuring data from input form
 
     // creating url for editing and creating destination
@@ -239,7 +239,9 @@ const PackageForm = () => {
     try {
       // formdata to send to backend
       const formData = new FormData();
-      formData.append("package_id", id);
+      if (isEdit) {
+        formData.append("id", id);
+      }
       formData.append("package_name", package_name);
       formData.append("description", description);
       formData.append("price", price);
@@ -253,7 +255,10 @@ const PackageForm = () => {
       formData.append("activities", activities);
       formData.append("activities_image", activitiesImage);
       formData.append("duration", duration);
-      formData.append("destination", destination);
+      formData.append(
+        "destination",
+        previousPackage.destination ? previousPackage.destination : destination
+      );
       formData.append("guide_id", guide_id);
 
       // Send the form data to the backend

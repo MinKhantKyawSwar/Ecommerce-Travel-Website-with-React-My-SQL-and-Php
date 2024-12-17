@@ -1,6 +1,7 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { UserContext } from "../../utils/UserContext";
 
 const ManageDestination = () => {
   const [destinations, setDestinations] = useState([]);
@@ -8,6 +9,7 @@ const ManageDestination = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [openDropdown, setOpenDropdown] = useState(null);
+  const { setDestinationId } = useContext(UserContext);
 
   const navigate = useNavigate(); // Initialize useNavigate
 
@@ -87,6 +89,30 @@ const ManageDestination = () => {
       if (!packages[id]) {
         await getPackages(id);
       }
+    }
+  };
+
+  
+  const deletePackageById = async (id) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/backend/getPackages.php`,
+        {
+          headers: {
+            "Package-Id": id,
+          },
+        }
+      );
+
+      if (response.data.status === 1) {
+        window.location.reload();
+      } else {
+        setError("Cannot delete this destination!");
+      }
+    } catch (err) {
+      setError("Failed to fetch details: " + err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -193,9 +219,12 @@ const ManageDestination = () => {
                             Packages
                           </h3>
                           <button
-                            onClick={() =>
-                              navigate(`/admin/manage-destination/packages`)
-                            }
+                            onClick={() => {
+                              setDestinationId(destination.destination_id)
+                              navigate(
+                                `/admin/manage-destination/packages/`
+                              );
+                            }}
                             className="font-medium text-blue-600 hover:underline transition duration-200"
                           >
                             Add package
