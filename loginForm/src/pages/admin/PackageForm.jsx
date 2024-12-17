@@ -76,7 +76,6 @@ const PackageForm = () => {
       } else if (response.data.status === 1) {
         setPreviousPackage(response.data.data[0]);
         console.log(response.data.data[0]);
-        
       }
     } catch (error) {
       console.error(
@@ -185,8 +184,12 @@ const PackageForm = () => {
     package_name: Yup.string().required("Packge Name is required."),
     description: Yup.string().required("Description is required."),
     price: Yup.number().required("Price is required."),
-    other_region_price: Yup.number().required("Other region price is required."),
-    flight_description: Yup.string().required("Flight description is required."),
+    other_region_price: Yup.number().required(
+      "Other region price is required."
+    ),
+    flight_description: Yup.string().required(
+      "Flight description is required."
+    ),
     facilities: Yup.string().required("facilities is required."),
     meals: Yup.string().required("Meals is required."),
     activities: Yup.string().required("Activities is required."),
@@ -194,8 +197,21 @@ const PackageForm = () => {
     guide_id: Yup.number().required("Guide is required."),
   });
 
+  // starts fixing submit handler
+
+  // ============================================
   const submitHandler = async (values) => {
-    const {} = values; // destructuring data from input form
+    const {
+      package_name,
+      description,
+      price,
+      other_region_price,
+      flight_description,
+      facilities,
+      meals,
+      activities,
+      duration,
+    } = values; // destructuring data from input form
 
     // creating url for editing and creating destination
     let url;
@@ -297,10 +313,10 @@ const PackageForm = () => {
   const goBackHandler = () => {
     navigate(-1);
   };
-  
-  useEffect(()=>{
+
+  useEffect(() => {
     getGuideInfo();
-  },[])
+  }, []);
 
   useEffect(() => {
     if (id) {
@@ -313,44 +329,35 @@ const PackageForm = () => {
 
   useEffect(() => {
     if (previousPackage) {
-      const {
-        flight_image,
-        facilities_image,
-        meals_image,
-        activities_image
-      } = previousPackage;
+      const { flight_image, facilities_image, meals_image, activities_image } =
+        previousPackage;
 
-      
       // Set the accommodation image if it exists
       if (flight_image) {
-        setFlightImage(
-          `http://localhost:3000/backend/${flight_image}`
-        );
+        setFlightImage(`http://localhost:3000/backend/${flight_image}`);
         setFlightImagePreview(`http://localhost:3000/backend/${flight_image}`); // Set the preview as well
       }
 
       if (facilities_image) {
-        console.log(facilities_image)
-        setFacilitiesImage(
+        console.log(facilities_image);
+        setFacilitiesImage(`http://localhost:3000/backend/${facilities_image}`);
+        setFacilitiesImagePreview(
           `http://localhost:3000/backend/${facilities_image}`
-        );
-        setFacilitiesImagePreview(`http://localhost:3000/backend/${facilities_image}`); // Set the preview as well
+        ); // Set the preview as well
       }
 
       if (meals_image) {
         console.log(meals_image);
-        setMealsImage(
-          `http://localhost:3000/backend/${meals_image}`
-        );
+        setMealsImage(`http://localhost:3000/backend/${meals_image}`);
         setMealsImagePreview(`http://localhost:3000/backend/${meals_image}`); // Set the preview as well
       }
 
       if (activities_image) {
         console.log(activities_image);
-        setActivitiesImage(
+        setActivitiesImage(`http://localhost:3000/backend/${activities_image}`);
+        setActivitiesImagePreview(
           `http://localhost:3000/backend/${activities_image}`
-        );
-        setActivitiesImagePreview(`http://localhost:3000/backend/${activities_image}`); // Set the preview as well
+        ); // Set the preview as well
       }
     }
   }, [previousPackage]);
@@ -422,7 +429,6 @@ const PackageForm = () => {
                 <StyledErrorMessage name="description" />
               </div>
 
-
               <div className="mb-4">
                 <label htmlFor="price" className="font-medium block">
                   Price
@@ -437,7 +443,10 @@ const PackageForm = () => {
               </div>
 
               <div className="mb-4">
-                <label htmlFor="other_region_price" className="font-medium block">
+                <label
+                  htmlFor="other_region_price"
+                  className="font-medium block"
+                >
                   Other Region Price
                 </label>
                 <Field
@@ -450,7 +459,10 @@ const PackageForm = () => {
               </div>
 
               <div className="mb-4">
-                <label htmlFor="flight_description" className="font-medium block">
+                <label
+                  htmlFor="flight_description"
+                  className="font-medium block"
+                >
                   Flight description
                 </label>
                 <Field
@@ -620,7 +632,7 @@ const PackageForm = () => {
                 />
                 <StyledErrorMessage name="activities" />
               </div>
-            
+
               <div className="mb-4">
                 <input
                   type="file"
@@ -673,7 +685,7 @@ const PackageForm = () => {
                 />
                 <StyledErrorMessage name="duration" />
               </div>
-              
+
               <div className="mb-4">
                 <label htmlFor="guide_id" className="font-medium block mb-1">
                   Tour Guide
