@@ -13,6 +13,11 @@ const Booking = () => {
   const [addOn, setAddOn] = useState([]);
   const [discount, setDiscount] = useState([]);
   const [discountAdded, setDiscountAdded] = useState(false);
+  const [availability, setAvailability] = useState([]);
+
+  const [travelDate, setTravelDate] = useState(null);
+  const [travelDateSelected, setTravelDateSelected] = useState(false); // State to track if travel date is selected
+
   const [discountedPrice, setDiscountedPrice] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [currentPackage, setCurrentPackage] = useState([]);
@@ -73,6 +78,31 @@ const Booking = () => {
         console.log(response.data);
       } else if (response.data.status === 1) {
         setRegion(response.data.data);
+      }
+    } catch (error) {
+      console.error(
+        "Error:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
+  const getAvailabilityInfo = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/backend/getBooking.php",
+        {
+          headers: {
+            Availability: id,
+            TravelDate: travelDate,
+          },
+        }
+      );
+
+      if (response.data.status === 0) {
+        setTravelDate(null)
+        setTravelDateSelected(false)
+      } else if (response.data.status === 1) {
+        setAvailability(response.data.data[0].number_of_available_people);
       }
     } catch (error) {
       console.error(
@@ -218,8 +248,9 @@ const Booking = () => {
       // Update travel date
       if (name === "travel_date" && value) {
         const selectedTravelDate = new Date(value);
-        // You can perform any additional logic or calculations based on the travel date here
-        setTravelDate(selectedTravelDate); // Assuming you have a state setter for travel date
+        const formattedDate = selectedTravelDate.toISOString().split("T")[0];
+        setTravelDateSelected(true);
+        setTravelDate(formattedDate); // Assuming you have a state setter for travel date
       }
 
       if (name === "discount" && value) {
@@ -322,6 +353,10 @@ const Booking = () => {
     getPackageInfo();
     getDiscountInfo();
   }, []);
+
+  useEffect(() => {
+    getAvailabilityInfo();
+  }, [travelDate]);
 
   useEffect(
     (_) => {
@@ -449,20 +484,31 @@ const Booking = () => {
                 </Field>
                 <StyledErrorMessage name="payment_method" />
               </div>
-              <div className="mb-3">
-                <label
-                  htmlFor="number_of_people"
-                  className="font-medium block mb-1"
-                >
-                  Number Of People
-                </label>
-                <Field
-                  type="number"
-                  name="number_of_people"
-                  id="number_of_people"
-                  className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
-                />
-                <StyledErrorMessage name="number_of_people" />
+              <div>
+                {travelDateSelected && (
+                  <div>
+                    {availability !== null ? (
+                      <p>Only {availability} people available</p>
+                    ) : (
+                      <p>Not available</p>
+                    )}
+                  </div>
+                )}
+                <div className="mb-3">
+                  <label
+                    htmlFor="number_of_people"
+                    className="font-medium block mb-1"
+                  >
+                    Number Of People
+                  </label>
+                  <Field
+                    type="number"
+                    name="number_of_people"
+                    id="number_of_people"
+                    className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  />
+                  <StyledErrorMessage name="number_of_people" />
+                </div>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
