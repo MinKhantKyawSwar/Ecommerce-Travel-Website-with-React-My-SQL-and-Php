@@ -33,6 +33,7 @@ const Booking = () => {
     user_id: "",
     package: Number(id),
     booking_date: "",
+    travel_date: "",
     city: "",
     country: "",
     region: "",
@@ -52,6 +53,9 @@ const Booking = () => {
       .required("Number of People is required"),
     region: Yup.string().required("Region is required."),
     payment_method: Yup.string().required("Payment method is required."),
+    travel_date: Yup.date()
+      .required("Travel date is required.")
+      .min(new Date(), "Travel date must be today or in the future."),
   });
 
   const getRegionInfo = async () => {
@@ -211,6 +215,13 @@ const Booking = () => {
         setTotalPeople(newTotalPeople);
       }
 
+      // Update travel date
+      if (name === "travel_date" && value) {
+        const selectedTravelDate = new Date(value);
+        // You can perform any additional logic or calculations based on the travel date here
+        setTravelDate(selectedTravelDate); // Assuming you have a state setter for travel date
+      }
+
       if (name === "discount" && value) {
         setDiscountAdded(true);
         const selectedDiscountData = discount.find(
@@ -257,12 +268,14 @@ const Booking = () => {
       number_of_people,
       add_on,
       discount,
+      travel_date,
     } = values;
 
     const data = {
       user_id: localStorage.getItem("user_id"),
       package: Number(id),
       booking_date: new Date(),
+      travel_date,
       city,
       country,
       region,
@@ -364,6 +377,18 @@ const Booking = () => {
                   className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                 />
                 <StyledErrorMessage name="city" />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="travel_date" className="font-medium block mb-1">
+                  Travel Date
+                </label>
+                <Field
+                  type="date" // Use type="date" for date input
+                  name="travel_date"
+                  id="travel_date"
+                  className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                />
+                <StyledErrorMessage name="travel_date" />
               </div>
               <div className="mb-3">
                 <label htmlFor="country" className="font-medium block mb-1">

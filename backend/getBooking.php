@@ -201,6 +201,7 @@ switch ($method) {
             // Validate required fields
             if (
                 empty($data->user_id) || empty($data->package) || empty($data->booking_date) ||
+                empty($data->travel_date) ||
                 empty($data->city) || empty($data->country) || empty($data->region) ||
                 empty($data->payment_method) || empty($data->number_of_people) ||
                 empty($data->add_on) || empty($data->discount) || empty($data->total_price)
@@ -212,6 +213,7 @@ switch ($method) {
             $user = $data->user_id;
             $package = $data->package;
             $booking_date = $data->booking_date;
+            $travel_date = $data->travel_date;
             $city = $data->city;
             $country = $data->country;
             $region = $data->region;
@@ -225,13 +227,14 @@ switch ($method) {
             $conn = $db->connect();
 
             // Adding data into database
-            $sql = "INSERT INTO booking(user, package, booking_date, city, country, region, payment_method, number_of_people, add_on, discount, total_price) VALUES 
-                (:user, :package, :booking_date, :city, :country, :region, :payment_method, :number_of_people, :add_on, :discount, :total_price)";
+            $sql = "INSERT INTO booking(user, package, booking_date, travel_date, city, country, region, payment_method, number_of_people, add_on, discount, total_price) VALUES 
+                (:user, :package, :booking_date, :travel_date, :city, :country, :region, :payment_method, :number_of_people, :add_on, :discount, :total_price)";
 
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':user', $user);
             $stmt->bindParam(':package', $package);
             $stmt->bindParam(':booking_date', $booking_date);
+            $stmt->bindParam(':travel_date', $travel_date);
             $stmt->bindParam(':city', $city);
             $stmt->bindParam(':country', $country);
             $stmt->bindParam(':region', $region);

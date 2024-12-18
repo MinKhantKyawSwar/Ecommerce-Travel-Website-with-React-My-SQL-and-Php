@@ -288,6 +288,7 @@ const Profile = () => {
           <h3 className="text-lg font-bold mt-2">{booking.package_name}</h3>
           <p className="text-gray-600">{booking.destination_name}</p>
           <div className="flex items-center justify-between mt-2">
+            <span className="text-sm text-gray-500">Travel Date: {booking.travel_date ? booking.travel_date : 'N/A'}</span>
             <span className="text-sm text-gray-500">People: {booking.number_of_people}</span>
             <span className="text-sm text-gray-500">Add-ons: {booking.add_on}</span>
           </div>
