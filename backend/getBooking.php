@@ -16,8 +16,8 @@ switch ($method) {
         try {
             // Retrieve all headers
             $headers = getallheaders();
-            if (isset($headers['Package_Id'])) {
-                $package_id = $headers['Package_Id'];
+            if (isset($headers['Destination_Id'])) {
+                $destination_Id = $headers['Destination_Id'];
 
                 // Connection to database
                 $conn = $db->connect();
@@ -44,9 +44,9 @@ switch ($method) {
                                 JOIN 
                                     discount ON booking.discount = discount.discount_id
                                 WHERE 
-                                    destination = :destination_id";
-                $stmt = $conn->prepare($getAllPackages);
-                $stmt->bindParam(':destination_id', $getBookingInfo, PDO::PARAM_INT);
+                                    destination = :destination_Id";
+                $stmt = $conn->prepare($getBookingInfo);
+                $stmt->bindParam(':destination_Id', $destination_Id, PDO::PARAM_INT);
                 $stmt->execute();
 
                 $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
