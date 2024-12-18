@@ -7,6 +7,7 @@ import Transactions from "./Transactions";
 import ManageDestination from "./ManageDestination";
 import ManageCustomer from "./ManageCustomer";
 import Profile from "./Profile";
+import ManageGuide from "./ManageGuide";
 
 const Index = () => {
   const [activeTabKey, setActiveTabKey] = useState(
@@ -89,6 +90,7 @@ const Index = () => {
               { name: "transactions", icon: <FaBox /> },
               { name: "Manage Destination", icon: <FaQuestionCircle /> },
               { name: "Manage Customers", icon: <FaQuestionCircle /> },
+              { name: "Manage Guide", icon: <FaQuestionCircle /> },
               { name: "Profile", icon: <FaUser /> },
             ].map(({ name, icon }) => (
               <li key={name}>
@@ -114,6 +116,7 @@ const Index = () => {
           {activeTabKey === "transactions" && <Transactions />}
           {activeTabKey === "Manage Destination" && <ManageDestination />}
           {activeTabKey === "Manage Customers" && <ManageCustomer />}
+          {activeTabKey === "Manage Guide" && <ManageGuide />}
           {activeTabKey === "Profile" && <Profile />}
         </div>
       </div>

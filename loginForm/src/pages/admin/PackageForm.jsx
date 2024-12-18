@@ -11,23 +11,15 @@ import { UserContext } from "../../utils/UserContext";
 
 const PackageForm = () => {
   const { destinationId: destination } = useContext(UserContext);
-  const [packages, setPackages] = useState([]);
-  const [region, setRegion] = useState([]);
-
-  const [previousDestination, setPreviousDestination] = useState([]);
   const [previousPackage, setPreviousPackage] = useState([]);
-
-  const [category, setCategory] = useState([]);
   const [guideInfo, setGuideInfo] = useState([]);
   const [redirect, setRedirect] = useState(false);
 
-  const [imagePreview, setImagePreview] = useState(null); // store image preview for accommodation
   const [flightImagePreview, setFlightImagePreview] = useState(null); // store flight image preview
   const [facilitiesImagePreview, setFacilitiesImagePreview] = useState(null); // store facilities image preview
   const [mealsImagePreview, setMealsImagePreview] = useState(null); // store meals image preview
   const [activitiesImagePreview, setActivitiesImagePreview] = useState(null); // store activities image preview
 
-  const [accommodationImage, setAccommodationImage] = useState(null); // store accommodation images
   const [flightImage, setFlightImage] = useState(null); // store flight images
   const [facilitiesImage, setFacilitiesImage] = useState(null); // store facilities images
   const [mealsImage, setMealsImage] = useState(null); // store accommodation images
@@ -84,20 +76,6 @@ const PackageForm = () => {
     }
   };
 
-  //for accommodation image change from form
-  const handleImageChange = (event) => {
-    const file = event.currentTarget.files[0];
-    if (file) {
-      setAccommodationImage(file);
-      setImagePreview(URL.createObjectURL(file)); // Create a preview URL for image
-    }
-  };
-
-  // deleting accommodation image
-  const handleDeleteImage = () => {
-    setAccommodationImage(null);
-    setImagePreview(null);
-  };
 
   //for flight image change from form
   const handleFlightImageChange = (event) => {
@@ -196,9 +174,7 @@ const PackageForm = () => {
     guide_id: Yup.number().required("Guide is required."),
   });
 
-  // starts fixing submit handler
 
-  // ============================================
   const submitHandler = async (values) => {
     const {
       package_name,

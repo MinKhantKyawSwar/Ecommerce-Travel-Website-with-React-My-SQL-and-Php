@@ -46,6 +46,7 @@ switch ($method) {
                     destination.accommodation, 
                     destination.accommodation_image,
                     tourguide.guide_id,
+                    tourguide.email,
                     tourguide.guide_name,
                     tourguide.language,
                     tourguide.exp_years,

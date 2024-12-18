@@ -139,7 +139,10 @@ const PackageDetails = () => {
                   <p className="text-lg text-gray-600">
                     {packageDetails.guide_name}
                   </p>
-
+                  <p className="text-lg font-medium text-gray-700">Email:</p>
+                  <p className="text-lg text-gray-600">
+                    {packageDetails.email}
+                  </p>
                   <p className="text-lg font-medium text-gray-700 mt-2">
                     Languages:
                   </p>

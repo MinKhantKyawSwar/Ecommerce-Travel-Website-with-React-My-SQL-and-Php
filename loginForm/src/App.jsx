@@ -15,6 +15,7 @@ import Explore from "./components/Explore";
 import Admin from "./pages/admin/Index";
 import DestinationForm from "./pages/admin/DestinationForm";
 import PackageForm from "./pages/admin/PackageForm";
+import GuideForm from "./pages/admin/GuideForm";
 
 function App() {
   const router = createBrowserRouter([
@@ -81,6 +82,14 @@ function App() {
         {
           path: "/admin/manage-destination/packages/:id",
           element: <PackageForm />,
+        },
+        {
+          path: "/admin/manage-guide/",
+          element: <GuideForm />,
+        },
+        {
+          path: "/admin/manage-guide/:id",
+          element: <GuideForm />,
         },
       ],
     },
