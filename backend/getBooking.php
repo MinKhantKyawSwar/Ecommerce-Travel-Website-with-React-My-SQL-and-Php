@@ -38,7 +38,7 @@ switch ($method) {
                                 JOIN 
                                     region ON booking.region = region.region_id
                                 JOIN 
-                                    payment ON booking.payment_method = package.payment_id
+                                    payment ON booking.payment_method = payment.payment_id
                                 JOIN 
                                     add_on ON booking.add_on= add_on.add_on_id
                                 JOIN 

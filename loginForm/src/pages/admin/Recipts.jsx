@@ -31,7 +31,7 @@ const Recipts = () => {
   };
 
   const downloadReceipt = () => {
-    const doc = new jsPDF("p", "mm", "a4"); // A4 size (210 x 297 mm)
+    const doc = new jsPDF("p", "mm", "a4"); // portrait, milimeter and A4 size (210 x 297 mm)
 
     // Header design with a highlighted title
     doc.setFillColor(50, 50, 150); // Blue background
