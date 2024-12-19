@@ -34,11 +34,14 @@ const PackageDetails = () => {
     }
   };
 
+  const handleBooking = async (id) => {
+    navigate(`/booking/${id}`);
+  };
+
   const goBackHandler = () => {
     navigate(-1);
     localStorage.getItem("activeTab");
   };
-
 
   useEffect(() => {
     fetchData(id);
@@ -59,9 +62,17 @@ const PackageDetails = () => {
           <div>{error}</div>
         ) : (
           <div className="mt-6">
-            <h2 className="text-3xl font-semibold text-gray-800 mb-4">
-              Package Details
-            </h2>
+            <div className="flex justify-between mb-5">
+              <h2 className="text-3xl font-semibold text-gray-800 mb-4">
+                Package Details
+              </h2>
+              <button
+                className="border-2 border-green-500 text-green-500 px-3 rounded hover:bg-green-500 hover:text-white transition"
+                onClick={() => handleBooking(id)}
+              >
+                Book Package
+              </button>
+            </div>
 
             <div className="space-y-4">
               <div className="flex justify-between">
@@ -164,7 +175,6 @@ const PackageDetails = () => {
           </div>
         )}
       </div>
-      
     </div>
   );
 };

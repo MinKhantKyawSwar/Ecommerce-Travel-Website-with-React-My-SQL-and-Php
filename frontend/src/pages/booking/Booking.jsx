@@ -4,6 +4,9 @@ import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { Slide, ToastContainer, toast } from "react-toastify"; // Ensure toast is imported
 import * as Yup from "yup";
+import { format } from "date-fns";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import StyledErrorMessage from "../../utils/StyledErrorMessage";
 
 const Booking = () => {
@@ -17,6 +20,7 @@ const Booking = () => {
   const [bookingId, setBookingId] = useState(0);
 
   const [travelDate, setTravelDate] = useState(null);
+  const [availableDates, setAvailableDates] = useState(null);
   const [travelDateSelected, setTravelDateSelected] = useState(false); // State to track if travel date is selected
 
   const [discountedPrice, setDiscountedPrice] = useState(0);
@@ -39,7 +43,7 @@ const Booking = () => {
     user_id: "",
     package: Number(id),
     booking_date: "",
-    travel_date: "",
+    travel_date: null,
     city: "",
     country: "",
     region: "",
@@ -161,6 +165,39 @@ const Booking = () => {
     }
   };
 
+  // getting available
+  const getAvailableDates = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/backend/getAvailableDate.php",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Packages-Id": id,
+          },
+        }
+      );
+
+      console.log(response.data.data);
+      if (response.data.status === 1) {
+        // Map through the data and format the travel_date directly
+        const formattedDates = response.data.data.map((item) => {
+          // Create a date object from the travel_date
+          const date = new Date(item.travel_date);
+          // Adjust the date to local time
+          const localDate = new Date(
+            date.getTime() + date.getTimezoneOffset() * 60000
+          );
+          return format(localDate, "MM/dd/yyyy"); // Format the date
+        });
+
+        setAvailableDates(formattedDates); // Update state with formatted dates
+        console.log(formattedDates); // Log the formatted dates
+      }
+    } catch (error) {
+      console.error("Error fetching available dates:", error);
+    }
+  };
   const getDiscountInfo = async () => {
     try {
       const response = await axios.get(
@@ -316,7 +353,7 @@ const Booking = () => {
       discount: discountId,
       total_price: totalPrice,
     };
-    
+
     const toastFire = (message) => {
       toast.success(message, {
         position: "top-center",
@@ -363,7 +400,6 @@ const Booking = () => {
       } else if (response.data.status === 1) {
         console.log(response.data);
         toastFire(response.data.message);
-        // setTimeout(() => setRedirect(true), 1500); // Redirect after 1.5 seconds
       } else if (response.data.status === 6) {
         toast.error(response.data.message);
       }
@@ -395,12 +431,18 @@ const Booking = () => {
     }
   };
 
+  const handleDateSelect = (date, setFieldValue) => {
+    setTravelDate(date); // Set the state with the Date object
+    setFieldValue("travel_date", date); // Update Formik's travel_date field
+  };
+
   useEffect(() => {
     getPaymentInfo();
     getRegionInfo();
     getAddOnInfo();
     getPackageInfo();
     getDiscountInfo();
+    getAvailableDates();
   }, []);
 
   useEffect(() => {
@@ -440,11 +482,14 @@ const Booking = () => {
         validationSchema={AuthFormSchema}
         onSubmit={submitHandler}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, setFieldValue }) => (
           <Form
             className="w-full max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg"
             method="POST"
-            onChange={getDataChange}
+            // OnSubmit={getDataChange}
+            OnSubmit={(values) => {
+              console.log("Form values:", values); // Debugging
+            }}
           >
             <h1 className="text-center font-semibold text-4xl my-4 text-teal-600">
               Order Form
@@ -462,17 +507,35 @@ const Booking = () => {
                 />
                 <StyledErrorMessage name="city" />
               </div>
+
               <div className="mb-3">
                 <label htmlFor="travel_date" className="font-medium block mb-1">
                   Travel Date
                 </label>
-                <Field
-                  type="date" // Use type="date" for date input
-                  name="travel_date"
-                  id="travel_date"
+                <DatePicker
+                  selected={travelDate}
+                  onChange={(date) => handleDateSelect(date, setFieldValue)}
+                  filterDate={(date) =>
+                    availableDates.some(
+                      (availableDate) =>
+                        format(new Date(availableDate), "MM/dd/yyyy") ===
+                        format(date, "MM/dd/yyyy") // Compare formatted dates
+                    )
+                  }
                   className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  placeholderText="Select a travel date"
                 />
-                <StyledErrorMessage name="travel_date" />
+
+                {travelDate && (
+                  <div className="mt-4 p-4 bg-teal-100 border border-teal-300 rounded-lg shadow-md">
+                    <h3 className="text-lg font-semibold">
+                      Selected Travel Date:
+                    </h3>
+                    <p className="text-xl text-teal-600">
+                      {format(travelDate, "MM/dd/yyyy")}
+                    </p>
+                  </div>
+                )}
               </div>
               <div className="mb-3">
                 <label htmlFor="country" className="font-medium block mb-1">
