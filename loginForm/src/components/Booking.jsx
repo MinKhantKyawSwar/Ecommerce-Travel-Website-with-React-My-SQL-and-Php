@@ -579,7 +579,7 @@ const Booking = () => {
           </Form>
         )}
       </Formik>
-      {redirect && <Navigate to={"/"} />}
+      {redirect && <Navigate to={`/`} />}
     </>
   );
 };

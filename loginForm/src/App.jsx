@@ -16,6 +16,7 @@ import Admin from "./pages/admin/Index";
 import DestinationForm from "./pages/admin/DestinationForm";
 import PackageForm from "./pages/admin/PackageForm";
 import GuideForm from "./pages/admin/GuideForm";
+import Recipts from "./pages/admin/Recipts";
 
 function App() {
   const router = createBrowserRouter([
@@ -90,6 +91,10 @@ function App() {
         {
           path: "/admin/manage-guide/:id",
           element: <GuideForm />,
+        },
+        {
+          path: "/recipts/:id",
+          element: <Recipts />,
         },
       ],
     },

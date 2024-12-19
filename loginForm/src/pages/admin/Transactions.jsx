@@ -13,7 +13,6 @@ const Transaction = () => {
       );
       if (response.data.status === 1) {
         setTransactions(response.data.data);
-        console.log(response.data.data);
       }
     } catch (error) {
       console.error(
@@ -23,8 +22,8 @@ const Transaction = () => {
     }
   };
 
-  const detailsHandler = () => {
-    navigate("/");
+  const detailsHandler = (id) => {
+    navigate(`/recipts/${id}`);
   };
 
   useEffect(() => {
@@ -67,7 +66,7 @@ const Transaction = () => {
                 <tr
                   key={index}
                   className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 text-center transition duration-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  onClick={detailsHandler}
+                  onClick={(_)=>detailsHandler(transaction.booking_id)}
                 >
                   <td className="px-8 py-6">{transaction.package_name}</td>
 
