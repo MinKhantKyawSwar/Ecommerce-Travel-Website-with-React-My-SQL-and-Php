@@ -1,6 +1,6 @@
 import React from 'react'
-// import AuthForm from './AuthForm'
-import AuthForm from './components/AuthForm'
+import AuthForm from '../../components/Auth/AuthForm'
+
 
 const Register = () => {
   return (

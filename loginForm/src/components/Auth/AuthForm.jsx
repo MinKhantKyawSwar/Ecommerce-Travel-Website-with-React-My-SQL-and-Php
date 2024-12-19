@@ -3,10 +3,10 @@ import * as Yup from "yup";
 import axios from "axios";
 import { Bounce, Slide, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import StyledErrorMessage from "./StyledErrorMessage";
+import StyledErrorMessage from "../../utils/StyledErrorMessage";
 import { useContext, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { UserContext } from "../utils/UserContext";
+import { UserContext } from "../../providers/UserContext.jsx";
 
 const AuthForm = ({ isLogin }) => {
   const { updateToken } = useContext(UserContext);

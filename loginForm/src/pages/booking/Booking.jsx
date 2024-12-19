@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { Slide, ToastContainer, toast } from "react-toastify"; // Ensure toast is imported
 import * as Yup from "yup";
-import StyledErrorMessage from "./StyledErrorMessage";
+import StyledErrorMessage from "../../utils/StyledErrorMessage";
 
 const Booking = () => {
   const [redirect, setRedirect] = useState(false);

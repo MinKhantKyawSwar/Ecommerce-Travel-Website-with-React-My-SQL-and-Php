@@ -7,7 +7,7 @@ import App from "./App.jsx";
 // import store from "./store/store.js";
 // import { PersistGate } from "redux-persist/integration/react";
 // import { persistStore } from "redux-persist";
-import { UserContextProvider } from "./utils/UserContext.jsx";
+import { UserContextProvider } from "./providers/UserContext.jsx";
 
 // const persistor = persistStore(store);
 

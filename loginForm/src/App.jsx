@@ -1,23 +1,23 @@
-import Index from "./Index";
+import Index from "./pages/homepage/Index";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Main2 from "./Main2";
-import Login from "./Login";
-import Register from "./Register";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
 import isLoginLoader from "./utils/isLogin";
-import Profile from "./components/Profile";
-import ManageProfile from "./components/ManageProfile";
-import { UserContextProvider } from "./utils/UserContext";
-import Details from "./components/Details";
-import PackageDetails from "./components/PackageDetails";
-import SavedPackages from "./components/SavedPackages";
-import Booking from "./components/Booking";
-import Explore from "./components/Explore";
-import Admin from "./pages/admin/Index";
-import DestinationForm from "./pages/admin/DestinationForm";
-import PackageForm from "./pages/admin/PackageForm";
-import GuideForm from "./pages/admin/GuideForm";
-import Recipts from "./pages/admin/Recipts";
+import Profile from "./pages/profile/Profile";
+import ManageProfile from "./pages/profile/ManageProfile";
 
+import Details from "./pages/homepage/Details";
+import PackageDetails from "./pages/package/PackageDetails";
+import SavedPackages from "./pages/package/SavedPackages";
+import Booking from "./pages/booking/Booking";
+import Explore from "./pages/explore/Explore";
+import Admin from "./pages/admin/Index";
+import PackageForm from "./components/Forms/PackageForm";
+import GuideForm from "./components/Forms/GuideForm";
+import Recipts from "./pages/admin/Recipts";
+import Main2 from "./layout/Main2";
+import { UserContextProvider } from "./providers/UserContext";
+import DestinationForm from "./components/Forms/DestinationForm";
 function App() {
   const router = createBrowserRouter([
     {

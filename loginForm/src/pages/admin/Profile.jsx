@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import axios from "axios";
-import { UserContext } from "../../utils/UserContext";
+import { UserContext } from "../../providers/UserContext";
 
 const Profile = () => {
   const { token, userInfo, setUserInfo } = useContext(UserContext);

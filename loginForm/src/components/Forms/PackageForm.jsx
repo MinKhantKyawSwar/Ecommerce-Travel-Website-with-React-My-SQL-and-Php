@@ -6,8 +6,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { useContext, useEffect, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 // import { XMarkIcon } from "@heroicons/react/24/solid";
-import StyledErrorMessage from "../../components/StyledErrorMessage";
-import { UserContext } from "../../utils/UserContext";
+import StyledErrorMessage from "../../utils/StyledErrorMessage";
+import { UserContext } from "../../providers/UserContext";
 
 const PackageForm = () => {
   const { destinationId: destination } = useContext(UserContext);

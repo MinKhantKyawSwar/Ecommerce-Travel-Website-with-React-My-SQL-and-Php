@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-import { UserContext } from "../../utils/UserContext";
+import { UserContext } from "../../providers/UserContext";
 
 const ManageDestination = () => {
   const [destinations, setDestinations] = useState([]);

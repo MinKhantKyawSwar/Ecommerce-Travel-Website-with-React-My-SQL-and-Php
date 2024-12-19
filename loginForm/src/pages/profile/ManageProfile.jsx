@@ -1,12 +1,12 @@
 import React, { useContext, useState } from "react";
-import { UserContext } from "../utils/UserContext";
+import { UserContext } from "../../providers/UserContext";
 import { Slide, ToastContainer } from "react-toastify";
 import { Field, Formik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
-import isLogin from "../utils/isLogin";
+import isLogin from "../../utils/isLogin";
 import { Form } from "react-router-dom";
-import StyledErrorMessage from "./StyledErrorMessage";
+import StyledErrorMessage from "../../utils/StyledErrorMessage";
 
 const ManageProfile = () => {
   const { token, updateToken, userInfo, setUserInfo } = useContext(UserContext);

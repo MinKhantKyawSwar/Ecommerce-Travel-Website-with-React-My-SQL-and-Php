@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Slide, ToastContainer } from "react-toastify";
 
 const SavedPackages = () => {
   const [error, setError] = useState(null);

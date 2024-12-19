@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import Packages from "./Packages";
-import Reviews from "./Reviews";
+import Packages from "../package/Packages";
+import Reviews from "../package/Reviews";
 
 const Details = () => {
   const [destination, setDestination] = useState({});

@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 // import { XMarkIcon } from "@heroicons/react/24/solid";
-import StyledErrorMessage from "../../components/StyledErrorMessage";
+import StyledErrorMessage from "../../utils/StyledErrorMessage";
 
 const DestinationForm = () => {
   const [region, setRegion] = useState([]);
