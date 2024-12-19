@@ -14,6 +14,7 @@ const Booking = () => {
   const [discount, setDiscount] = useState([]);
   const [discountAdded, setDiscountAdded] = useState(false);
   const [availability, setAvailability] = useState([]);
+  const [bookingId, setBookingId] = useState(0);
 
   const [travelDate, setTravelDate] = useState(null);
   const [travelDateSelected, setTravelDateSelected] = useState(false); // State to track if travel date is selected
@@ -99,8 +100,8 @@ const Booking = () => {
       );
 
       if (response.data.status === 0) {
-        setTravelDate(null)
-        setTravelDateSelected(false)
+        setTravelDate(null);
+        setTravelDateSelected(false);
       } else if (response.data.status === 1) {
         setAvailability(response.data.data[0].number_of_available_people);
       }
@@ -297,11 +298,10 @@ const Booking = () => {
       region,
       payment_method,
       number_of_people,
-      add_on,
-      discount,
       travel_date,
     } = values;
 
+    // Prepare the data object
     const data = {
       user_id: localStorage.getItem("user_id"),
       package: Number(id),
@@ -316,8 +316,37 @@ const Booking = () => {
       discount: discountId,
       total_price: totalPrice,
     };
+    
+    const toastFire = (message) => {
+      toast.success(message, {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    };
+
+    const toastError = (message) => {
+      toast.error(message, {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Slide,
+      });
+    };
 
     try {
+      // Make the booking request
       const response = await axios.post(
         "http://localhost:3000/backend/getBooking.php",
         data,
@@ -328,21 +357,41 @@ const Booking = () => {
         }
       );
 
+      // Handle the response
       if (response.data.status === 0) {
         toast.error(response.data.message);
       } else if (response.data.status === 1) {
         console.log(response.data);
-        toast.success(response.data.message);
-        setTimeout(() => setRedirect(true), 1500);
+        toastFire(response.data.message);
+        // setTimeout(() => setRedirect(true), 1500); // Redirect after 1.5 seconds
       } else if (response.data.status === 6) {
         toast.error(response.data.message);
       }
-    } catch (error) {
-      console.error(
-        "Error:",
-        error.response ? error.response.data : error.message
+
+      // Fetch transaction data
+      const dataResponse = await axios.get(
+        "http://localhost:3000/backend/getTransactions.php",
+        {
+          headers: {
+            "User ": Number(localStorage.getItem("user_id")),
+          },
+        }
       );
-      toast.error("An error occurred. Please try again.");
+
+      // Handle transaction response
+      if (dataResponse.data.status === 0) {
+        toast.error(dataResponse.data.message);
+      } else if (dataResponse.data.status === 1) {
+        setBookingId(dataResponse.data.data[0].booking_id);
+        setTimeout(() => setRedirect(true), 1500); // Redirect after 1.5 seconds
+      }
+    } catch (error) {
+      // Improved error handling
+      const errorMessage = error.response
+        ? error.response.data.message || "An error occurred. Please try again."
+        : "An error occurred. Please check your network connection.";
+      console.error("Error:", errorMessage);
+      toast.error(errorMessage);
     }
   };
 
@@ -579,7 +628,7 @@ const Booking = () => {
           </Form>
         )}
       </Formik>
-      {redirect && <Navigate to={`/`} />}
+      {redirect && <Navigate to={`/recipts/${bookingId}`} />}
     </>
   );
 };

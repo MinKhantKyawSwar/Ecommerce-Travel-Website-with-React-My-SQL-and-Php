@@ -55,6 +55,48 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "No packages found."];
                 }
+            } else if (isset($headers['User'])) {
+                $users = $headers['User'];
+                $conn = $db->connect();
+                $getTransactionInfo = "SELECT 
+                                        booking.*, 
+                                        users.*,
+                                        region.*,
+                                        package.*,
+                                        payment.*,
+                                        add_on.*,
+                                        discount.*
+                                    FROM 
+                                        booking
+                                    JOIN 
+                                        users ON booking.user = users.user_id
+                                    JOIN 
+                                        package ON booking.package = package.package_id
+                                    JOIN 
+                                        region ON booking.region = region.region_id
+                                    JOIN 
+                                        payment ON booking.payment_method = payment.payment_id
+                                    JOIN 
+                                        add_on ON booking.add_on = add_on.add_on_id
+                                    JOIN 
+                                        discount ON booking.discount = discount.discount_id
+                                    where 
+                                        booking.user = :user
+                                    ORDER BY 
+                                        booking.booking_id DESC
+                                    LIMIT 1;";
+                $stmt = $conn->prepare($getTransactionInfo);
+                $stmt->bindParam(':user', $users);
+
+                $stmt->execute();
+
+                $user = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                if ($user) {
+                    $response = ['status' => 1, 'message' => "Data found", 'data' => $user];
+                } else {
+                    $response = ['status' => 0, 'message' => "No packages found.", 'data' => $user];
+                }
             } else {
                 // Connection to database
                 $conn = $db->connect();
