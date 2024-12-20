@@ -104,8 +104,8 @@ const Booking = () => {
       );
 
       if (response.data.status === 0) {
-        setTravelDate(null);
-        setTravelDateSelected(false);
+        // setTravelDate(null);
+        // setTravelDateSelected(false);
       } else if (response.data.status === 1) {
         setAvailability(response.data.data[0].number_of_available_people);
       }
@@ -462,6 +462,10 @@ const Booking = () => {
     ]
   );
 
+  if(redirect){
+    navigate(`/recipts/${bookingId}`)
+  }  
+
   return (
     <>
       <ToastContainer
@@ -486,10 +490,7 @@ const Booking = () => {
           <Form
             className="w-full max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg"
             method="POST"
-            // OnSubmit={getDataChange}
-            OnSubmit={(values) => {
-              console.log("Form values:", values); // Debugging
-            }}
+            onChange={getDataChange}
           >
             <h1 className="text-center font-semibold text-4xl my-4 text-teal-600">
               Order Form
@@ -526,16 +527,7 @@ const Booking = () => {
                   placeholderText="Select a travel date"
                 />
 
-                {travelDate && (
-                  <div className="mt-4 p-4 bg-teal-100 border border-teal-300 rounded-lg shadow-md">
-                    <h3 className="text-lg font-semibold">
-                      Selected Travel Date:
-                    </h3>
-                    <p className="text-xl text-teal-600">
-                      {format(travelDate, "MM/dd/yyyy")}
-                    </p>
-                  </div>
-                )}
+                
               </div>
               <div className="mb-3">
                 <label htmlFor="country" className="font-medium block mb-1">
