@@ -15,14 +15,14 @@ import Admin from "./pages/admin/Index";
 import PackageForm from "./components/Forms/PackageForm";
 import GuideForm from "./components/Forms/GuideForm";
 import Recipts from "./pages/admin/Recipts";
-import Main2 from "./layout/Main2";
+import Main from "./layout/Main";
 import { UserContextProvider } from "./providers/UserContext";
 import DestinationForm from "./components/Forms/DestinationForm";
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Main2 />,
+      element: <Main />,
       children: [
         {
           index: true,

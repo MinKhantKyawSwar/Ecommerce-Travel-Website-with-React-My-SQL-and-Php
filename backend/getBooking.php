@@ -26,6 +26,7 @@ switch ($method) {
                                     users.*,
                                     region.*,
                                     package.*,
+                                    package_info.*,
                                     payment.*,
                                     add_on.*,
                                     discount.*
@@ -43,6 +44,8 @@ switch ($method) {
                                     add_on ON booking.add_on= add_on.add_on_id
                                 JOIN 
                                     discount ON booking.discount = discount.discount_id
+                                JOIN 
+                                    package_info ON package_info.package = package.package_id
                                 WHERE 
                                     destination = :destination_Id";
                 $stmt = $conn->prepare($getBookingInfo);
@@ -79,7 +82,7 @@ switch ($method) {
                 // Connection to database
                 $conn = $db->connect();
                 
-                $getAvailabilityInfo = "SELECT * FROM available_people WHERE package = :id AND travel_date = :travel_date";
+                $getAvailabilityInfo = "SELECT * FROM package_info WHERE package = :id AND travel_date = :travel_date";
                 $stmt = $conn->prepare($getAvailabilityInfo);
                 
                 // Bind parameters

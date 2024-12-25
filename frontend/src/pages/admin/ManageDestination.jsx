@@ -38,6 +38,7 @@ const ManageDestination = () => {
         {
           headers: {
             "Destination-ID": id,
+            "Package" : ""
           },
         }
       );
@@ -165,7 +166,7 @@ const ManageDestination = () => {
                   >
                     {destination.destination_id}
                   </th>
-                  <td className="px-6 py-4">{destination.destination_name}</td>
+                  <td className="px-6 py-4">{destination.city}</td>
                   <td className="px-6 py-4">{destination.country}</td>
                   <td className="px-6 py-4">{destination.region_name}</td>
                   <td className="flex gap-4 py-4">

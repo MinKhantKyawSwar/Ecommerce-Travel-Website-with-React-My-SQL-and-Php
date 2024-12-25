@@ -39,12 +39,13 @@ const Packages = ({ destination_id, activeTab }) => {
     navigate(`/booking/${id}`);
   };
 
-  const savedItemHandler = async (id) => {
+  const savedItemHandler = async (id, least_price) => {
     const user_id = Number(localStorage.getItem("user_id"));
-
+  
     const data = {
       package: id,
       user: user_id,
+      least_price: least_price,
       saved_at: new Date().toLocaleString(),
     };
     try {
@@ -52,20 +53,21 @@ const Packages = ({ destination_id, activeTab }) => {
         `http://localhost:3000/backend/getSavedPackages.php`,
         data,
         {
-          headers: {  
+          headers: {
             "Content-Type": "application/json",
           },
         }
       );
-
+  
       if (response.data.status === 1) {
-        // console.log(response);
-        alert("successfully saved") 
+        alert("Successfully saved");
+      } else if (response.data.status === 2) {
+        alert("This package is already saved.");
       } else {
-        setError("item does not saved");
+        setError("Item was not saved");
       }
     } catch (err) {
-      setError("Failed to fetch packages: " + err.message);
+      setError("Failed to save package: " + err.message);
     }
   };
 
@@ -89,7 +91,7 @@ const Packages = ({ destination_id, activeTab }) => {
                 className="border rounded-lg p-4 shadow-md w-full md:w-1/3"
               >
                 <button
-                  onClick={() => savedItemHandler(pkg.package_id)}
+                  onClick={() => savedItemHandler(pkg.package_id, pkg.least_price)}
                   className={`mb-2 px-4 py-2 rounded ${
                     isSaved
                       ? "bg-green-500 text-white"
@@ -102,7 +104,7 @@ const Packages = ({ destination_id, activeTab }) => {
                   {index + 1}. {pkg.package_name}
                 </p>
                 <p className="text-sm mb-4">
-                  <b>Price:</b> ${pkg.price}
+                  <b>Price:</b> Starting from <b> ${pkg.least_price}</b>
                   <br />
                   <b>Facilities:</b> {pkg.facilities}
                   <br />
@@ -115,7 +117,9 @@ const Packages = ({ destination_id, activeTab }) => {
                 <div className="flex justify-between">
                   <button
                     className="border-2 border-blue-500 text-blue-500 px-3 py-2 rounded hover:bg-blue-500 hover:text-white transition"
-                    onClick={() => {handleDetails(pkg.package_id)}}
+                    onClick={() => {
+                      handleDetails(pkg.package_id);
+                    }}
                   >
                     Check More
                   </button>

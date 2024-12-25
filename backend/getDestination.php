@@ -24,13 +24,16 @@ switch ($method) {
                 $getAllDestination = "SELECT 
                                             destination.*,
                                             category.*,
+                                            location.*,
                                             region.*
                                       FROM 
                                             destination
                                       JOIN 
                                             category ON destination.category = category.category_id
                                       JOIN 
-                                            region ON destination.region = region.region_id
+                                            location ON destination.location = location.location_id
+                                        JOIN
+                                            region ON location.region = region.region_id
                                       where destination_id = :id";
                 $stmt = $conn->prepare($getAllDestination);
                 $stmt->bindParam(':id', $id);
@@ -47,13 +50,16 @@ switch ($method) {
                 $getAllDestinations = "SELECT 
                                             destination.*,
                                             category.*,
+                                            location.*,
                                             region.*
                                       FROM 
                                             destination
                                       JOIN 
                                             category ON destination.category = category.category_id
                                       JOIN 
-                                            region ON destination.region = region.region_id";
+                                            location ON destination.location = location.location_id
+                                      JOIN
+                                            region ON location.region = region.region_id";
                 $stmt = $conn->prepare($getAllDestinations);
                 $stmt->execute();
                 $allDestinations = $stmt->fetchAll(PDO::FETCH_ASSOC); // Fetch all rows
@@ -205,28 +211,28 @@ switch ($method) {
         }
         break;
     case "DELETE":
-            try {
-                $headers = getallheaders();
-                // Check if "User -Id" header exists
-                if (isset($headers['Destination_Id'])) {
-                    $destination_id = $headers['Destination_Id'];
-                }
-                // Retrieve all data
-    
-                $conn = $db->connect();
-                $deleteDestination = "DELETE FROM destination WHERE destination_id= :destination_id";
-                $stmt = $conn->prepare($deleteDestination);
-                $stmt->bindParam(':destination_id', $destination_id);
-                $status = $stmt->execute();
-    
-                if ($status) {
-                    $response = ['status' => 1, 'message' => "Destination successfully deleted!"];
-                } else {
-                    $response = ['status' => 0, 'message' => "Failed to delete Destination!"];
-                }
-            } catch (PDOException $e) {
-                $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
+        try {
+            $headers = getallheaders();
+            // Check if "User -Id" header exists
+            if (isset($headers['Destination_Id'])) {
+                $destination_id = $headers['Destination_Id'];
             }
-            echo json_encode($response);
-            break;
+            // Retrieve all data
+
+            $conn = $db->connect();
+            $deleteDestination = "DELETE FROM destination WHERE destination_id= :destination_id";
+            $stmt = $conn->prepare($deleteDestination);
+            $stmt->bindParam(':destination_id', $destination_id);
+            $status = $stmt->execute();
+
+            if ($status) {
+                $response = ['status' => 1, 'message' => "Destination successfully deleted!"];
+            } else {
+                $response = ['status' => 0, 'message' => "Failed to delete Destination!"];
+            }
+        } catch (PDOException $e) {
+            $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
+        }
+        echo json_encode($response);
+        break;
 }

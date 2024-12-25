@@ -21,7 +21,23 @@ switch ($method) {
 
                 // Connection to database
                 $conn = $db->connect();
-                $getAllPackages = "SELECT * FROM Package WHERE destination = :destination_id";
+                $getAllPackages = "SELECT 
+                                        package.*,
+                                        MIN(package_info.price) AS least_price,
+                                        location.*,
+                                        region.*
+                                    FROM package
+                                JOIN 
+                                    package_info ON package_info.package = package.package_id
+                                JOIN
+                                    destination ON package.destination = destination.destination_id
+                                JOIN
+                                    location ON location.location_id = destination.location
+                                JOIN
+                                    region ON region.region_id = location.region
+                                WHERE destination.destination_id = :destination_id
+                                GROUP BY package.package_id
+                                ORDER BY least_price ASC";
                 $stmt = $conn->prepare($getAllPackages);
                 $stmt->bindParam(':destination_id', $destination_id, PDO::PARAM_INT);
                 $stmt->execute();
@@ -33,31 +49,59 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "No packages found."];
                 }
-            } else if (isset($headers['Package-Id'])) {
+            } else if (isset($headers['Destination-ID']) && isset($headers['Package'])) {
+                $destination_id = $headers['Destination-ID'];
+
+                // Connection to database
+                $conn = $db->connect();
+                $getAllPackages = "SELECT 
+                                        package.*,
+                                        package_info.*,
+                                        location.*,
+                                        region.*
+                                    FROM package_info
+                                JOIN 
+                                    package_info ON package_info.package = package.package_id
+                                JOIN
+                                    destination ON package.destination = destination.destination_id
+                                JOIN
+                                    location ON location.location_id = destination.location
+                                JOIN
+                                    region ON region.region_id = location.region
+                                WHERE destination.destination_id = :destination_id";
+                $stmt = $conn->prepare($getAllPackages);
+                $stmt->bindParam(':destination_id', $destination_id, PDO::PARAM_INT);
+                $stmt->execute();
+
+                $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                if ($packages) {
+                    $response = ['status' => 1, 'message' => "Data found", 'data' => $packages];
+                } else {
+                    $response = ['status' => 0, 'message' => "No packages found."];
+                }
+            } 
+            
+            else if (isset($headers['Package-Id'])) {
                 $package_id = (int) $headers['Package-Id'];
 
                 $conn = $db->connect();
                 $getPackageDetails = "
                 SELECT 
                     package.*, 
-                    destination.destination_name, 
-                    destination.country, 
-                    destination.region, 
-                    destination.accommodation, 
-                    destination.accommodation_image,
-                    tourguide.guide_id,
-                    tourguide.email,
-                    tourguide.guide_name,
-                    tourguide.language,
-                    tourguide.exp_years,
-                    tourguide.guide_image,
-                    tourguide.description As guide_description
+                    package.description As package_description,
+                    destination.*,
+                    tourguide.*,
+                    tourguide.description As guide_description,
+                    package_info.*
                 FROM 
                     package
                 JOIN 
                     destination ON package.destination = destination.destination_id
                 JOIN 
                     tourguide ON tourguide.guide_id = package.tour_guide
+                JOIN 
+                    package_info ON package_info.package = package.package_id
                 WHERE 
                     package.package_id = :package_id;
 
@@ -85,7 +129,7 @@ switch ($method) {
         try {
             // Initialize an array to hold error messages
             $uploadErrors = [];
-            
+
             if (!isset($_FILES['flight_image']) || $_FILES['flight_image']['error'] !== 0) {
                 $uploadErrors[] = "Flight image is missing or there was an upload error.";
             }

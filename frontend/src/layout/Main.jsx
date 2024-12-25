@@ -2,7 +2,7 @@
 import { Outlet } from "react-router-dom";
 import Nav from "../components/Nav";
 
-const Main2 = () => {
+const Main = () => {
 
   return (
     <section className="max-w-[80%] mx-auto h-screen">
@@ -12,4 +12,4 @@ const Main2 = () => {
   );
 };
 
-export default Main2;
+export default Main;

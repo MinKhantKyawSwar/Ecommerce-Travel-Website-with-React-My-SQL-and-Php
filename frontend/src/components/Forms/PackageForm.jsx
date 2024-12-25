@@ -140,9 +140,8 @@ const PackageForm = () => {
   // initial values either from database or ""
   const initialValues = {
     package_name: previousPackage.package_name || "",
-    description: previousPackage.description || "",
-    price: previousPackage.price || "",
-    other_region_price: previousPackage.other_region_price || "",
+    description: previousPackage.package_description || "",
+    price: previousPackage.price || "",    
     flight_description: previousPackage.flight_description || "",
     flight_image: previousPackage.flight_image || "",
     facilities: previousPackage.facilities || "",
@@ -161,9 +160,6 @@ const PackageForm = () => {
     package_name: Yup.string().required("Packge Name is required."),
     description: Yup.string().required("Description is required."),
     price: Yup.number().required("Price is required."),
-    other_region_price: Yup.number().required(
-      "Other region price is required."
-    ),
     flight_description: Yup.string().required(
       "Flight description is required."
     ),
@@ -180,7 +176,6 @@ const PackageForm = () => {
       package_name,
       description,
       price,
-      other_region_price,
       flight_description,
       facilities,
       meals,
@@ -219,9 +214,9 @@ const PackageForm = () => {
         formData.append("id", id);
       }
       formData.append("package_name", package_name);
+      formData.append("location", location);
       formData.append("description", description);
       formData.append("price", price);
-      formData.append("other_region_price", other_region_price);
       formData.append("flight_description", flight_description);
       formData.append("flight_image", flightImage);
       formData.append("facilities", facilities);
@@ -423,21 +418,7 @@ const PackageForm = () => {
                 <StyledErrorMessage name="price" />
               </div>
 
-              <div className="mb-4">
-                <label
-                  htmlFor="other_region_price"
-                  className="font-medium block"
-                >
-                  Other Region Price
-                </label>
-                <Field
-                  type="number"
-                  name="other_region_price"
-                  id="other_region_price"
-                  className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
-                />
-                <StyledErrorMessage name="other_region_price" />
-              </div>
+            
 
               <div className="mb-4">
                 <label

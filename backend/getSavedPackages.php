@@ -18,20 +18,34 @@ switch ($method) {
             $data = json_decode($eData);
             $user = $data->user;
             $package = $data->package;
+            $least_price = $data->least_price;
             $saved_at = $data->saved_at;
 
             $conn = $db->connect();
-            $setSavedItems = "INSERT INTO saveditems (user, package, saved_at) VALUES (:user, :package, :saved_at)";
-            $stmt = $conn->prepare($setSavedItems);
+            // Check if the package is already saved by the user
+            $checkPackage = "SELECT * FROM saveditems WHERE user = :user AND package = :package";
+            $stmt = $conn->prepare($checkPackage);
             $stmt->bindParam(':user', $user);
             $stmt->bindParam(':package', $package);
-            $stmt->bindParam(':saved_at', $saved_at);
-            $status = $stmt->execute();
+            $stmt->execute();
+            $existingPackage = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($status) {
-                $response = ['status' => 1, 'message' => "Item Successfully saved!"];
+            if ($existingPackage) {
+                $response = ['status' => 2, 'message' => "Package already saved!"];
             } else {
-                $response = ['status' => 0, 'message' => "Failed to save item!"];
+                $setSavedItems = "INSERT INTO saveditems (user, package, price, saved_at) VALUES (:user, :package, :least_price, :saved_at)";
+                $stmt = $conn->prepare($setSavedItems);
+                $stmt->bindParam(':user', $user);
+                $stmt->bindParam(':package', $package);
+                $stmt->bindParam(':saved_at', $saved_at);
+                $stmt->bindParam(':least_price', $least_price);
+                $status = $stmt->execute();
+
+                if ($status) {
+                    $response = ['status' => 1, 'message' => "Package Successfully saved!"];
+                } else {
+                    $response = ['status' => 0, 'message' => "Failed to save package!"];
+                }
             }
         } catch (PDOException $e) {
             $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
@@ -50,20 +64,26 @@ switch ($method) {
                 $getSavedPackages = "
                         SELECT 
                             saveditems.*,
-                            package.package_name,
-                            package.price,
+                            package.*,
+                            package_info.price,
                             destination.destination_image,
-                            destination.destination_name
+                            destination.*,
+                            location.*
                         FROM 
                             saveditems
                         JOIN 
                             package ON package.package_id = saveditems.package
                         JOIN 
+                            package_info ON package_info.package = package.package_id
+                        JOIN 
                             users ON users.user_id = saveditems.user
                         JOIN 
                             destination ON destination.destination_id = package.destination
+                        JOIN 
+                            location ON location.location_id = destination.location
                         WHERE 
-                            saveditems.user = :user_id;
+                            saveditems.user = :user_id AND
+                            package_info.price = saveditems.price;
                     ";
                 $stmt = $conn->prepare($getSavedPackages);
                 $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT); // Corrected binding
