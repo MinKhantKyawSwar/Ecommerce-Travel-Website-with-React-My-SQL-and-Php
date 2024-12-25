@@ -277,12 +277,6 @@ const ManageDestination = () => {
                                         </button>
                                       </div>
                                     </div>
-                                    {/* <div className="text-sm text-gray-500 mt-2">
-                                            Other Region Price: $
-                                            {packageItem.other_region_price} |
-                                            Duration: {packageItem.duration}{" "}
-                                            days
-                                          </div> */}
                                   </li>
                                 )
                               )

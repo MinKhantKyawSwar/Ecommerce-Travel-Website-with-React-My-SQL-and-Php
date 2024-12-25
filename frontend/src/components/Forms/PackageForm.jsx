@@ -141,7 +141,6 @@ const PackageForm = () => {
   const initialValues = {
     package_name: previousPackage.package_name || "",
     description: previousPackage.package_description || "",
-    price: previousPackage.price || "",    
     flight_description: previousPackage.flight_description || "",
     flight_image: previousPackage.flight_image || "",
     facilities: previousPackage.facilities || "",
@@ -175,7 +174,6 @@ const PackageForm = () => {
     const {
       package_name,
       description,
-      price,
       flight_description,
       facilities,
       meals,
@@ -216,7 +214,6 @@ const PackageForm = () => {
       formData.append("package_name", package_name);
       formData.append("location", location);
       formData.append("description", description);
-      formData.append("price", price);
       formData.append("flight_description", flight_description);
       formData.append("flight_image", flightImage);
       formData.append("facilities", facilities);
@@ -404,21 +401,6 @@ const PackageForm = () => {
                 />
                 <StyledErrorMessage name="description" />
               </div>
-
-              <div className="mb-4">
-                <label htmlFor="price" className="font-medium block">
-                  Price
-                </label>
-                <Field
-                  type="number"
-                  name="price"
-                  id="price"
-                  className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
-                />
-                <StyledErrorMessage name="price" />
-              </div>
-
-            
 
               <div className="mb-4">
                 <label
@@ -674,6 +656,7 @@ const PackageForm = () => {
                 className="text-white bg-blue-600 py-3 font-medium w-full text-center rounded-lg hover:bg-teal-700 transition duration-200"
                 type="submit"
                 disabled={isSubmitting}
+                navigate={"/"}
               >
                 Submit
               </button>

@@ -205,7 +205,6 @@ switch ($method) {
                 // Read POST data
                 $package_name = $_POST['package_name'];
                 $description = $_POST['description'];
-                $price = $_POST['price'];
                 $other_region_price = $_POST['other_region_price'];
                 $flight_description = $_POST['flight_description'];;
                 $flight_image = $flightTargetFilePath;
@@ -223,15 +222,13 @@ switch ($method) {
                 $conn = $db->connect();
 
                 // Prepare the SQL statement to insert new destination
-                $sql = "INSERT INTO package(package_name, description, price, other_region_price, flight_description, flight_image, facilities, facilities_image, meals, meals_image, activities, activities_image, duration, destination, tour_guide) VALUES 
-                             (:package_name, :description, :price, :other_region_price, :flight_description, :flight_image, :facilities, :facilities_image, :meals, :meals_image, :activities, :activities_image, :duration, :destination, :tour_guide)";
+                $sql = "INSERT INTO package(package_name, description,flight_description, flight_image, facilities, facilities_image, meals, meals_image, activities, activities_image, duration, destination, tour_guide) VALUES 
+                             (:package_name, :description,  :flight_description, :flight_image, :facilities, :facilities_image, :meals, :meals_image, :activities, :activities_image, :duration, :destination, :tour_guide)";
                 $stmt = $conn->prepare($sql);
 
                 // Bind the parameters to the prepared statement
                 $stmt->bindParam(':package_name', $package_name);
                 $stmt->bindParam(':description', $description);
-                $stmt->bindParam(':price', $price);
-                $stmt->bindParam(':other_region_price', $other_region_price);
                 $stmt->bindParam(':flight_description', $flight_description);
                 $stmt->bindParam(':flight_image', $flight_image);
                 $stmt->bindParam(':facilities', $facilities);
