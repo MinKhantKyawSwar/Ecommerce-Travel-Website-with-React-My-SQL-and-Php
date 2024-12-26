@@ -122,9 +122,52 @@ switch ($method) {
                 } else {
                     $response = [
                         'status' => 0,
-                        'message' => "No destinations found"
+                        'message' => "No package found"
                     ];
                 }
+            } else if (isset($headers['Package_Info_Id'])) {
+                $package_info_id = (int)$headers['Package_Info_Id'];
+                // connection to database
+                $conn = $db->connect();
+
+                // Query to fetch all destinations
+                $getPackageDetailInfo = "SELECT 
+                                            package_info.*,
+                                            location.*, 
+                                            package.* 
+                                        FROM package_info 
+                                        JOIN 
+                                            location 
+                                        ON 
+                                            package_info.source_location = location.location_id 
+                                        JOIN 
+                                            package 
+                                        ON 
+                                            package_info.package = package.package_id 
+                                        where 
+                                            package_info.package_info_id = :package_info_id";
+                $stmt = $conn->prepare($getPackageDetailInfo);
+                $stmt->bindParam(':package_info_id', $package_info_id, PDO::PARAM_INT);
+                $stmt->execute();
+                $PackageDetailInfo = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                if (!empty($PackageDetailInfo)) {
+                    $response = [
+                        'status' => 1,
+                        'message' => "Data found",
+                        'data' => $PackageDetailInfo
+                    ];
+                } else {
+                    $response = [
+                        'status' => 0,
+                        'message' => "No package found"
+                    ];
+                }
+            } else {
+                $response = [
+                    'status' => 0,
+                    'message' => "Package Id not found"
+                ];
             }
         } catch (PDOException $e) {
             $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];

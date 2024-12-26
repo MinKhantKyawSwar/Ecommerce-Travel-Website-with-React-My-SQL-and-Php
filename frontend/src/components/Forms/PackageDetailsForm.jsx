@@ -11,6 +11,7 @@ import { Navigate, useParams } from "react-router-dom";
 const PackageDetailsForm = () => {
   const [region, setRegion] = useState([]);
   const [redirect, setRedirect] = useState(false);
+  const [isEdit, setisEdit] = useState(false);
   const { id } = useParams();
 
   const [formEntries, setFormEntries] = useState([
@@ -44,6 +45,25 @@ const PackageDetailsForm = () => {
     }
   };
 
+  const getPrevData = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/backend/getPackageDetails.php",
+        {
+          headers : {
+            "Package_Info_Id" : id
+          }
+        }
+      );
+      if (response.data.status === 1) {
+        setFormEntries(response.data.data);
+      } else {
+        console.error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching packages:", error.message);
+    }
+  };
+
   const addFormEntry = () => {
     setFormEntries((prevEntries) => [
       ...prevEntries,
@@ -64,8 +84,14 @@ const PackageDetailsForm = () => {
   };
 
   const handleSubmit = async (values) => {
+    let url;
+    if(isEdit){
+      url = "http://localhost:3000/backend/editPackageDetails.php";
+    }else{
+      url = "http://localhost:3000/backend/getPackageDetails.php";
+    }
     try {
-      const response = await axios.post("http://localhost:3000/backend/getPackageDetails.php", values);
+      const response = await axios.post(url, values);
       if (response.data.status === 1) {
         toast.success("Packages submitted successfully!");
         setRedirect(true);
@@ -88,6 +114,11 @@ const PackageDetailsForm = () => {
   useEffect(() => {
     getAllRegion();
   }, []);
+
+  useEffect(() => {
+    getPrevData();
+  }, [isEdit]);
+
 
   return (
     <>
