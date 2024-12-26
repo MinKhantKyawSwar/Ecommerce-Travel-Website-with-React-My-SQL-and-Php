@@ -162,8 +162,8 @@ switch ($method) {
                 move_uploaded_file($accommodation_image_file['tmp_name'], $accommodationTargetFilePath)
             ) {
                 // Read POST data
-                $destination_name = $_POST['destination_name'];
                 $country = $_POST['country'];
+                $city = $_POST['city'];
                 $region = $_POST['region'];
                 $description = $_POST['description'];
                 $category = $_POST['category'];
@@ -176,15 +176,35 @@ switch ($method) {
                 // Connect to the database
                 $conn = $db->connect();
 
+                // Check if the location already exists
+                $checkExistLocationSql = "SELECT `location_id` FROM `location` WHERE `city` = :city AND `country` = :country AND `region` = :region";
+                $stmt = $conn->prepare($checkExistLocationSql);
+                $stmt->bindParam(':city', $city);
+                $stmt->bindParam(':country', $country);
+                $stmt->bindParam(':region', $region);
+                $stmt->execute();
+                $location = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($location) {
+                    // Location exists, use the existing location_id
+                    $location_id = $location['location_id'];
+                } else {
+                    // Location does not exist, insert it into the database
+                    $insertLocationSql = "INSERT INTO `location` (`city`, `country`, `region`) VALUES (:city, :country, :region)";
+                    $stmt = $conn->prepare($insertLocationSql);
+                    $stmt->bindParam(':city', $city);
+                    $stmt->bindParam(':country', $country);
+                    $stmt->bindParam(':region', $region);
+                    $stmt->execute();
+                    $location_id = $conn->lastInsertId();
+                }
+
                 // Prepare the SQL statement to insert new destination
-                $sql = "INSERT INTO destination (destination_name, country, region, description, category, accommodation, destination_image, destination_second_image, destination_third_image, accommodation_image) 
-                                 VALUES (:destination_name, :country, :region, :description, :category, :accommodation, :destination_image, :destination_second_image, :destination_third_image, :accommodation_image)";
+                $sql = "INSERT INTO destination ( location, description, category, accommodation, destination_image, destination_second_image, destination_third_image, accommodation_image) 
+                                 VALUES (:location_id, :description, :category, :accommodation, :destination_image, :destination_second_image, :destination_third_image, :accommodation_image)";
                 $stmt = $conn->prepare($sql);
 
                 // Bind the parameters to the prepared statement
-                $stmt->bindParam(':destination_name', $destination_name);
-                $stmt->bindParam(':country', $country);
-                $stmt->bindParam(':region', $region);
                 $stmt->bindParam(':description', $description);
                 $stmt->bindParam(':category', $category);
                 $stmt->bindParam(':accommodation', $accommodation);
@@ -192,7 +212,9 @@ switch ($method) {
                 $stmt->bindParam(':destination_second_image', $destination_second_image);
                 $stmt->bindParam(':destination_third_image', $destination_third_image);
                 $stmt->bindParam(':accommodation_image', $accommodation_image);
+                $stmt->bindParam(':location_id', $location_id);
 
+                
                 // Execute the statement
                 $success = $stmt->execute();
                 // Send the response back

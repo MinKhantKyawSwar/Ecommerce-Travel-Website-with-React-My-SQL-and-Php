@@ -180,7 +180,7 @@ const DestinationForm = () => {
 
   // initial values either from database or ""
   const initialValues = {
-    destination_name: previousDestination.destination_name || "",
+    city: previousDestination.city || "",
     country: previousDestination.country || "",
     region: previousDestination.region || "",
     description: previousDestination.description || "",
@@ -195,7 +195,7 @@ const DestinationForm = () => {
 
   // auth schema for input validation with Yup
   const AuthFormSchema = Yup.object({
-    destination_name: Yup.string().required("Destination Name is required."),
+    city: Yup.string().required("Destination Name is required."),
     country: Yup.string().required("Country is required."),
     region: Yup.string().required("Region is required."),
     description: Yup.string().required("Description is required."),
@@ -205,7 +205,7 @@ const DestinationForm = () => {
 
   const submitHandler = async (values) => {
     const {
-      destination_name,
+      city,
       country,
       region,
       description,
@@ -260,7 +260,7 @@ const DestinationForm = () => {
       // formdata to send to backend
       const formData = new FormData();
       formData.append("id", id);
-      formData.append("destination_name", destination_name);
+      formData.append("city", city);
       formData.append("country", country);
       formData.append("region", region);
       formData.append("description", description);
@@ -442,16 +442,16 @@ const DestinationForm = () => {
                 Destination Form
               </h1>
               <div className="mb-4">
-                <label htmlFor="destination_name" className="font-medium block">
+                <label htmlFor="city" className="font-medium block">
                   Destination Name
                 </label>
                 <Field
                   type="text"
-                  name="destination_name"
-                  id="destination_name"
+                  name="city"
+                  id="city"
                   className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                 />
-                <StyledErrorMessage name="destination_name" />
+                <StyledErrorMessage name="city" />
               </div>
 
               <input

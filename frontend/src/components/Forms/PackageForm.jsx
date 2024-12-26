@@ -158,7 +158,6 @@ const PackageForm = () => {
   const AuthFormSchema = Yup.object({
     package_name: Yup.string().required("Packge Name is required."),
     description: Yup.string().required("Description is required."),
-    price: Yup.number().required("Price is required."),
     flight_description: Yup.string().required(
       "Flight description is required."
     ),
@@ -322,7 +321,7 @@ const PackageForm = () => {
       if (meals_image) {
         console.log(meals_image);
         setMealsImage(`http://localhost:3000/backend/${meals_image}`);
-        setMealsImagePreview(`http://localhost:3000/backend/${meals_image}`); // Set the preview as well
+        setMealsImagePreview(`http://localhost:3000/backend/${meals_image}`);
       }
 
       if (activities_image) {
@@ -330,7 +329,7 @@ const PackageForm = () => {
         setActivitiesImage(`http://localhost:3000/backend/${activities_image}`);
         setActivitiesImagePreview(
           `http://localhost:3000/backend/${activities_image}`
-        ); // Set the preview as well
+        ); 
       }
     }
   }, [previousPackage]);
@@ -656,7 +655,6 @@ const PackageForm = () => {
                 className="text-white bg-blue-600 py-3 font-medium w-full text-center rounded-lg hover:bg-teal-700 transition duration-200"
                 type="submit"
                 disabled={isSubmitting}
-                navigate={"/"}
               >
                 Submit
               </button>

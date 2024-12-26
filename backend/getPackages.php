@@ -49,7 +49,9 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "No packages found."];
                 }
-            } else if (isset($headers['Destination-ID']) && isset($headers['Package'])) {
+            }  
+            
+            else if (isset($headers['Destination-ID']) && isset($headers['Package'])) {
                 $destination_id = $headers['Destination-ID'];
 
                 // Connection to database
@@ -205,7 +207,6 @@ switch ($method) {
                 // Read POST data
                 $package_name = $_POST['package_name'];
                 $description = $_POST['description'];
-                $other_region_price = $_POST['other_region_price'];
                 $flight_description = $_POST['flight_description'];;
                 $flight_image = $flightTargetFilePath;
                 $facilities = $_POST['facilities'];

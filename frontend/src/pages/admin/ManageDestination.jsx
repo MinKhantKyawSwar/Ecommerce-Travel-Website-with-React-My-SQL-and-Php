@@ -20,7 +20,7 @@ const ManageDestination = () => {
       );
 
       if (response.data.status === 1) {
-        setDestinations(response.data.data);
+        setDestinations(response.data.data);  
       } else {
         setError("No data found");
       }
