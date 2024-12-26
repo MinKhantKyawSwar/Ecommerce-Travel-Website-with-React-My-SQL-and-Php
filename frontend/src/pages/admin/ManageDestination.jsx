@@ -154,7 +154,7 @@ const ManageDestination = () => {
   const deletePackageDetailsById = async (id) => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/backend/getPackagesDetails.php`,
+        `http://localhost:3000/backend/getPackageDetails.php`,
         {
           headers: {
             "Package-Info-Id": id,
@@ -164,7 +164,6 @@ const ManageDestination = () => {
 
       if (response.data.status === 1) {
         // window.location.reload();
-        console.log('Deleted');
       } else {
         setError("Cannot delete this package details!");
       }
@@ -286,16 +285,16 @@ const ManageDestination = () => {
                                   <li
                                     key={packageIndex}
                                     className="py-4 border-b border-gray-300 transition duration-200 hover:bg-gray-200"
-                                   
-                                  >
-                                    <div className="flex justify-between items-center hover:underline transition duration-200">
-                                      <span className="font-medium text-gray-800"  onClick={() =>
+                                    onClick={() =>
                                       toggleDetailsDropdown(
                                         packageIndex,
                                         packageItem.package_id
                                       )
-                                    }>
-                                        {packageItem.package_name} 
+                                    }
+                                  >
+                                    <div className="flex justify-between items-center hover:underline transition duration-200">
+                                      <span className="font-medium text-gray-800">
+                                        {packageItem.package_name}
                                       </span>
                                       <div className="flex gap-4">
                                         <button

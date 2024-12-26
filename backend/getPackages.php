@@ -263,23 +263,49 @@ switch ($method) {
     case "DELETE":
         try {
             $headers = getallheaders();
-            // Check if "User -Id" header exists
+            // Check if "Package-Id" header exists
             if (isset($headers['Package-Id'])) {
                 $package_id = $headers['Package-Id'];
-            }
+         
             // Retrieve all data
 
             $conn = $db->connect();
+            $deletePackage = "DELETE FROM package_info WHERE package= :package_id";
+            $stmt = $conn->prepare($deletePackage);
+            $stmt->bindParam(':package_id', $package_id);
+            $status1 = $stmt->execute();
+
+
             $deletePackage = "DELETE FROM package WHERE package_id= :package_id";
             $stmt = $conn->prepare($deletePackage);
             $stmt->bindParam(':package_id', $package_id);
-            $status = $stmt->execute();
+            $status2 = $stmt->execute();
 
-            if ($status) {
+
+            if ($status1 && $status2) {
                 $response = ['status' => 1, 'message' => "Package successfully deleted!"];
             } else {
                 $response = ['status' => 0, 'message' => "Failed to delete Package!"];
             }
+        } else if (isset($headers['Package-Info-Id'])) {
+                $package_info_id = $headers['Package-Info-Id'];
+            // Retrieve all data
+
+            $conn = $db->connect();
+            $deletePackage = "DELETE FROM package_info WHERE package_info_id= :package_info_id";
+            $stmt = $conn->prepare($deletePackage);
+            $stmt->bindParam(':package_info_id', $package_info_id);
+            $status = $stmt->execute();
+
+            if ($status) {
+                $response = ['status' => 1, 'message' => "Package Details successfully deleted!"];
+            } else {
+                $response = ['status' => 0, 'message' => "Failed to delete Package Details!"];
+            }
+        }
+        else{
+            $response = ['status' => 0, 'message' => "Id is missing!"];
+        }
         } catch (PDOException $e) {
             $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
         }

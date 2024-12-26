@@ -131,17 +131,18 @@ switch ($method) {
         }
         echo json_encode($response);
         break;
-        case "DELETE":
+    case "DELETE":
+
+        try {
             $headers = getallheaders();
-            try {
-                if (isset($headers['Package-Info-Id'])) {
-                    $package_info_Id = (int)$headers['Package-Info-Id'];
+            if (isset($headers['Package-Info-Id'])) {
+                $package_info_id = (int)$headers['Package-Info-Id'];
                 $conn = $db->connect();
                 $deletePackage = "DELETE FROM package_info WHERE package_info_id= :package_info_id";
                 $stmt = $conn->prepare($deletePackage);
                 $stmt->bindParam(':package_info_id', $package_info_id, PDO::PARAM_INT);
                 $status = $stmt->execute();
-    
+
                 if ($status) {
                     $response = ['status' => 1, 'message' => "Package Data Information is successfully deleted!"];
                 } else {
@@ -150,12 +151,12 @@ switch ($method) {
             } else {
                 $response = ['status' => 0, 'message' => "Package Data information not found!"];
             }
-            } catch (PDOException $e) {
-                $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
-            }
-            echo json_encode($response);
-            break;
-    
+        } catch (PDOException $e) {
+            $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
+        }
+        echo json_encode($response);
+        break;
+
     default:
         echo json_encode(['status' => 0, 'message' => 'Invalid request method']);
         break;

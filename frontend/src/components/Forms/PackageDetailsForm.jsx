@@ -27,24 +27,20 @@ const PackageDetailsForm = () => {
 
   const getAllRegion = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3000/backend/getBooking.php",
+      const response = await axios.get("http://localhost:3000/backend/getBooking.php",
         {
-          headers: {
-            Region: region,
-          },
+          headers : {
+            "Region" : region
+          }
         }
       );
-      if (response.data.status === 0) {
-        console.log(response.data.message);
-      } else if (response.data.status === 1) {
+      if (response.data.status === 1) {
         setRegion(response.data.data);
+      } else {
+        console.error(response.data.message);
       }
     } catch (error) {
-      console.error(
-        "Error:",
-        error.response ? error.response.data : error.message
-      );
+      console.error("Error fetching regions:", error.message);
     }
   };
 
@@ -69,10 +65,7 @@ const PackageDetailsForm = () => {
 
   const handleSubmit = async (values) => {
     try {
-      const response = await axios.post(
-        "http://localhost:3000/backend/getPackageDetails.php",
-        values
-      );
+      const response = await axios.post("http://localhost:3000/backend/getPackageDetails.php", values);
       if (response.data.status === 1) {
         toast.success("Packages submitted successfully!");
         setRedirect(true);
@@ -98,15 +91,9 @@ const PackageDetailsForm = () => {
 
   return (
     <>
-      <ToastContainer
-        position="top-center"
-        autoClose={2000}
-        transition={Slide}
-      />
+      <ToastContainer position="top-center" autoClose={2000} transition={Slide} />
       <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
-        <h1 className="text-center font-semibold text-3xl my-4 text-blue-600">
-          Package Details Form
-        </h1>
+        <h1 className="text-center font-semibold text-3xl my-4 text-blue-600">Package Details Form</h1>
         {redirect && <Navigate to={`/admin`} />}
         <Formik
           initialValues={formEntries}
@@ -117,59 +104,36 @@ const PackageDetailsForm = () => {
             <Form className="space-y-6">
               {formEntries.map((entry, index) => (
                 <div key={index} className="border p-4 mb-4 rounded-lg">
-                  <h2 className="text-lg font-medium mb-2">
-                    Package {index + 1}
-                  </h2>
+                  <h2 className="text-lg font-medium mb-2">Package {index + 1}</h2>
                   <div className="mb-4">
-                    <label
-                      htmlFor={`formEntries.${index}.city`}
-                      className="font-medium block"
-                    >
-                      City
-                    </label>
+                    <label htmlFor={`formEntries.${index}.city`} className="font-medium block">City</label>
                     <Field
                       type="text"
                       name={`formEntries.${index}.city`}
                       value={entry.city}
-                      onChange={(e) =>
-                        handleFieldChange(index, "city", e.target.value)
-                      }
+                      onChange={(e) => handleFieldChange(index, "city", e.target.value)}
                       className=" text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                     />
                     <StyledErrorMessage name={`formEntries.${index}.city`} />
                   </div>
                   <div className="mb-4">
-                    <label
-                      htmlFor={`formEntries.${index}.country`}
-                      className="font-medium block"
-                    >
-                      Country
-                    </label>
+                    <label htmlFor={`formEntries.${index}.country`} className="font-medium block">Country</label>
                     <Field
                       type="text"
                       name={`formEntries.${index}.country`}
                       value={entry.country}
-                      onChange={(e) =>
-                        handleFieldChange(index, "country", e.target.value)
-                      }
+                      onChange={(e) => handleFieldChange(index, "country", e.target.value)}
                       className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                     />
                     <StyledErrorMessage name={`formEntries.${index}.country`} />
                   </div>
                   <div className="mb-4">
-                    <label
-                      htmlFor={`formEntries.${index}.region`}
-                      className="font-medium block mb-1"
-                    >
-                      Region
-                    </label>
+                    <label htmlFor={`formEntries.${index}.region`} className="font-medium block mb-1">Region</label>
                     <Field
                       as="select"
                       name={`formEntries.${index}.region`}
                       value={entry.region}
-                      onChange={(e) =>
-                        handleFieldChange(index, "region", e.target.value)
-                      }
+                      onChange={(e) => handleFieldChange(index, "region", e.target.value)}
                       className="text-lg border border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                     >
                       <option value="" label="Select one option" />
@@ -182,59 +146,32 @@ const PackageDetailsForm = () => {
                     <StyledErrorMessage name={`formEntries.${index}.region`} />
                   </div>
                   <div className="mb-4">
-                    <label
-                      htmlFor={`formEntries.${index}.price`}
-                      className="font-medium block"
-                    >
-                      Price
-                    </label>
+                    <label htmlFor={`formEntries.${index}.price`} className="font-medium block">Price</label>
                     <Field
                       type="number"
                       name={`formEntries.${index}.price`}
                       value={entry.price}
-                      onChange={(e) =>
-                        handleFieldChange(index, "price", e.target.value)
-                      }
+                      onChange={(e) => handleFieldChange(index, "price", e.target.value)}
                       className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                     />
                     <StyledErrorMessage name={`formEntries.${index}.price`} />
                   </div>
                   <div className="mb-4">
-                    <label
-                      htmlFor={`formEntries.${index}.number_of_available_people`}
-                      className="font-medium block"
-                    >
-                      Available People
-                    </label>
+                    <label htmlFor={`formEntries.${index}.number_of_available_people`} className="font-medium block">Available People</label>
                     <Field
                       type="number"
                       name={`formEntries.${index}.number_of_available_people`}
                       value={entry.number_of_available_people}
-                      onChange={(e) =>
-                        handleFieldChange(
-                          index,
-                          "number_of_available_people",
-                          e.target.value
-                        )
-                      }
+                      onChange={(e) => handleFieldChange(index, "number_of_available_people", e.target.value)}
                       className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                     />
-                    <StyledErrorMessage
-                      name={`formEntries.${index}.number_of_available_people`}
-                    />
+                    <StyledErrorMessage name={`formEntries.${index}.number_of_available_people`} />
                   </div>
                   <div className="mb-4">
-                    <label
-                      htmlFor={`formEntries.${index}.travel_date`}
-                      className="font-medium block"
-                    >
-                      Travel Date
-                    </label>
+                    <label htmlFor={`formEntries.${index}.travel_date`} className="font-medium block">Travel Date</label>
                     <DatePicker
                       selected={entry.travel_date}
-                      onChange={(date) =>
-                        handleFieldChange(index, "travel_date", date)
-                      }
+                      onChange={(date) => handleFieldChange(index, "travel_date", date)}
                       className="text-lg border-2 border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                     />
                   </div>
