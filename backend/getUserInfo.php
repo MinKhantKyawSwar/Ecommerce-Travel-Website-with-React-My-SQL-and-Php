@@ -33,8 +33,7 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "Failed to find!"];
                 }
-            }
-            else {
+            } else {
                 // Query to fetch all destinations
                 $getAllUsersInfo = "SELECT * FROM users where role = 'customer'";
                 $stmt = $conn->prepare($getAllUsersInfo);
@@ -52,11 +51,14 @@ switch ($method) {
                         'status' => 0,
                         'message' => "No ysers found"
                     ];
-                } 
+                }
             }
         } catch (PDOException $e) {
             $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
         }
         echo json_encode($response);
+        break;
+    default:
+        echo json_encode(['status' => 0, 'message' => 'Invalid request method']);
         break;
 }

@@ -214,7 +214,7 @@ switch ($method) {
                 $stmt->bindParam(':accommodation_image', $accommodation_image);
                 $stmt->bindParam(':location_id', $location_id);
 
-                
+
                 // Execute the statement
                 $success = $stmt->execute();
                 // Send the response back
@@ -235,7 +235,7 @@ switch ($method) {
     case "DELETE":
         try {
             $headers = getallheaders();
-            // Check if "User -Id" header exists
+            // Check if "destination" header exists
             if (isset($headers['Destination_Id'])) {
                 $destination_id = $headers['Destination_Id'];
             }
@@ -256,5 +256,8 @@ switch ($method) {
             $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
         }
         echo json_encode($response);
+        break;
+    default:
+        echo json_encode(['status' => 0, 'message' => 'Invalid request method']);
         break;
 }

@@ -105,32 +105,34 @@ switch ($method) {
         echo json_encode($response);
         break;
 
-        case "DELETE":
-            try {
-                // Retrieve all headers
-                $headers = getallheaders();
-                // Check if "User -Id" header exists
-                if (isset($headers['Saved-PackageId'])) {
-                    $saved_packageId = $headers['Saved-PackageId'];
-    
-                    $conn = $db->connect();
-                    $deleteSavedPackages = "Delete from saveditems where saved_id = :package_id";
-                    $stmt = $conn->prepare($deleteSavedPackages);
-                    $stmt->bindParam(':package_id', $saved_packageId);
-                    
+    case "DELETE":
+        try {
+            // Retrieve all headers
+            $headers = getallheaders();
+            // Check if "User -Id" header exists
+            if (isset($headers['Saved-PackageId'])) {
+                $saved_packageId = $headers['Saved-PackageId'];
 
-                    if ($stmt->execute()) {
-                        $response = ['status' => 1, 'message' => "Saved Package deleted"];
-                    } else {
-                        $response = ['status' => 0, 'message' => "No saved package found."];
-                    }
+                $conn = $db->connect();
+                $deleteSavedPackages = "Delete from saveditems where saved_id = :package_id";
+                $stmt = $conn->prepare($deleteSavedPackages);
+                $stmt->bindParam(':package_id', $saved_packageId);
+
+
+                if ($stmt->execute()) {
+                    $response = ['status' => 1, 'message' => "Saved Package deleted"];
                 } else {
-                    $response = ['status' => 0, 'message' => "User-Id header missing."];
+                    $response = ['status' => 0, 'message' => "No saved package found."];
                 }
-
-            } catch (PDOException $e) {
-                $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
+            } else {
+                $response = ['status' => 0, 'message' => "User-Id header missing."];
             }
-            echo json_encode($response);
-            break;
+        } catch (PDOException $e) {
+            $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
+        }
+        echo json_encode($response);
+        break;
+    default:
+        echo json_encode(['status' => 0, 'message' => 'Invalid request method']);
+        break;
 }

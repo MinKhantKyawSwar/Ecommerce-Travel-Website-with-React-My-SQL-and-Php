@@ -74,35 +74,33 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "No packages found."];
                 }
-            }else if (isset($headers['Availability']) && isset($headers['TravelDate'])) {
+            } else if (isset($headers['Availability']) && isset($headers['TravelDate'])) {
 
                 $id = $headers['Availability'];
                 $travel_date = $headers['TravelDate'];
-                
+
                 // Connection to database
                 $conn = $db->connect();
-                
+
                 $getAvailabilityInfo = "SELECT * FROM package_info WHERE package = :id AND travel_date = :travel_date";
                 $stmt = $conn->prepare($getAvailabilityInfo);
-                
+
                 // Bind parameters
                 $stmt->bindParam(':id', $id, PDO::PARAM_INT); // Corrected to bind to :id
                 $stmt->bindParam(':travel_date', $travel_date, PDO::PARAM_STR); // Use PDO::PARAM_STR for date
-                
+
                 // Execute the statement
                 $stmt->execute();
-                
+
                 // Fetch all available people
                 $available_people = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
+
                 if ($available_people) {
                     $response = ['status' => 1, 'message' => "Data found", 'data' => $available_people];
                 } else {
                     $response = ['status' => 0, 'message' => "No package found"];
                 }
-            }
-            
-            else if (isset($headers['Payment'])) {
+            } else if (isset($headers['Payment'])) {
 
                 // Connection to database
                 $conn = $db->connect();
@@ -278,8 +276,8 @@ switch ($method) {
                 $stmt = $conn->prepare($updateAvailabilitySql);
                 $stmt->bindParam(':total_people', $total_people);
                 $stmt->bindParam(':travel_date', $travel_date);
-                
-                
+
+
                 if ($stmt->execute()) {
                     $response = ['status' => 1, 'message' => 'Available People updated successfully'];
                 } else {
@@ -321,5 +319,8 @@ switch ($method) {
 
         // Return the response as JSON
         echo json_encode($response);
+        break;
+    default:
+        echo json_encode(['status' => 0, 'message' => 'Invalid request method']);
         break;
 }

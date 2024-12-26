@@ -38,12 +38,12 @@ switch ($method) {
 
             // Process each image upload
             $guideImageFilePath = !empty($_FILES['guide_image']['name']) ? $packageSaveLocation . uniqid() . '_' . basename($_FILES['guide_image']['name']) : $currentImages['guide_image'];
-            
+
             // Move the uploaded files to the target directory if they are uploaded
             if (!empty($_FILES['guide_image']['name'])) {
                 move_uploaded_file($_FILES['guide_image']['tmp_name'], $guideImageFilePath);
             }
-           
+
 
             // Prepare the SQL statement to update the destination
             $sql = "UPDATE tourguide 
@@ -60,7 +60,7 @@ switch ($method) {
             $stmt->bindParam(':language', $language);
             $stmt->bindParam(':exp_years', $exp_years);
             $stmt->bindParam(':guide_image', $guideImageFilePath);
-           
+
 
             // Execute the statement
             $success = $stmt->execute();
@@ -76,5 +76,8 @@ switch ($method) {
         } catch (PDOException $e) {
             echo json_encode(['status' => 0, 'message' => 'Error: ' . $e->getMessage()]);
         }
+        break;
+    default:
+        echo json_encode(['status' => 0, 'message' => 'Invalid request method']);
         break;
 }

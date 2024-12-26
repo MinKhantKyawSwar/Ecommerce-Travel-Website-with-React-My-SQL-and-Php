@@ -19,7 +19,7 @@ switch ($method) {
             if (isset($headers['Packages-Id'])) {
                 // Connection to database
                 $conn = $db->connect();
-                $getPackages = "SELECT COUNT(*) as total_packages FROM package"; 
+                $getPackages = "SELECT COUNT(*) as total_packages FROM package";
                 $stmt = $conn->prepare($getPackages);
                 $stmt->execute();
 
@@ -30,10 +30,10 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "No packages found."];
                 }
-            }else if (isset($headers['Total_Income'])) {
+            } else if (isset($headers['Total_Income'])) {
                 // Connection to database
                 $conn = $db->connect();
-                $getTotalCount = "SELECT SUM(total_price) as total_price FROM booking"; 
+                $getTotalCount = "SELECT SUM(total_price) as total_price FROM booking";
                 $stmt = $conn->prepare($getTotalCount);
                 $stmt->execute();
 
@@ -44,13 +44,15 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "No booking found."];
                 }
-            }
-            else {
+            } else {
                 $response = ['status' => 0, 'message' => "Header missing."];
             }
         } catch (PDOException $e) {
             $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
         }
         echo json_encode($response);
+        break;
+    default:
+        echo json_encode(['status' => 0, 'message' => 'Invalid request method']);
         break;
 }

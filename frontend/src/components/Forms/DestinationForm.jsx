@@ -24,6 +24,21 @@ const DestinationForm = () => {
 
   const { id } = useParams();
 
+    // initial values either from database or ""
+    const initialValues = {
+      city: previousDestination.city || "",
+      country: previousDestination.country || "",
+      region: previousDestination.region || "",
+      description: previousDestination.description || "",
+      category: previousDestination.category || "",
+      accommodation: previousDestination.accommodation || "",
+      destination_image: previousDestination.destination_image || "",
+      destination_second_image:
+        previousDestination.destination_second_image || "",
+      destination_third_image: previousDestination.destination_third_image || "",
+      accommodation_image: previousDestination.accommodation_image || "",
+    };
+
   // getting region info
   const getAllRegion = async () => {
     try {
@@ -178,20 +193,7 @@ const DestinationForm = () => {
     setPreviewImages(updatedPreviewImages);
   };
 
-  // initial values either from database or ""
-  const initialValues = {
-    city: previousDestination.city || "",
-    country: previousDestination.country || "",
-    region: previousDestination.region || "",
-    description: previousDestination.description || "",
-    category: previousDestination.category || "",
-    accommodation: previousDestination.accommodation || "",
-    destination_image: previousDestination.destination_image || "",
-    destination_second_image:
-      previousDestination.destination_second_image || "",
-    destination_third_image: previousDestination.destination_third_image || "",
-    accommodation_image: previousDestination.accommodation_image || "",
-  };
+
 
   // auth schema for input validation with Yup
   const AuthFormSchema = Yup.object({

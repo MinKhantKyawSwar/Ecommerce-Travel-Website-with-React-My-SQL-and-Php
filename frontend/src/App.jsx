@@ -18,6 +18,7 @@ import Recipts from "./pages/admin/Recipts";
 import Main from "./layout/Main";
 import { UserContextProvider } from "./providers/UserContext";
 import DestinationForm from "./components/Forms/DestinationForm";
+import PackageDetailsForm from "./components/Forms/PackageDetailsForm";
 function App() {
   const router = createBrowserRouter([
     {
@@ -77,12 +78,20 @@ function App() {
           element: <DestinationForm />,
         },
         {
-          path: "/admin/manage-destination/packages/",
+          path: "/admin/manage-destination/packages",
           element: <PackageForm />,
         },
         {
           path: "/admin/manage-destination/packages/:id",
           element: <PackageForm />,
+        },
+        {
+          path: "/admin/manage-destination/packages/package-details/:id",
+          element: <PackageDetailsForm />,
+        },
+        {
+          path: "/admin/manage-destination/packages/manage-package-details/:id",
+          element: <PackageDetailsForm />,
         },
         {
           path: "/admin/manage-guide/",

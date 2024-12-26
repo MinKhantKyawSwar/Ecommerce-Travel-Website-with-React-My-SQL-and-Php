@@ -18,7 +18,7 @@ switch ($method) {
             $data = json_decode($eData);
             $email = $data->email;
             $password = $data->password;
-            
+
             // Connection to database
             $conn = $db->connect();
 
@@ -29,7 +29,7 @@ switch ($method) {
             $stmt->execute();
 
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
             $hashedPassword = $user['password'];
             // Verify the password
             if (!password_verify($password, $hashedPassword)) {
@@ -43,7 +43,7 @@ switch ($method) {
                 ];
 
                 $token = base64_encode(json_encode($tokenData));
-                $response = ['status' => 1, 'message' => "Login successful",'token' => $token, 'id' => $user['user_id'],'email' => $user['email']];
+                $response = ['status' => 1, 'message' => "Login successful", 'token' => $token, 'id' => $user['user_id'], 'email' => $user['email']];
             }
 
             if (!$user) {
@@ -56,55 +56,54 @@ switch ($method) {
         echo json_encode($response);
         break;
 
-    case "GET":{    
-        $headers = apache_request_headers();
+    case "GET": {
+            $headers = apache_request_headers();
 
-        if (!isset($headers['Authorization'])) {
-            return null;
-        }
-
-        $token = str_replace('Bearer ', '', $headers['Authorization']);
-
-        $recievedToken = json_decode(base64_decode($token), true);
-        
-        $id = $recievedToken['id'];
-        $exp = $recievedToken['exp'];
-
-        if (isset($$id) && isset($exp)) {
-            if ($exp < time()) {
+            if (!isset($headers['Authorization'])) {
                 return null;
             }
-            return $id;
-        }
-        if (!$id) {
-            $response = ['status' => 0, 'message' => "Invalid token"];
-        }
 
-        try {
-            $conn = $db->connect();
-            $sql = "SELECT * FROM users where user_id = :id";
-            $stmt = $conn->prepare($sql);
-            $stmt->bindParam(":id", $id);
-            $stmt->execute();
+            $token = str_replace('Bearer ', '', $headers['Authorization']);
 
-            $customer = $stmt->fetch(PDO::FETCH_ASSOC);
-            // echo $customer['username'];
+            $recievedToken = json_decode(base64_decode($token), true);
 
-            if ($customer) {
-                 $response = ['status' => 1, 'message' => "User exists.", "customer" => $customer];
-                 
-            }else{
-                $response = ['status' => 0, 'message' => "User Does not Exist."];
+            $id = $recievedToken['id'];
+            $exp = $recievedToken['exp'];
+
+            if (isset($$id) && isset($exp)) {
+                if ($exp < time()) {
+                    return null;
+                }
+                return $id;
             }
-             $response;
-            
-            
-        } catch (PDOException $e) {
-             $response = ['status' => 0, 'message' => "Error Occurs", 'error' => $e->getMessage()];
-            
+            if (!$id) {
+                $response = ['status' => 0, 'message' => "Invalid token"];
+            }
+
+            try {
+                $conn = $db->connect();
+                $sql = "SELECT * FROM users where user_id = :id";
+                $stmt = $conn->prepare($sql);
+                $stmt->bindParam(":id", $id);
+                $stmt->execute();
+
+                $customer = $stmt->fetch(PDO::FETCH_ASSOC);
+                // echo $customer['username'];
+
+                if ($customer) {
+                    $response = ['status' => 1, 'message' => "User exists.", "customer" => $customer];
+                } else {
+                    $response = ['status' => 0, 'message' => "User Does not Exist."];
+                }
+                $response;
+            } catch (PDOException $e) {
+                $response = ['status' => 0, 'message' => "Error Occurs", 'error' => $e->getMessage()];
+            }
+            echo json_encode($response);
+            break;
         }
-        echo json_encode($response);
+
+    default:
+        echo json_encode(['status' => 0, 'message' => 'Invalid request method']);
         break;
-    }
-       
 }

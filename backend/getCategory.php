@@ -24,7 +24,7 @@ switch ($method) {
             $getAllCategories = "SELECT * FROM category";
             $stmt = $conn->prepare($getAllCategories);
             $stmt->execute();
-            $allCategories = $stmt->fetchAll(PDO::FETCH_ASSOC); 
+            $allCategories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             if (!empty($allCategories)) {
                 $response = [
@@ -42,5 +42,8 @@ switch ($method) {
             $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
         }
         echo json_encode($response);
+        break;
+    default:
+        echo json_encode(['status' => 0, 'message' => 'Invalid request method']);
         break;
 }

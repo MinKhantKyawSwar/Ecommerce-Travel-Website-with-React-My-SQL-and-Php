@@ -14,6 +14,7 @@ const PackageForm = () => {
   const [previousPackage, setPreviousPackage] = useState([]);
   const [guideInfo, setGuideInfo] = useState([]);
   const [redirect, setRedirect] = useState(false);
+  const [lastAddedPackageId, setLastAddedPackageId] = useState(false);
 
   const [flightImagePreview, setFlightImagePreview] = useState(null); // store flight image preview
   const [facilitiesImagePreview, setFacilitiesImagePreview] = useState(null); // store facilities image preview
@@ -75,7 +76,6 @@ const PackageForm = () => {
       );
     }
   };
-
 
   //for flight image change from form
   const handleFlightImageChange = (event) => {
@@ -260,6 +260,8 @@ const PackageForm = () => {
           theme: "light",
           transition: Bounce,
         });
+        setLastAddedPackageId(response.data.data);
+        console.log(response.data.data);
         setRedirect(true); // Redirect after successful submission
       } else if (response.data.status === 6) {
         toast.error(response.data.message, {
@@ -335,7 +337,7 @@ const PackageForm = () => {
   }, [previousPackage]);
 
   if (redirect) {
-    return <Navigate to={`/admin`} />;
+    return <Navigate to={`/admin/manage-destination/packages/package-details/${lastAddedPackageId}`} />;
   }
 
   return (
@@ -650,7 +652,6 @@ const PackageForm = () => {
                 </Field>
                 <StyledErrorMessage name="guide" />
               </div>
-
               <button
                 className="text-white bg-blue-600 py-3 font-medium w-full text-center rounded-lg hover:bg-teal-700 transition duration-200"
                 type="submit"

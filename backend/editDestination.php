@@ -26,7 +26,7 @@ switch ($method) {
 
             // Connect to the database
             $conn = $db->connect();
-            
+
             // Check if the location already exists
             $checkExistLocationSql = "SELECT `location_id` FROM `location` WHERE `city` = :city AND `country` = :country AND `region` = :region";
             $stmt = $conn->prepare($checkExistLocationSql);
@@ -115,5 +115,8 @@ switch ($method) {
         } catch (PDOException $e) {
             echo json_encode(['status' => 0, 'message' => 'Error: ' . $e->getMessage()]);
         }
+        break;
+    default:
+        echo json_encode(['status' => 0, 'message' => 'Invalid request method']);
         break;
 }

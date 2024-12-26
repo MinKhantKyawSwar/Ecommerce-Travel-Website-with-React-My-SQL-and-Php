@@ -136,4 +136,7 @@ switch ($method) {
         }
         echo json_encode($response);
         break;
+    default:
+        echo json_encode(['status' => 0, 'message' => 'Invalid request method']);
+        break;
 }

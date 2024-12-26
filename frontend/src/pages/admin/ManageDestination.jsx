@@ -5,10 +5,13 @@ import { UserContext } from "../../providers/UserContext";
 
 const ManageDestination = () => {
   const [destinations, setDestinations] = useState([]);
-  const [packages, setPackages] = useState({}); // Change to an object
+  const [packages, setPackages] = useState({});
+  const [packageDetails, setPackgeDetails] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const [error, setError] = useState(null);
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [openDetailsDropdown, setOpenDetailsDropdown] = useState(null);
   const { setDestinationId } = useContext(UserContext);
 
   const navigate = useNavigate(); // Initialize useNavigate
@@ -20,7 +23,30 @@ const ManageDestination = () => {
       );
 
       if (response.data.status === 1) {
-        setDestinations(response.data.data);  
+        setDestinations(response.data.data);
+      } else {
+        setError("No data found");
+      }
+    } catch (err) {
+      setError("Failed to fetch data: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getPackageDetails = async (id) => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/backend/getPackageDetails.php",
+        {
+          headers: {
+            Package_Id: id,
+          },
+        }
+      );
+
+      if (response.data.status === 1) {
+        setPackgeDetails(response.data.data);
       } else {
         setError("No data found");
       }
@@ -38,11 +64,10 @@ const ManageDestination = () => {
         {
           headers: {
             "Destination-ID": id,
-            "Package" : ""
+            Package: "",
           },
         }
       );
-
       if (response.data.status === 1) {
         // Store packages in the object with destination ID as key
         setPackages((prevPackages) => ({
@@ -93,7 +118,16 @@ const ManageDestination = () => {
     }
   };
 
-  
+  const toggleDetailsDropdown = async (index, id) => {
+    setOpenDetailsDropdown(openDetailsDropdown === index ? null : index);
+    if (openDetailsDropdown !== index) {
+      // Fetch packages only if they are not already fetched
+      if (openDetailsDropdown !== index && !packages[id]) {
+        await getPackageDetails(id);
+      }
+    }
+  };
+
   const deletePackageById = async (id) => {
     try {
       const response = await axios.delete(
@@ -108,7 +142,31 @@ const ManageDestination = () => {
       if (response.data.status === 1) {
         window.location.reload();
       } else {
-        setError("Cannot delete this destination!");
+        setError("Cannot delete this package!");
+      }
+    } catch (err) {
+      setError("Failed to fetch details: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deletePackageDetailsById = async (id) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/backend/getPackagesDetails.php`,
+        {
+          headers: {
+            "Package-Info-Id": id,
+          },
+        }
+      );
+
+      if (response.data.status === 1) {
+        // window.location.reload();
+        console.log('Deleted');
+      } else {
+        setError("Cannot delete this package details!");
       }
     } catch (err) {
       setError("Failed to fetch details: " + err.message);
@@ -157,9 +215,15 @@ const ManageDestination = () => {
                 </th>
               </tr>
             </thead>
+
             {destinations.map((destination, index) => (
               <tbody key={index}>
-                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <tr
+                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-200"
+                  onClick={() =>
+                    toggleDropdown(index, destination.destination_id)
+                  }
+                >
                   <th
                     scope="row"
                     className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
@@ -178,21 +242,7 @@ const ManageDestination = () => {
                     >
                       Details
                     </button>
-                    <button
-                      onClick={() =>
-                        toggleDropdown(index, destination.destination_id)
-                      }
-                    >
-                      {openDropdown === index ? (
-                        <p className="font-medium text-blue-600 hover:underline">
-                          {"Hide"}
-                        </p>
-                      ) : (
-                        <p className="font-medium text-blue-600 hover:underline">
-                          {"Packages"}
-                        </p>
-                      )}
-                    </button>
+
                     <button
                       onClick={() =>
                         navigate(
@@ -221,10 +271,8 @@ const ManageDestination = () => {
                           </h3>
                           <button
                             onClick={() => {
-                              setDestinationId(destination.destination_id)
-                              navigate(
-                                `/admin/manage-destination/packages/`
-                              );
+                              setDestinationId(destination.destination_id);
+                              navigate(`/admin/manage-destination/packages/`);
                             }}
                             className="font-medium text-blue-600 hover:underline transition duration-200"
                           >
@@ -238,11 +286,16 @@ const ManageDestination = () => {
                                   <li
                                     key={packageIndex}
                                     className="py-4 border-b border-gray-300 transition duration-200 hover:bg-gray-200"
+                                   
                                   >
-                                    <div className="flex justify-between items-center">
-                                      <span className="font-medium text-gray-800">
-                                        {packageItem.package_name} ($
-                                        {packageItem.price})
+                                    <div className="flex justify-between items-center hover:underline transition duration-200">
+                                      <span className="font-medium text-gray-800"  onClick={() =>
+                                      toggleDetailsDropdown(
+                                        packageIndex,
+                                        packageItem.package_id
+                                      )
+                                    }>
+                                        {packageItem.package_name} 
                                       </span>
                                       <div className="flex gap-4">
                                         <button
@@ -255,6 +308,7 @@ const ManageDestination = () => {
                                         >
                                           Details
                                         </button>
+
                                         <button
                                           onClick={() =>
                                             navigate(
@@ -277,6 +331,67 @@ const ManageDestination = () => {
                                         </button>
                                       </div>
                                     </div>
+                                    {/* Toggleable package details */}
+
+                                    {openDetailsDropdown === packageIndex && (
+                                      <div className="mt-4 bg-gray-100 p-4 rounded-lg shadow-md">
+                                        <h4 className="font-semibold text-lg">
+                                          Package Details
+                                        </h4>
+                                        <ul className="list-disc pl-5">
+                                          {packageDetails.map(
+                                            (packageData, index) => (
+                                              <li key={index} className="py-2">
+                                                <div>
+                                                  <div className="font-medium text-gray-800">
+                                                    Packge {index + 1}
+                                                  </div>
+                                                  <div className="text-gray-600">
+                                                    Start Location:{" "}
+                                                    {packageData.city}
+                                                  </div>
+                                                  <div className="text-gray-600">
+                                                    Price: ${packageData.price}
+                                                  </div>
+                                                  <div className="text-gray-600">
+                                                    Travel Date:{" "}
+                                                    {packageData.travel_date}
+                                                  </div>
+                                                  <div className="text-gray-600">
+                                                    Available People:{" "}
+                                                    {
+                                                      packageData.number_of_available_people
+                                                    }
+                                                  </div>
+                                                </div>
+                                                <div className="flex gap-4">
+                                                  <button
+                                                    onClick={() =>
+                                                      navigate(
+                                                        `/admin/manage-destination/packages/manage-package-details/${packageData.package_info_id}`
+                                                      )
+                                                    }
+                                                    className="font-medium text-blue-600 hover:underline transition duration-200"
+                                                  >
+                                                    Edit
+                                                  </button>
+                                                  <button
+                                                    onClick={() =>
+                                                      deletePackageDetailsById(
+                                                        packageData.package_info_id
+                                                      )
+                                                    }
+                                                    className="font-medium text-red-600 hover:underline transition duration-200"
+                                                  >
+                                                    Delete
+                                                  </button>
+                                                </div>
+                                              </li>
+                                            )
+                                          )}
+                                        </ul>
+                                      </div>
+                                    )}
                                   </li>
                                 )
                               )

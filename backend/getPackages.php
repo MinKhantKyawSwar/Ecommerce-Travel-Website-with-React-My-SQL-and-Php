@@ -49,9 +49,7 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "No packages found."];
                 }
-            }  
-            
-            else if (isset($headers['Destination-ID']) && isset($headers['Package'])) {
+            } else if (isset($headers['Destination-ID']) && isset($headers['Package'])) {
                 $destination_id = $headers['Destination-ID'];
 
                 // Connection to database
@@ -61,7 +59,7 @@ switch ($method) {
                                         package_info.*,
                                         location.*,
                                         region.*
-                                    FROM package_info
+                                    FROM package
                                 JOIN 
                                     package_info ON package_info.package = package.package_id
                                 JOIN
@@ -70,7 +68,7 @@ switch ($method) {
                                     location ON location.location_id = destination.location
                                 JOIN
                                     region ON region.region_id = location.region
-                                WHERE destination.destination_id = :destination_id";
+                                WHERE package.destination = :destination_id";
                 $stmt = $conn->prepare($getAllPackages);
                 $stmt->bindParam(':destination_id', $destination_id, PDO::PARAM_INT);
                 $stmt->execute();
@@ -82,9 +80,7 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "No packages found."];
                 }
-            } 
-            
-            else if (isset($headers['Package-Id'])) {
+            } else if (isset($headers['Package-Id'])) {
                 $package_id = (int) $headers['Package-Id'];
 
                 $conn = $db->connect();
@@ -244,9 +240,14 @@ switch ($method) {
 
                 // Execute the statement
                 $success = $stmt->execute();
+
+
+                // Get the last inserted ID
+                $lastInsertId = $conn->lastInsertId();
+
                 // Send the response back
                 if ($success) {
-                    $response = ['status' => 1, 'message' => 'Package added successfully'];
+                    $response = ['status' => 1, 'message' => 'Package added successfully', 'data' =>  $lastInsertId];
                 } else {
                     $response = ['status' => 0, 'message' => 'Failed to add package'];
                 }
@@ -283,5 +284,8 @@ switch ($method) {
             $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
         }
         echo json_encode($response);
+        break;
+    default:
+        echo json_encode(['status' => 0, 'message' => 'Invalid request method']);
         break;
 }
