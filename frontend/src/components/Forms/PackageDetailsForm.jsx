@@ -98,7 +98,9 @@ const PackageDetailsForm = () => {
           toast.error(response.data.message);
         }
       } catch (error) {
-        toast.error("An error occurred while submitting data: " + error.message);
+        toast.error(
+          "An error occurred while submitting data: " + error.message
+        );
       }
     } else {
       url = "http://localhost:3000/backend/getPackageDetails.php";
@@ -114,7 +116,6 @@ const PackageDetailsForm = () => {
     } catch (error) {
       toast.error("An error occurred while submitting data: " + error.message);
     }
-    
   };
 
   const handleFieldChange = (index, field, value) => {
@@ -279,23 +280,27 @@ const PackageDetailsForm = () => {
                       className="text-lg border-2 border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                     />
                   </div>
-                  <button
-                    type="button"
-                    className="text-red-500 border border-red-500 px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition"
-                    onClick={() => removeFormEntry(index)}
-                  >
-                    Remove
-                  </button>
+                  {!isEdit && (
+                    <button
+                      type="button"
+                      className="text-red-500 border border-red-500 px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition"
+                      onClick={() => removeFormEntry(index)}
+                    >
+                      Remove
+                    </button>
+                  )}
                 </div>
               ))}
 
-              <button
-                type="button"
-                className="text-blue-600 border border-blue-600 px-6 py-2 rounded-lg hover:bg-blue-600 hover:text-white transition"
-                onClick={addFormEntry}
-              >
-                Add More
-              </button>
+              {!isEdit && (
+                <button
+                  type="button"
+                  className="text-blue-600 border border-blue-600 px-6 py-2 rounded-lg hover:bg-blue-600 hover:text-white transition"
+                  onClick={addFormEntry}
+                >
+                  Add More
+                </button>
+              )}
 
               <button
                 type="submit"
