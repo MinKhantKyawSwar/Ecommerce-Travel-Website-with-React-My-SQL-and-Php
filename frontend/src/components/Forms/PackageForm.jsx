@@ -337,7 +337,11 @@ const PackageForm = () => {
   }, [previousPackage]);
 
   if (redirect) {
-    return <Navigate to={`/admin/manage-destination/packages/package-details/${lastAddedPackageId}`} />;
+    if (isEdit){
+      return <Navigate to={`/admin`} />;
+    }else{
+      return <Navigate to={`/admin/manage-destination/packages/package-details/${lastAddedPackageId}`} />;
+    }
   }
 
   return (

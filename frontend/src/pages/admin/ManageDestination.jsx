@@ -337,6 +337,16 @@ const ManageDestination = () => {
                                         <h4 className="font-semibold text-lg">
                                           Package Details
                                         </h4>
+                                        <button
+                                          className="w-full text-green-600 font-medium py-2 px-10 mt-4 rounded-lg border border-green-600 hover:bg-green-600 hover:text-white transition duration-200"
+                                          onClick={() =>
+                                            navigate(
+                                              `/admin/manage-destination/packages/package-details/${packageItem.package_id}`
+                                            )
+                                          }
+                                        >
+                                          Add New Package Details
+                                        </button>
                                         <ul className="list-disc pl-5">
                                           {packageDetails.map(
                                             (packageData, index) => (

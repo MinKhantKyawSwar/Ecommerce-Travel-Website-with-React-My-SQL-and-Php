@@ -18,9 +18,7 @@ switch ($method) {
 
             $package_name = $_POST['package_name'];
             $description = $_POST['description'];
-            $price = $_POST['price'];
-            $other_region_price = $_POST['other_region_price'];
-            $flight_description = $_POST['flight_description'];;
+            $flight_description = $_POST['flight_description'];
             $facilities = $_POST['facilities'];
             $meals = $_POST['meals'];
             $activities = $_POST['activities'];
@@ -64,19 +62,19 @@ switch ($method) {
 
             // Prepare the SQL statement to update the destination
             $sql = "UPDATE package 
-                    SET package_name=:package_name,description=:description,price =:price,other_region_price=:other_region_price,
+                    SET package_name=:package_name,description=:description,
                         flight_description=:flight_description,flight_image=:flight_image,facilities=:facilities,
                         facilities_image=:facilities_image,meals=:meals,meals_image=:meals_image,activities=:activities,
                         activities_image=:activities_image,duration=:duration,destination=:destination,tour_guide=:tour_guide 
                     WHERE package_id = :id";
+
+            // Prepare the statement using the connection object
             $stmt = $conn->prepare($sql);
 
             // Bind the parameters to the prepared statement
             $stmt->bindParam(':id', $id);
             $stmt->bindParam(':package_name', $package_name);
             $stmt->bindParam(':description', $description);
-            $stmt->bindParam(':price', $price);
-            $stmt->bindParam(':other_region_price', $other_region_price);
             $stmt->bindParam(':flight_description', $flight_description);
             $stmt->bindParam(':flight_image', $flightTargetFilePath);
             $stmt->bindParam(':facilities', $facilities);

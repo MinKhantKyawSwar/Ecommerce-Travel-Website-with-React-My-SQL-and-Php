@@ -34,6 +34,8 @@ switch ($method) {
                 $travel_date = $entry['travel_date'] ?? null;
                 $number_of_available_people = $entry['number_of_available_people'] ?? null;
                 $package = $entry['package'] ?? null;
+                $package_info_id = $entry['package_info_id'] ?? null;
+                
 
                 if (!$country || !$city || !$region || !$price || !$travel_date || !$number_of_available_people || !$package) {
                     echo json_encode(['status' => 0, 'message' => 'Missing required fields in one or more entries']);
@@ -64,9 +66,10 @@ switch ($method) {
                 }
 
                 // Prepare the SQL statement to insert new destination
-                $sql = "INSERT INTO `package_info`(`source_location`, `price`, `travel_date`, `number_of_available_people`, `package`) 
-              VALUES (:location_id, :price, :travel_date, :number_of_available_people, :package) where package_info_id = :package_info_id";
-                $stmt = $conn->prepare($sql);
+                
+                $sql = "UPDATE package_info SET source_location = :location_id, price = :price, travel_date = :travel_date, 
+                number_of_available_people = :number_of_available_people, package = :package WHERE package_info_id = :package_info_id";
+                  $stmt = $conn->prepare($sql);
 
                 // Bind the parameters to the prepared statement
                 $stmt->bindParam(':location_id', $location_id, PDO::PARAM_INT);
