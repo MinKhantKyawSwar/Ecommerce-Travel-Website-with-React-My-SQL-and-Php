@@ -81,12 +81,12 @@ switch ($method) {
                 // Connection to database
                 $conn = $db->connect();
                 $getCityInfo = "SELECT * FROM location 
-                                 JOIN package_info ON package_info.source_location = location.location_id 
+                                 JOIN package_info ON package_info.source_location = location.location_id  
                                  WHERE travel_date = :travel_date AND
                                         package_info.package = :package_id";
                 $stmt = $conn->prepare($getCityInfo);
-                $stmt->bindParam(':travel_date', $travel_date, PDO::PARAM_STR); 
-                $stmt->bindParam(':package_id', $package_id, PDO::PARAM_STR); 
+                $stmt->bindParam(':travel_date', $travel_date, PDO::PARAM_STR);
+                $stmt->bindParam(':package_id', $package_id, PDO::PARAM_STR);
                 $stmt->execute();
 
                 $city = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -96,8 +96,7 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "No packages found."];
                 }
-            }
-            else if (isset($headers['Availability']) && isset($headers['TravelDate'])) {
+            } else if (isset($headers['Availability']) && isset($headers['TravelDate'])) {
 
                 $id = $headers['Availability'];
                 $travel_date = $headers['TravelDate'];
@@ -252,9 +251,8 @@ switch ($method) {
 
             // Validate required fields
             if (
-                empty($data->user_id) || empty($data->package) || empty($data->booking_date) ||
-                empty($data->travel_date) ||
-                empty($data->city) || empty($data->country) || empty($data->region) ||
+                empty($data->user_id) || empty($data->package) || empty($data->city) ||
+                empty($data->booking_date) || empty($data->travel_date) ||
                 empty($data->payment_method) || empty($data->number_of_people) ||
                 empty($data->add_on) || empty($data->discount) || empty($data->total_price)
             ) {
@@ -263,14 +261,13 @@ switch ($method) {
 
             // Assign variables
             $user = $data->user_id;
-            $package = $data->package;
+            $package = (int) $data->package;
+            $source_location = (int) $data->city;
             $booking_date = $data->booking_date;
             $travel_date = $data->travel_date;
-            $city = $data->city;
-            $country = $data->country;
-            $region = $data->region;
+            $formattedDate = (new DateTime($travel_date))->format('Y-m-d');
             $payment_method = $data->payment_method;
-            $number_of_people = $data->number_of_people;
+            $number_of_people = (int) $data->number_of_people;
             $add_on = $data->add_on;
             $discount = $data->discount;
             $total_price = $data->total_price;
@@ -278,67 +275,78 @@ switch ($method) {
             // Connection to database
             $conn = $db->connect();
 
-            $getAvailabilitySql = "Select number_of_available_people from available_people where travel_date = :travel_date";
+            // Check availability
+            $getAvailabilitySql = "SELECT number_of_available_people 
+                                   FROM package_info 
+                                   WHERE travel_date = :travel_date 
+                                   AND source_location = :source_location 
+                                   AND package = :package";
             $stmt = $conn->prepare($getAvailabilitySql);
-            $stmt->bindParam(':travel_date', $travel_date);
+            $stmt->bindParam(':travel_date', $formattedDate);
+            $stmt->bindParam(':source_location', $source_location);
+            $stmt->bindParam(':package', $package);
             $stmt->execute();
-            // Fetch the number of available people as an associative array
+
             $number_of_available_people_row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // Extract the actual number of available people from the associative array
-            $number_of_available_people = (int)$number_of_available_people_row['number_of_available_people'];
+            // Check if data is found
+            if (!$number_of_available_people_row) {
+                throw new Exception("No availability data found for the specified package, date, and location.");
+            }
+
+            $number_of_available_people = (int) $number_of_available_people_row['number_of_available_people'];
 
             // Total people left after booking
-            $total_people = $number_of_available_people - (int)$number_of_people;
+            $total_people = $number_of_available_people - $number_of_people;
 
             if ($total_people < 0) {
                 $response = ['status' => 0, 'message' => $number_of_available_people];
-                //"There is not enough seat left for this package at this date!"
             } else {
-                $updateAvailabilitySql = "Update available_people SET number_of_available_people=:total_people where travel_date = :travel_date";
+                // Update availability
+                $updateAvailabilitySql = "UPDATE package_info 
+                                          SET number_of_available_people = :total_people 
+                                          WHERE travel_date = :travel_date 
+                                          AND source_location = :source_location 
+                                          AND package = :package";
                 $stmt = $conn->prepare($updateAvailabilitySql);
                 $stmt->bindParam(':total_people', $total_people);
-                $stmt->bindParam(':travel_date', $travel_date);
-
+                $stmt->bindParam(':travel_date', $formattedDate);
+                $stmt->bindParam(':source_location', $source_location);
+                $stmt->bindParam(':package', $package);
 
                 if ($stmt->execute()) {
                     $response = ['status' => 1, 'message' => 'Available People updated successfully'];
                 } else {
-                    $response = ['status' => 0, 'message' => 'Failed to update available people.'];
+                    throw new Exception("Failed to update available people.");
                 }
 
-                // Adding data into database
-                $sql = "INSERT INTO booking(user, package, booking_date, travel_date, city, country, region, payment_method, number_of_people, add_on, discount, total_price) VALUES 
-            (:user, :package, :booking_date, :travel_date, :city, :country, :region, :payment_method, :number_of_people, :add_on, :discount, :total_price)";
-
+                // Insert booking
+                $sql = "INSERT INTO booking(user, package, source_location, booking_date, travel_date, payment_method, number_of_people, add_on, discount, total_price) 
+                        VALUES (:user, :package, :source_location, :booking_date, :travel_date, :payment_method, :number_of_people, :add_on, :discount, :total_price)";
                 $stmt = $conn->prepare($sql);
                 $stmt->bindParam(':user', $user);
                 $stmt->bindParam(':package', $package);
+                $stmt->bindParam(':source_location', $source_location);
                 $stmt->bindParam(':booking_date', $booking_date);
-                $stmt->bindParam(':travel_date', $travel_date);
-                $stmt->bindParam(':city', $city);
-                $stmt->bindParam(':country', $country);
-                $stmt->bindParam(':region', $region);
+                $stmt->bindParam(':travel_date', $formattedDate);
                 $stmt->bindParam(':payment_method', $payment_method);
                 $stmt->bindParam(':number_of_people', $number_of_people);
                 $stmt->bindParam(':add_on', $add_on);
                 $stmt->bindParam(':discount', $discount);
                 $stmt->bindParam(':total_price', $total_price);
 
-                // Execute the statement
                 if ($stmt->execute()) {
                     $response = ['status' => 1, 'message' => "Successfully Booked!"];
                 } else {
-                    $response = ['status' => 0, 'message' => "Failed to create booking! Please try again."];
+                    throw new Exception("Failed to create booking! Please try again.");
                 }
             }
         } catch (Exception $e) {
-            // Catch general exceptions
             $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
         } catch (PDOException $e) {
-            // Catch database-related exceptions
             $response = ['status' => 0, 'message' => "Database Error: " . $e->getMessage()];
         }
+
 
         // Return the response as JSON
         echo json_encode($response);

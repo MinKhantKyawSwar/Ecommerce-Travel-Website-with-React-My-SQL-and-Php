@@ -31,17 +31,17 @@ const Recipts = () => {
   };
 
   const downloadReceipt = () => {
-    const doc = new jsPDF("p", "mm", "a4"); // portrait, milimeter and A4 size (210 x 297 mm)
+    const doc = new jsPDF("p", "mm", "a4"); // portrait, millimeters, and A4 size (210 x 297 mm)
 
-    // Header design with a highlighted title
+    // Header design with a larger, centered title
     doc.setFillColor(50, 50, 150); // Blue background
     doc.rect(0, 0, 210, 40, "F"); // Full-width rectangle at the top
     doc.setFont("Helvetica", "bold");
-    doc.setFontSize(24);
+    doc.setFontSize(28);
     doc.setTextColor(255, 255, 255); // White text color
     doc.text("Trailblazers Receipt", 105, 25, { align: "center" });
 
-    // Add a subheader or tagline
+    // Add a subheader with italicized font
     doc.setFont("Helvetica", "italic");
     doc.setFontSize(12);
     doc.text("Your journey begins here!", 105, 35, { align: "center" });
@@ -64,7 +64,7 @@ const Recipts = () => {
       },
       { label: "City:", value: String(transactions.city || "") },
       { label: "Country:", value: String(transactions.country || "") },
-      { label: "Region:", value: String(transactions.region || "") },
+      { label: "Region:", value: String(transactions.region_name || "") },
       {
         label: "Payment Method:",
         value: String(transactions.payment_name || ""),
@@ -73,7 +73,7 @@ const Recipts = () => {
         label: "Number of People:",
         value: String(transactions.number_of_people || ""),
       },
-      { label: "Add-ons:", value: String(transactions.add_on || "") },
+      { label: "Add-ons:", value: String(transactions.add_ons || "") },
       { label: "Discount:", value: `${String(transactions.discount || 0)}%` },
     ];
 
@@ -83,16 +83,16 @@ const Recipts = () => {
     const marginRight = 190;
     const rowHeight = 12;
 
-    // Draw table header
+    // Draw table header with a darker background and larger font
     doc.setFont("Helvetica", "bold");
-    doc.setFontSize(14);
+    doc.setFontSize(16);
     doc.setFillColor(230, 230, 230); // Light gray header background
     doc.rect(marginLeft, yPosition, marginRight - marginLeft, rowHeight, "F");
     doc.text("Booking Details", 105, yPosition + 8, { align: "center" });
 
     yPosition += rowHeight;
 
-    // Draw table rows with alternating colors
+    // Draw table rows with alternating colors and improved readability
     details.forEach((detail, index) => {
       // Alternating row background color for better readability
       if (index % 2 === 0) {
@@ -115,10 +115,10 @@ const Recipts = () => {
       yPosition += rowHeight;
     });
 
-    // Summary section
+    // Summary section with bold font and distinct background
     yPosition += 15;
     doc.setFont("Helvetica", "bold");
-    doc.setFontSize(14);
+    doc.setFontSize(16);
     doc.setFillColor(230, 230, 230); // Light gray background for summary
     doc.rect(marginLeft, yPosition, marginRight - marginLeft, rowHeight, "F");
     doc.text("Summary", 105, yPosition + 8, { align: "center" });
@@ -137,16 +137,16 @@ const Recipts = () => {
       yPosition += rowHeight;
     });
 
-    // Footer design
+    // Footer design with a more refined look
     yPosition = 280; // Move to the bottom of the A4 page
     doc.setFont("Helvetica", "normal");
     doc.setFontSize(10);
 
-    // Footer background box
+    // Footer background box with rounded corners
     doc.setFillColor(50, 50, 150); // Blue background
     doc.rect(0, yPosition - 10, 210, 30, "F");
 
-    // Footer text
+    // Footer text with refined styling
     doc.setTextColor(255, 255, 255); // White text color
     const footerText = "Thank you for traveling with Trailblazers!";
     const contactInfo =
@@ -155,8 +155,8 @@ const Recipts = () => {
     doc.text(footerText, 105, yPosition, { align: "center" });
     doc.text(contactInfo, 105, yPosition + 10, { align: "center" });
 
-    // Save the PDF
-    doc.save(`Booking_invoice_${String(id)}.pdf`);
+    // Save the PDF with a more user-friendly filename
+    doc.save(`Booking_Invoice_${String(id)}.pdf`);
   };
 
   useEffect(() => {
@@ -191,7 +191,7 @@ const Recipts = () => {
           </div>
           <div className="flex justify-between">
             <span className="font-semibold">Region:</span>
-            <span>{transactions.region}</span>
+            <span>{transactions.region_name}</span>
           </div>
           <div className="flex justify-between">
             <span className="font-semibold">Booking Date:</span>
@@ -212,7 +212,7 @@ const Recipts = () => {
 
           <div className="flex justify-between">
             <span className="font-semibold">Add-ons:</span>
-            <span>{transactions.add_on}</span>
+            <span>{transactions.add_ons}</span>
           </div>
           <div className="flex justify-between">
             <span className="font-semibold">Discount:</span>

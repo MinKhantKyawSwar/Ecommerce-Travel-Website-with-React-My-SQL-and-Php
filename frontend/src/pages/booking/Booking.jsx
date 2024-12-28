@@ -2,7 +2,7 @@ import axios from "axios";
 import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
-import { Slide, ToastContainer, toast } from "react-toastify"; // Ensure toast is imported
+import { Bounce, Slide, ToastContainer, toast } from "react-toastify"; // Ensure toast is imported
 import * as Yup from "yup";
 import { format } from "date-fns";
 import DatePicker from "react-datepicker";
@@ -12,9 +12,10 @@ import StyledErrorMessage from "../../utils/StyledErrorMessage";
 const Booking = () => {
   const [redirect, setRedirect] = useState(false);
   const [payment, setPayment] = useState([]);
-  const [region, setRegion] = useState([]);
   const [locationInfo, setLocationInfo] = useState([]);
   const [countryData, setCountryData] = useState([]);
+  const [region, setRegion] = useState([]);
+  const [basePrice, setBasePrice] = useState(0);
   const [addOn, setAddOn] = useState([]);
   const [discount, setDiscount] = useState([]);
   const [discountAdded, setDiscountAdded] = useState(false);
@@ -42,32 +43,25 @@ const Booking = () => {
   const { id } = useParams(); // package id from url
 
   const initialValues = {
-    user_id: "",
-    package: Number(id),
-    booking_date: "",
-    travel_date: null,
-    city: "",
+    travel_date: "",
     country: "",
-    region: "",
+    city: "",
     payment_method: "",
     number_of_people: 1,
     add_on: "",
     discount: "",
-    total_price: 0,
   };
 
-  const AuthFormSchema = Yup.object({
-    city: Yup.string().required("City is required."),
-    country: Yup.string().required("Country is required."),
+  const AuthFormSchema = Yup.object().shape({
+    travel_date: Yup.string().required("Travel date is required"),
+    country: Yup.string().required("Country is required"),
+    city: Yup.string().required("City is required"),
+    payment_method: Yup.string().required("Payment method is required"),
     number_of_people: Yup.number()
-      .min(1, "You must at book for at least 1 person.")
-      .max(15, "Select Possible amount of people")
-      .required("Number of People is required"),
-    region: Yup.string().required("Region is required."),
-    payment_method: Yup.string().required("Payment method is required."),
-    travel_date: Yup.date()
-      .required("Travel date is required.")
-      .min(new Date(), "Travel date must be today or in the future."),
+      .min(1, "At least one person is required")
+      .required("Number of people is required"),
+    add_on: Yup.string().nullable(),
+    discount: Yup.string().nullable(),
   });
 
   const getRegionInfo = async () => {
@@ -136,8 +130,6 @@ const Booking = () => {
       );
 
       if (response.data.status === 0) {
-        // setTravelDate(null);
-        // setTravelDateSelected(false);
       } else if (response.data.status === 1) {
         setAvailability(response.data.data[0].number_of_available_people);
       }
@@ -281,26 +273,30 @@ const Booking = () => {
   const getDataChange = (e) => {
     try {
       const { name, value } = e.target;
-      let basePrice = currentPackage.price || 0;
-      let regionalPrice = basePrice;
       let addOnPrice = 0;
       let discountedPercentage = 0;
 
-      // Update selected region
-      if (name === "region" && value) {
-        const selectedRegionData = region.find((r) => r.region_id == value);
-        if (selectedRegionData) {
-          regionalPrice =
-            selectedRegionData.region_name == currentPackage.region
-              ? currentPackage.price
-              : currentPackage.other_region_price;
-          setSelectedRegionPrice(regionalPrice);
-        }
-      }
-
       if (name === "country" && value) {
         setCountryData(value);
-        console.log(value);
+      }
+
+      if (name === "city" && value) {
+        // Check if name is "city" and value is not empty
+        const selectedLocationId = Number(value); // Convert value to a number
+
+        // Check if locationInfo is defined and is an array
+        if (Array.isArray(locationInfo)) {
+          // Find the location that matches the selected location ID
+          const selectedLocation = locationInfo.find(
+            (location) => location.location_id === selectedLocationId
+          );
+
+          // If a matching location is found, set the base price
+          if (selectedLocation) {
+            setBasePrice(selectedLocation.price);
+          }
+          setTotalPrice(basePrice);
+        }
       }
 
       // Update selected add-on
@@ -346,9 +342,10 @@ const Booking = () => {
   const calculateTotalPrice = () => {
     let totalPriceCalculation = 0;
     let priceAfterDiscountCalculation = 0;
+
     if (discountAdded) {
       totalPriceCalculation = Math.round(
-        (selectedRegionPrice + selectedAddOnPrice) * totalPeople
+        (basePrice + selectedAddOnPrice) * totalPeople
       );
       priceAfterDiscountCalculation = Math.round(
         totalPriceCalculation * (selectedDiscountPercentage / 100)
@@ -358,29 +355,14 @@ const Booking = () => {
       setDiscountedPrice(totalPriceCalculation);
     } else {
       totalPriceCalculation = Math.round(
-        (selectedRegionPrice + selectedAddOnPrice) * totalPeople
+        (basePrice + selectedAddOnPrice) * totalPeople
       );
       setTotalPrice(totalPriceCalculation);
     }
   };
 
-  const cityOnChangeHandler = async (e) => {
-    console.log(e.target.value);
-  };
-
-  const countryOnChangeHandler = async (e) => {
-    console.log(e.target.value);
-  };
-
   const submitHandler = async (values) => {
-    const {
-      city,
-      country,
-      region,
-      payment_method,
-      number_of_people,
-      travel_date,
-    } = values;
+    const { city, payment_method, number_of_people, travel_date } = values;
 
     // Prepare the data object
     const data = {
@@ -389,8 +371,6 @@ const Booking = () => {
       booking_date: new Date(),
       travel_date,
       city,
-      country,
-      region,
       payment_method,
       number_of_people,
       add_on: addOnId,
@@ -453,11 +433,10 @@ const Booking = () => {
         "http://localhost:3000/backend/getTransactions.php",
         {
           headers: {
-            "User ": Number(localStorage.getItem("user_id")),
+            "User": Number(localStorage.getItem("user_id")),
           },
         }
       );
-
       // Handle transaction response
       if (dataResponse.data.status === 0) {
         toast.error(dataResponse.data.message);
@@ -466,12 +445,8 @@ const Booking = () => {
         setTimeout(() => setRedirect(true), 1500); // Redirect after 1.5 seconds
       }
     } catch (error) {
-      // Improved error handling
-      const errorMessage = error.response
-        ? error.response.data.message || "An error occurred. Please try again."
-        : "An error occurred. Please check your network connection.";
-      console.error("Error:", errorMessage);
-      toast.error(errorMessage);
+      console.error("Error:", error);
+      toast.error(error);
     }
   };
 
@@ -493,6 +468,10 @@ const Booking = () => {
     getAvailabilityInfo();
     getLocationInfo(travelDate);
   }, [travelDate]);
+
+  useEffect(() => {
+    setTotalPrice(basePrice);
+  }, [basePrice]);
 
   useEffect(
     (_) => {
@@ -529,12 +508,11 @@ const Booking = () => {
       <Formik
         initialValues={initialValues}
         validationSchema={AuthFormSchema}
-        onSubmit={submitHandler}
+        onSubmit={(values) => submitHandler(values)}
       >
-        {({ isSubmitting, setFieldValue }) => (
+        {({ setFieldValue }) => (
           <Form
             className="w-full max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg"
-            method="POST"
             onChange={getDataChange}
           >
             <h1 className="text-center font-semibold text-4xl my-4 text-teal-600">
@@ -607,18 +585,19 @@ const Booking = () => {
                 >
                   <option value="" label="Select one option" />
                   {locationInfo && locationInfo.length > 0 ? ( // Check if locationInfo array is not empty
-                    locationInfo.map((locationInfoItem, index) =>
-                      // Check if the country matches the selected country
-                      locationInfoItem.country === countryData ? ( // Use locationInfoItem directly
-                        <option
-                          key={locationInfoItem.location_id} // Use location_id as the key
-                          value={locationInfoItem.location_id} // Use location_id as the value
-                          label={`${locationInfoItem.city}, ${locationInfoItem.country}`} // Combine city and country for the label
-                        >
-                          {`${locationInfoItem.city}, ${locationInfoItem.country}`}{" "}
-                          {/* Display combined label */}
-                        </option>
-                      ) : null // Return null if the country does not match
+                    locationInfo.map(
+                      (locationInfoItem, index) =>
+                        // Check if the country matches the selected country
+                        locationInfoItem.country === countryData ? ( // Use locationInfoItem directly
+                          <option
+                            key={index} // Use location_id as the key
+                            value={locationInfoItem.location_id} // Use location_id as the value
+                            label={`${locationInfoItem.city}, ${locationInfoItem.country}`} // Combine city and country for the label
+                          >
+                            {`${locationInfoItem.city}, ${locationInfoItem.country}`}{" "}
+                            {/* Display combined label */}
+                          </option>
+                        ) : null // Return null if the country does not match
                     )
                   ) : (
                     <option value="" label="No cities available" /> // Fallback option if no cities
@@ -748,7 +727,7 @@ const Booking = () => {
           </Form>
         )}
       </Formik>
-      {redirect && <Navigate to={`/recipts/${bookingId}`} />}
+      {/* {redirect && <Navigate to={`/recipts/${bookingId}`} />} */}
     </>
   );
 };

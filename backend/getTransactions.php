@@ -20,27 +20,27 @@ switch ($method) {
                 $booking_id = $headers['Recipt'];
                 $conn = $db->connect();
                 $getTransactionInfo = "SELECT 
-                                        booking.*, 
-                                        users.*,
-                                        region.*,
-                                        package.*,
-                                        payment.*,
-                                        add_on.*,
-                                        discount.*
-                                    FROM 
-                                        booking
-                                    JOIN 
-                                        users ON booking.user = users.user_id
-                                    JOIN 
-                                        package ON booking.package = package.package_id
-                                    JOIN 
-                                        region ON booking.region = region.region_id
-                                    JOIN 
-                                        payment ON booking.payment_method = payment.payment_id
-                                    JOIN 
-                                        add_on ON booking.add_on = add_on.add_on_id
-                                    JOIN 
-                                        discount ON booking.discount = discount.discount_id
+                                            booking.*,
+                                            users.*,
+                                            package.*,
+                                            location.*,
+                                            region.*,
+                                            payment.*,
+                                            add_on.add_on as add_ons
+                                        FROM 
+                                            booking
+                                        JOIN
+                                            users ON users.user_id = booking.user
+                                        JOIN 
+                                            package ON package.package_id = booking.package
+                                        JOIN 
+                                            location ON location.location_id = booking.source_location
+                                        JOIN 
+                                            region ON region.region_id = location.region
+                                        JOIN 
+                                            payment ON booking.payment_method = payment.payment_id
+                                        JOIN 
+                                            add_on ON booking.add_on = add_on.add_on_id
                                     where 
                                         booking.booking_id = :booking_id;";
                 $stmt = $conn->prepare($getTransactionInfo);
@@ -56,37 +56,31 @@ switch ($method) {
                     $response = ['status' => 0, 'message' => "No packages found."];
                 }
             } else if (isset($headers['User'])) {
-                $users = $headers['User'];
+                $user = $headers['User'];
                 $conn = $db->connect();
                 $getTransactionInfo = "SELECT 
-                                        booking.*, 
-                                        users.*,
-                                        region.*,
-                                        package.*,
-                                        payment.*,
-                                        add_on.*,
-                                        discount.*
-                                    FROM 
-                                        booking
-                                    JOIN 
-                                        users ON booking.user = users.user_id
-                                    JOIN 
-                                        package ON booking.package = package.package_id
-                                    JOIN 
-                                        region ON booking.region = region.region_id
-                                    JOIN 
-                                        payment ON booking.payment_method = payment.payment_id
-                                    JOIN 
-                                        add_on ON booking.add_on = add_on.add_on_id
-                                    JOIN 
-                                        discount ON booking.discount = discount.discount_id
-                                    where 
-                                        booking.user = :user
-                                    ORDER BY 
-                                        booking.booking_id DESC
-                                    LIMIT 1;";
+                                            booking.*,
+                                            users.*,
+                                            package.*,
+                                            location.*,
+                                            region.*
+                                        FROM 
+                                            booking
+                                        JOIN
+                                            users ON users.user_id = booking.user
+                                        JOIN 
+                                            package ON package.package_id = booking.package
+                                        JOIN 
+                                            location ON location.location_id = booking.source_location
+                                        JOIN 
+                                            region ON region.region_id = location.region
+                                        WHERE 
+                                            booking.user = :user
+                                        ORDER BY 
+                                            booking.booking_id DESC
+                                        LIMIT 1;";
                 $stmt = $conn->prepare($getTransactionInfo);
-                $stmt->bindParam(':user', $users);
+                $stmt->bindParam(':user', $user);
 
                 $stmt->execute();
 
@@ -95,7 +89,7 @@ switch ($method) {
                 if ($user) {
                     $response = ['status' => 1, 'message' => "Data found", 'data' => $user];
                 } else {
-                    $response = ['status' => 0, 'message' => "No packages found.", 'data' => $user];
+                    $response = ['status' => 0, 'message' => "No Transactions found.", 'data' => $user];
                 }
             } else {
                 // Connection to database
