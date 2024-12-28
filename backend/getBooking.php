@@ -74,7 +74,30 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "No packages found."];
                 }
-            } else if (isset($headers['Availability']) && isset($headers['TravelDate'])) {
+            } else if (isset($headers['Location_info']) && isset($headers['Package_Id'])) {
+                $travel_date = $headers['Location_info'];
+                $package_id = $headers['Package_Id'];
+
+                // Connection to database
+                $conn = $db->connect();
+                $getCityInfo = "SELECT * FROM location 
+                                 JOIN package_info ON package_info.source_location = location.location_id 
+                                 WHERE travel_date = :travel_date AND
+                                        package_info.package = :package_id";
+                $stmt = $conn->prepare($getCityInfo);
+                $stmt->bindParam(':travel_date', $travel_date, PDO::PARAM_STR); 
+                $stmt->bindParam(':package_id', $package_id, PDO::PARAM_STR); 
+                $stmt->execute();
+
+                $city = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                if ($city) {
+                    $response = ['status' => 1, 'message' => "Data found", 'data' => $city];
+                } else {
+                    $response = ['status' => 0, 'message' => "No packages found."];
+                }
+            }
+            else if (isset($headers['Availability']) && isset($headers['TravelDate'])) {
 
                 $id = $headers['Availability'];
                 $travel_date = $headers['TravelDate'];

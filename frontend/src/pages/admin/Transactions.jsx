@@ -33,7 +33,7 @@ const Transaction = () => {
   return (
     <>
       <div className="p-4 rounded-lg bg-white dark:bg-gray-800 shadow-md">
-        <h2 className="text-lg font-semibold mb-2">Manage Destination</h2>
+        <h2 className="text-lg font-semibold mb-2">Transactions</h2>
         <hr />
       </div>
       <div>

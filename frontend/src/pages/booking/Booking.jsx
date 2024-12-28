@@ -13,6 +13,8 @@ const Booking = () => {
   const [redirect, setRedirect] = useState(false);
   const [payment, setPayment] = useState([]);
   const [region, setRegion] = useState([]);
+  const [locationInfo, setLocationInfo] = useState([]);
+  const [countryData, setCountryData] = useState([]);
   const [addOn, setAddOn] = useState([]);
   const [discount, setDiscount] = useState([]);
   const [discountAdded, setDiscountAdded] = useState(false);
@@ -91,6 +93,36 @@ const Booking = () => {
       );
     }
   };
+
+  const getLocationInfo = async (travelDate) => {
+    try {
+      const formattedTravelDate = travelDate
+        ? travelDate.toISOString().split("T")[0]
+        : null;
+      const response = await axios.get(
+        "http://localhost:3000/backend/getBooking.php",
+        {
+          headers: {
+            Location_info: formattedTravelDate,
+            Package_Id: id,
+          },
+        }
+      );
+
+      if (response.data.status === 0) {
+        console.log(response.data);
+      } else if (response.data.status === 1) {
+        setLocationInfo(response.data.data);
+        console.log(response.data.data);
+      }
+    } catch (error) {
+      console.error(
+        "Error:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
+
   const getAvailabilityInfo = async () => {
     try {
       const response = await axios.get(
@@ -178,7 +210,6 @@ const Booking = () => {
         }
       );
 
-      console.log(response.data.data);
       if (response.data.status === 1) {
         // Map through the data and format the travel_date directly
         const formattedDates = response.data.data.map((item) => {
@@ -267,6 +298,11 @@ const Booking = () => {
         }
       }
 
+      if (name === "country" && value) {
+        setCountryData(value);
+        console.log(value);
+      }
+
       // Update selected add-on
       if (name === "add_on" && value) {
         const selectedAddOnData = addOn.find((add) => add.add_on === value);
@@ -326,6 +362,14 @@ const Booking = () => {
       );
       setTotalPrice(totalPriceCalculation);
     }
+  };
+
+  const cityOnChangeHandler = async (e) => {
+    console.log(e.target.value);
+  };
+
+  const countryOnChangeHandler = async (e) => {
+    console.log(e.target.value);
   };
 
   const submitHandler = async (values) => {
@@ -447,6 +491,7 @@ const Booking = () => {
 
   useEffect(() => {
     getAvailabilityInfo();
+    getLocationInfo(travelDate);
   }, [travelDate]);
 
   useEffect(
@@ -462,9 +507,9 @@ const Booking = () => {
     ]
   );
 
-  if(redirect){
-    navigate(`/recipts/${bookingId}`)
-  }  
+  if (redirect) {
+    navigate(`/recipts/${bookingId}`);
+  }
 
   return (
     <>
@@ -495,74 +540,94 @@ const Booking = () => {
             <h1 className="text-center font-semibold text-4xl my-4 text-teal-600">
               Order Form
             </h1>
+            <div className="mb-3">
+              <label htmlFor="travel_date" className="font-medium block mb-1">
+                Select Your Travel Date! (*be sure to choose it first to show up
+                your start location!)
+              </label>
+              <DatePicker
+                selected={travelDate}
+                onChange={(date) => handleDateSelect(date, setFieldValue)}
+                filterDate={(date) =>
+                  availableDates.some(
+                    (availableDate) =>
+                      format(new Date(availableDate), "MM/dd/yyyy") ===
+                      format(date, "MM/dd/yyyy") // Compare formatted dates
+                  )
+                }
+                className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                placeholderText="Select a travel date"
+              />
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="mb-3">
-                <label htmlFor="city" className="font-medium block mb-1">
-                  City
-                </label>
-                <Field
-                  type="text"
-                  name="city"
-                  id="city"
-                  className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
-                />
-                <StyledErrorMessage name="city" />
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="travel_date" className="font-medium block mb-1">
-                  Travel Date
-                </label>
-                <DatePicker
-                  selected={travelDate}
-                  onChange={(date) => handleDateSelect(date, setFieldValue)}
-                  filterDate={(date) =>
-                    availableDates.some(
-                      (availableDate) =>
-                        format(new Date(availableDate), "MM/dd/yyyy") ===
-                        format(date, "MM/dd/yyyy") // Compare formatted dates
-                    )
-                  }
-                  className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
-                  placeholderText="Select a travel date"
-                />
-
-                
-              </div>
               <div className="mb-3">
                 <label htmlFor="country" className="font-medium block mb-1">
                   Country
                 </label>
                 <Field
-                  type="text"
-                  name="country"
+                  as="select"
+                  name="country" // Ensure this matches your Formik initial values
                   id="country"
                   className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
-                />
-                <StyledErrorMessage name="country" />
+                  required // Added required attribute directly to the Field component
+                >
+                  <option value="" label="Select one option" />
+                  {locationInfo && locationInfo.length > 0 ? ( // Check if locationInfo array is not empty
+                    [...new Set(locationInfo.map((item) => item.country))].map(
+                      (
+                        country,
+                        index // Get unique countries
+                      ) => (
+                        <option
+                          key={index} // Use index as the key (consider using a unique identifier if available)
+                          value={country} // Use country as the value
+                          label={country} // Use country as the label
+                        />
+                      )
+                    )
+                  ) : (
+                    <option value="" label="No countries available" /> // Fallback option if no countries
+                  )}
+                </Field>
+                <StyledErrorMessage name="country" />{" "}
+                {/* Ensure this matches the Field name */}
               </div>
+
               <div className="mb-3">
-                <label htmlFor="region" className="font-medium block mb-1">
-                  Region
+                <label htmlFor="city" className="font-medium block mb-1">
+                  City
                 </label>
                 <Field
                   as="select"
-                  name="region"
-                  id="region"
+                  name="city"
+                  id="city"
                   className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  required // Added required attribute directly to the Field component
                 >
-                  <option value="" label="Select one option" required />
-                  {region.map((region) => (
-                    <option
-                      key={region.region_id}
-                      value={region.region_id}
-                      label={region.region_name}
-                    />
-                  ))}
+                  <option value="" label="Select one option" />
+                  {locationInfo && locationInfo.length > 0 ? ( // Check if locationInfo array is not empty
+                    locationInfo.map((locationInfoItem, index) =>
+                      // Check if the country matches the selected country
+                      locationInfoItem.country === countryData ? ( // Use locationInfoItem directly
+                        <option
+                          key={locationInfoItem.location_id} // Use location_id as the key
+                          value={locationInfoItem.location_id} // Use location_id as the value
+                          label={`${locationInfoItem.city}, ${locationInfoItem.country}`} // Combine city and country for the label
+                        >
+                          {`${locationInfoItem.city}, ${locationInfoItem.country}`}{" "}
+                          {/* Display combined label */}
+                        </option>
+                      ) : null // Return null if the country does not match
+                    )
+                  ) : (
+                    <option value="" label="No cities available" /> // Fallback option if no cities
+                  )}
                 </Field>
-                <StyledErrorMessage name="region" />
+                <StyledErrorMessage name="city" />{" "}
               </div>
             </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="mb-3">
                 <label
@@ -675,7 +740,7 @@ const Booking = () => {
               )}
             </div>
             <button
-              className="text-white bg-teal-600 py-4 font-medium w-full text-center mt-4 rounded-lg hover:bg-teal-700 transition duration-200"
+              className="text-white bg-orange-400 py-4 font-medium w-full text-center mt-4 rounded-lg hover:bg-sky-700 transition duration-200"
               type="submit"
             >
               Order

@@ -20,7 +20,7 @@ switch ($method) {
                 $package_id = $headers['Packages-Id'];
                 // Connection to database
                 $conn = $db->connect();
-                $getTravelDate = "SELECT travel_date FROM available_people WHERE package = :package_id";
+                $getTravelDate = "SELECT travel_date FROM package_info WHERE package = :package_id";
                 $stmt = $conn->prepare($getTravelDate);
                 $stmt->bindParam(':package_id', $package_id, PDO::PARAM_INT);
                 $stmt->execute();
@@ -29,7 +29,7 @@ switch ($method) {
                 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 if ($result) {
-                    $response = ['status' => 1, 'message' => "Data found", 'data' => $result];
+                    $response = ['status' => 1, 'message' => "Data found", 'data' => $result, 'package_id' => $package_id];
                 } else {
                     $response = ['status' => 0, 'message' => "No packages found."];
                 }
