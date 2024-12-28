@@ -4,7 +4,8 @@ import { UserContext } from "../providers/UserContext";
 import axios from "axios";
 
 const Nav = () => {
-  const { token, updateToken,userInfo, setUserInfo, deleteToken } = useContext(UserContext);
+  const { token, updateToken, userInfo, setUserInfo, deleteToken } =
+    useContext(UserContext);
   const navigate = useNavigate();
 
   const [username, setUsername] = useState(""); // State for username
@@ -26,9 +27,12 @@ const Nav = () => {
         return;
       }
 
-      const response = await axios.get("http://localhost:3000/backend/login.php", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        "http://localhost:3000/backend/login.php",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       if (response.data.status === 1 && response.data.customer) {
         // Set username in state and localStorage
@@ -55,64 +59,113 @@ const Nav = () => {
   }, [token]); // Run effect when token changes
 
   return (
-    <nav className="bg-slate-50 py-2 w- m-auto">
-      <div className="flex items-center justify-around">
-        <div className="flex px-5">
-          <Link to={"/Explore"} className="text-blue-600 text-xl pt-2">
+    <div className="navbar bg-base-100">
+      <div className="navbar-start">
+        <div>
+          <Link to={"/Explore"} className="btn btn-ghost text-lg font-normal">
             Explore
           </Link>
         </div>
-        <div className="flex ">
-          <Link to={"/"} className="text-blue-600 font-bold text-3xl pt-2 px-40">
-            Trailblazers
-          </Link>
-        </div>
-
-        <div className="flex gap-3">
-          {token ? (
-            <>
-            <Link to={"/saved-packages"} className="w-10 px-12 text-blue-600 font-medium py-2">
-                Saved
-              </Link>
-              {
-                userInfo.role === "customer" && 
-                <Link to={"/profile"} className="w-10 text-blue-600 font-medium py-2">
-                Profile
-              </Link>
-              }
-              {
-                userInfo.role === "admin" && 
-                <Link to={"/admin"} className="w-30 text-blue-600 font-medium py-2">
-                Admin Dashboard
-              </Link>
-              }
-              <button
-                type="button"
-                className="w-20 text-blue-600 font-medium py-2 rounded hover:bg-blue-600 hover:text-white"
-                onClick={logoutHandler}
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <>
-              <Link to="/register" className="p-2 mt-5 text-blue-600 hover:bg-blue-600 hover:text-white">
-                Register
-              </Link>
-              <Link to="/login" className="px-5 py-2 border-2 border-blue-600 mt-5 rounded-xl text-blue-600 hover:bg-blue-600 hover:text-white">
-                Login
-              </Link>
-            </>
-          )}
-        </div>
       </div>
-      {token && username && (
-        <div className="text-right text-sm text-blue-600 ">
-          <span className="font-semibold">Logged in as </span>
-          <span className="font-bold text-xl">{username}</span>
-        </div>
+      <div className="navbar-center">
+        <Link to={"/"} className="btn btn-ghost text-xl">
+          Trailblazers
+        </Link>
+      </div>
+      {token ? (
+        <>
+          <div className="navbar-end">
+            <div className="dropdown dropdown-end">
+              <div
+                tabIndex={0}
+                role="button"
+                className="btn btn-ghost btn-circle"
+              >
+                <div className="indicator">
+                  <Link to={"/saved-packages"}>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                      />
+                    </svg>
+                    <span className="badge badge-sm indicator-item">8</span>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {token && userInfo && (
+              <div className="dropdown dropdown-end">
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className="btn btn-ghost btn-circle avatar"
+                >
+                  <div className="w-10 rounded-full">
+                    <img
+                      alt="Tailwind CSS Navbar component"
+                      src={`http://localhost:3000/backend/${userInfo.profile_image}`}
+                    />
+                  </div>
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+                >
+                  <li>
+                    {userInfo && (
+                      <Link to="/profile" className="justify-between">
+                        Profile
+                        <span className="badge text-pink-600">New</span>
+                      </Link>
+                    )}
+                  </li>
+                  <li>
+                    {userInfo.role === "admin" && (
+                      <Link
+                        to={"/admin"}
+                        className="w-30 text-blue-600 font-medium py-2"
+                      >
+                        Admin Dashboard
+                      </Link>
+                    )}
+                  </li>
+                  <li>
+                    <div onClick={logoutHandler}>Logout</div>
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="navbar-end flex gap-3">
+            <Link
+              to="/register"
+              className="btn btn-outline mr-2" // Added button style and margin
+            >
+              Register
+            </Link>
+            <Link
+              to="/login"
+              className="btn btn-primary text-white mr-2 rounded-xl" // Added button style for emphasis
+            >
+              Login
+            </Link>
+          </div>
+        </>
       )}
-    </nav>
+    </div>
   );
 };
 

@@ -1,6 +1,6 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [destinations, setDestinations] = useState([]);
@@ -18,6 +18,7 @@ const Index = () => {
 
       if (response.data.status === 1) {
         setDestinations(response.data.data);
+        console.log(response.data.data);
       } else {
         setError("No data found");
       }
@@ -60,24 +61,52 @@ const Index = () => {
     <div className="bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-16">
         <header className="text-center mb-12">
-          <h1 className="text-5xl font-extrabold text-blue-600">Explore the World</h1>
-          <p className="text-lg text-gray-700 mt-4">Find the best destinations and plan your next adventure.</p>
+          <h1 className="text-5xl font-extrabold text-blue-600">
+            Explore the World
+          </h1>
+          <p className="text-lg text-gray-700 mt-4">
+            Find the best destinations and plan your next adventure.
+          </p>
         </header>
-        <h2 className="text-3xl font-bold text-center mb-8">Popular Destinations</h2>
+        <h2 className="text-3xl font-bold text-center mb-8">
+          Popular Destinations
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {destinations.map((destination, index) => (
-            <div className="bg-white shadow-md rounded-lg overflow-hidden" key={index}>
-              <img
-                src={`http://localhost:3000/backend/${destination.destination_image}` || 'default-image.jpg'}
-                alt={destination.destination_name}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-4">
-                <h3 className="text-2xl font-semibold mb-2 text-blue-600">{destination.destination_name}</h3>
-                <p className="text-gray-600 mb-1 font-medium">{destination.country}</p>
-                <p className="text-gray-500 mb-4 text-sm">{destination.description}</p>
+            <div
+              className="card card-compact bg-base-100 w-96 h-96 shadow-xl"
+              key={index}
+            >
+              <figure>
+                <img
+                  src={
+                    `http://localhost:3000/backend/${destination.destination_image}` ||
+                    "default-image.jpg"
+                  }
+                  alt={destination.city}
+                  className="w-full h-72 object-cover"
+                />
+              </figure>
+
+              <div className="card-body p-4">
+                {" "}
+                {/* Added padding to the card body */}
+                <h3 className="card-title text-2xl font-bold mb-2">
+                  {" "}
+                  {/* Increased font size and added margin */}
+                  {destination.city}
+                </h3>
+                <p className="text-gray-700 mb-1 font-semibold">
+                  {/* Changed text color and weight */}
+                  {destination.country}
+                </p>
+                <p className="text-gray-600 mb-4 text-sm">
+                  {" "}
+                  {/* Adjusted text color for better contrast */}
+                  {destination.description}
+                </p>
                 <button
-                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+                  className="border border-black text-black bg-white px-6 py-3 rounded-lg hover:bg-yellow-500 hover:text-white hover:border-transparent transition duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50"
                   onClick={() => handleDetails(destination.destination_id)}
                 >
                   View Details
@@ -116,7 +145,9 @@ const Index = () => {
 
       <footer className="bg-blue-600 text-white py-6">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-sm">&copy; 2024 Travel App. All rights reserved.</p>
+          <p className="text-sm">
+            &copy; 2024 Travel App. All rights reserved.
+          </p>
         </div>
       </footer>
     </div>
