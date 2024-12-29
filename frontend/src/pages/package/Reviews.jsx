@@ -257,10 +257,9 @@ const Reviews = ({ id }) => {
 
   return (
     <>
-      <div className="mt-10 flex">
-        <div className="mt-10 lg:w-2/3">hi</div>
+      <div className="flex flex-col lg:flex-row">
         {showReviewForm && (
-          <div className="fixed bg-slate-600 top-1/4 w-1/2 left-1/4 p-4 rounded-lg shadow-lg">
+          <div className="fixed bg-slate-600 top-1/4 left-1/4 p-4 rounded-lg shadow-lg z-10">
             <button
               onClick={() => goBackHandler()}
               className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-200"
@@ -293,9 +292,10 @@ const Reviews = ({ id }) => {
             </form>
           </div>
         )}
-        <div className="lg:w-1/3">
+
+        <div className="flex flex-col lg:flex-1 lg:ml-4">
           <h1 className="text-xl font-bold">Reviews</h1>
-          <div className="lg:col-span-2 hidden lg:flex flex-col space-y-4">
+          <div className="hidden lg:flex flex-col space-y-4">
             <div className="flex items-center space-x-2">
               <span className="text-yellow-400 text-xl">
                 {renderStars(averageRating)}{" "}
@@ -390,30 +390,26 @@ const Reviews = ({ id }) => {
                         <p className="text-sm text-gray-200">
                           {review ? review.description : "No Description"}
                         </p>
-                        {
-                          review &&
-                          review.user ===
-                            Number(localStorage.getItem("user_id")) ? ( // Check if review is defined
-                            <div className="mt-4 flex space-x-2">
-                              <button
-                                onClick={() =>
-                                  handleEditReview(review.review_id)
-                                } // Function to handle edit
-                                className="bg-yellow-500 text-white py-1 px-3 rounded-md hover:bg-yellow-600 transition-all duration-200"
-                              >
-                                Edit
-                              </button>
-                              <button
-                                onClick={() =>
-                                  handleDeleteReview(review.review_id)
-                                } // Function to handle delete
-                                className="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600 transition-all duration-200"
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          ) : null // Use null instead of an empty string
-                        }
+                        {review &&
+                        review.user ===
+                          Number(localStorage.getItem("user_id")) ? (
+                          <div className="mt-4 flex space-x-2">
+                            <button
+                              onClick={() => handleEditReview(review.review_id)}
+                              className="bg-yellow-500 text-white py-1 px-3 rounded-md hover:bg-yellow-600 transition-all duration-200"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleDeleteReview(review.review_id)
+                              }
+                              className="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600 transition-all duration-200"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        ) : null}
                       </div>
                     ))
                 ) : (
