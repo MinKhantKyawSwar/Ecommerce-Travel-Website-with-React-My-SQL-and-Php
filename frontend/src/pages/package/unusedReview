@@ -39,26 +39,26 @@ const Reviews = ({ id }) => {
     }
   };
   const totalRatingData = async (totalRating) => {
-    const data = {
-      totalRating: parseFloat(totalRating),
-      destination: parseInt(id),
-    };
     try {
       const response = await axios.put(
-        `http://localhost:3000/backend/updateReviewInfo.php`,
-        data,
+        `http://localhost:3000/backend/getReview.php`,
         {
           headers: {
-            "Content-Type": "application/json",
+            Rating: totalRating,
+            Destination_Id: id,
           },
         }
       );
+
+      console.log(totalRating)
+      console.log(id)
 
       if (response.data.status === 1) {
         console.log(response.data.data);
       } else {
         setError(response.data.message);
         console.log(response.data);
+
       }
     } catch (err) {
       setError("Failed to add rating: " + err.message);
@@ -146,7 +146,8 @@ const Reviews = ({ id }) => {
       );
 
       if (response.data.status === 1) {
-        totalRatingData(averageRating);
+        totalRatingData(averageRating)
+        console.log(averageRating);
         setPrevReview([...prevReview, response.data.data]);
         setReviewTitle("");
         setDescription("");
@@ -166,6 +167,7 @@ const Reviews = ({ id }) => {
     );
 
     if (reviewToEdit) {
+      totalRatingData(averageRating)
       setReviewTitle(reviewToEdit.review_title);
       setDescription(reviewToEdit.description);
       setRating(reviewToEdit.rating);
@@ -185,6 +187,7 @@ const Reviews = ({ id }) => {
       created_at: new Date(),
       userId: localStorage.getItem("user_id"),
       destination: id,
+      total_rating : averageRating 
     };
 
     try {
@@ -199,7 +202,7 @@ const Reviews = ({ id }) => {
       );
 
       if (response.data.status === 1) {
-        totalRatingData(averageRating);
+        totalRatingData(averageRating)
         const updatedReviews = prevReview.map((review) =>
           review.review_id === currentReviewId ? response.data.data : review
         );
@@ -241,7 +244,6 @@ const Reviews = ({ id }) => {
       );
 
       if (response.data.status === 1) {
-        totalRatingData(averageRating);
         setReload(!reload);
       } else {
         setError("Failed to delete review");
@@ -253,7 +255,11 @@ const Reviews = ({ id }) => {
 
   useEffect(() => {
     getPrevReview();
-  }, [showReviewForm, reload]);
+  }, [showReviewForm, reload]); // Fetch reviews when the component mounts or when the id changes
+
+  useEffect(() => {
+    totalRatingData(averageRating)
+  }, []); // Fetch reviews when the component mounts or when the id changes
 
   return (
     <>
