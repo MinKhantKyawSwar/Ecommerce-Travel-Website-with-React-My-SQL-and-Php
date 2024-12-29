@@ -8,7 +8,7 @@ const Nav = () => {
     useContext(UserContext);
   const navigate = useNavigate();
 
-  const [username, setUsername] = useState(""); // State for username
+  const [cartItem, setCartItem] = useState(0);
 
   const logoutHandler = () => {
     updateToken(null);
@@ -16,7 +16,6 @@ const Nav = () => {
     localStorage.removeItem("user_id");
     localStorage.removeItem("username");
     setUserInfo("");
-    setUsername(""); // Clear username from state
     navigate("/login");
   };
 
@@ -39,7 +38,6 @@ const Nav = () => {
         const customer = response.data.customer;
         localStorage.setItem("user_id", customer.user_id);
         localStorage.setItem("username", customer.username);
-        setUsername(customer.username); // Set the username to state
         setUserInfo(customer); // Optionally, update userInfo if needed
       } else {
         console.error("Failed to fetch user ID:", response.data.message);
@@ -49,12 +47,31 @@ const Nav = () => {
     }
   };
 
+  const getSavedItems = async () => {
+  const data = {
+      user_id: localStorage.getItem("user_id"),
+  }
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/backend/getCartInfo.php", data,
+      );
+
+      if (response.data.status === 1) {
+        setCartItem(response.data.data);
+      } else {
+        setError("No data found");
+      }
+    } catch (err) {
+      setError("Failed to fetch data: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (token) {
       // Fetch user ID only if the token exists
       getUserId();
-    } else {
-      setUsername(""); // Clear username when no token is present
     }
   }, [token]); // Run effect when token changes
 
@@ -76,13 +93,13 @@ const Nav = () => {
         <>
           <div className="navbar-end">
             <div className="dropdown dropdown-end">
-              <div
-                tabIndex={0}
-                role="button"
-                className="btn btn-ghost btn-circle"
-              >
-                <div className="indicator">
-                  <Link to={"/saved-packages"}>
+              <Link to={"/saved-packages"}>
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className="btn btn-ghost btn-circle"
+                >
+                  <div className="indicator">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-4 w-4"
@@ -97,10 +114,12 @@ const Nav = () => {
                         d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
                       />
                     </svg>
-                    <span className="badge badge-sm indicator-item">8</span>
-                  </Link>
+                    <span className="badge badge-sm indicator-item">
+                      {cartItem}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              </Link>
             </div>
 
             {token && userInfo && (

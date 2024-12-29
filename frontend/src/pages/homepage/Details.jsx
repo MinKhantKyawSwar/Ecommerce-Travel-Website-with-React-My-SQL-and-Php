@@ -42,7 +42,6 @@ const Details = () => {
     navigate(-1);
   };
 
-
   useEffect(() => {
     findById();
   }, [id]);
@@ -61,33 +60,67 @@ const Details = () => {
         Go Back
       </button>
 
-      <div className="mt-5 p-4 border flex flex-col md:flex-row">
-        {destination.destination_image ? (
-          <img
-            src={`http://localhost:3000/backend/${destination.destination_image}`}
-            alt="Destination"
-            className="w-full md:w-1/2 rounded-lg shadow-lg"
-          />
-        ) : (
-          <p className="text-gray-500">No Image Available For now</p>
-        )}
-        <div className="md:ml-4 mt-4 md:mt-0">
-          <h2 className="text-2xl font-medium underline">
-            Destination Details
-          </h2>
-          <p>
-            <b>Name:</b> {destination.destination_name}
+      <div className="mt-5 p-6 border rounded-lg shadow-md bg-white">
+        <div className="pb-6 border-b">
+          <p className="text-2xl font-semibold text-gray-800">
+            {destination.city}
           </p>
-          <p>
-            <b>Country:</b> {destination.country}
-          </p>
-          <p>
-            <b>Description:</b> {destination.description}
-          </p>
-          <p>
-            <b>Bookings:</b> {/* Add booking details here */}
-          </p>
+          <span className="text-gray-600 flex items-center mt-1">
+            📍 {destination.country}
+          </span>
         </div>
+        <div className="flex flex-col md:flex-row mt-6 gap-6">
+          {/* Main Image */}
+          <div className="w-full md:w-3/5">
+            {destination.destination_image ? (
+              <img
+                src={`http://localhost:3000/backend/${destination.destination_image}`}
+                alt="Destination"
+                className="w-full h-full rounded-lg shadow-lg object-cover"
+              />
+            ) : (
+              <p className="text-gray-500 text-center py-10 border rounded-lg">
+                No Image Available For Now
+              </p>
+            )}
+          </div>
+
+          {/* Side Images */}
+          <div className="flex flex-col md:w-2/5 gap-4">
+            {[
+              destination.destination_second_image,
+              destination.destination_third_image,
+            ].map((image, index) => (
+              <div key={index}>
+                {image ? (
+                  <img
+                    src={`http://localhost:3000/backend/${image}`}
+                    alt={`Destination Side ${index + 1}`}
+                    className="w-full h-40 rounded-lg shadow-lg object-cover"
+                  />
+                ) : (
+                  <p className="text-gray-500 text-center py-10 border rounded-lg">
+                    No Image Available For Now
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="md:ml-4 mt-4 md:mt-0">
+        <h2 className="text-2xl font-medium underline">Destination Details</h2>
+
+        <p className="text-lg">
+          <b>Country:</b> {destination.country}
+        </p>
+        <p className="text-lg">
+          <b>Description:</b> {destination.description}
+        </p>
+        <p className="text-lg">
+          <b>Bookings:</b> {/* Add booking details here */}
+        </p>
       </div>
 
       <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
@@ -114,7 +147,7 @@ const Details = () => {
               Location, Best time to Visit, Weather, Local Currency, Language,
               review, tips
             </p>
-            <Reviews id={id}/>
+            <Reviews id={id} />
           </div>
         )}
         {activeTab === "packages" && (

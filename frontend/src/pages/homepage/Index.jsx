@@ -14,7 +14,7 @@ const Index = () => {
   const getDestinations = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/backend/getDestination.php"
+        "http://localhost:3000/backend/getIndexInfo.php"
       );
 
       if (response.data.status === 1) {
@@ -92,7 +92,7 @@ const Index = () => {
                 />
                 {/* Days Label */}
                 <span className="absolute top-4 left-4 bg-black text-white text-sm font-semibold px-3 py-1 rounded-md">
-                  {destination.days} Days
+                  {destination.duration} Days
                 </span>
                 {/* Rating Badge */}
                 <span className="absolute top-4 right-4 bg-yellow-500 text-white text-sm font-semibold px-2 py-1 rounded-md flex items-center">
