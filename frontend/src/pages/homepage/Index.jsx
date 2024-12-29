@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import TopLocations from "./TopLocations";
 
 const Index = () => {
   const [destinations, setDestinations] = useState([]);
@@ -18,7 +19,6 @@ const Index = () => {
 
       if (response.data.status === 1) {
         setDestinations(response.data.data);
-        console.log(response.data.data);
       } else {
         setError("No data found");
       }
@@ -71,13 +71,17 @@ const Index = () => {
         <h2 className="text-3xl font-bold text-center mb-8">
           Popular Destinations
         </h2>
+        <div>
+          <TopLocations />
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {destinations.map((destination, index) => (
             <div
-              className="card card-compact bg-base-100 w-96 h-96 shadow-xl"
+              className="relative bg-white rounded-lg overflow-hidden shadow-lg"
               key={index}
             >
-              <figure>
+              {/* Destination Image */}
+              <figure className="relative">
                 <img
                   src={
                     `http://localhost:3000/backend/${destination.destination_image}` ||
@@ -86,31 +90,38 @@ const Index = () => {
                   alt={destination.city}
                   className="w-full h-72 object-cover"
                 />
+                {/* Days Label */}
+                <span className="absolute top-4 left-4 bg-black text-white text-sm font-semibold px-3 py-1 rounded-md">
+                  {destination.days} Days
+                </span>
+                {/* Rating Badge */}
+                <span className="absolute top-4 right-4 bg-yellow-500 text-white text-sm font-semibold px-2 py-1 rounded-md flex items-center">
+                  ⭐ {destination.rating}
+                </span>
               </figure>
 
-              <div className="card-body p-4">
-                {" "}
-                {/* Added padding to the card body */}
-                <h3 className="card-title text-2xl font-bold mb-2">
-                  {" "}
-                  {/* Increased font size and added margin */}
+              {/* Card Body */}
+              <div className="p-4">
+                <h3 className="text-xl font-bold text-gray-900">
                   {destination.city}
                 </h3>
-                <p className="text-gray-700 mb-1 font-semibold">
-                  {/* Changed text color and weight */}
+                <p className="text-sm text-gray-500 mb-1">
                   {destination.country}
                 </p>
-                <p className="text-gray-600 mb-4 text-sm">
-                  {" "}
-                  {/* Adjusted text color for better contrast */}
+                <p className="text-sm text-gray-700 mb-4">
                   {destination.description}
                 </p>
-                <button
-                  className="border border-black text-black bg-white px-6 py-3 rounded-lg hover:bg-yellow-500 hover:text-white hover:border-transparent transition duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50"
-                  onClick={() => handleDetails(destination.destination_id)}
-                >
-                  View Details
-                </button>
+                <div className="flex justify-between items-center">
+                  <span className="text-lg font-bold text-gray-900">
+                    ${destination.price}
+                  </span>
+                  <button
+                    className="px-4 py-2 text-white bg-black rounded-lg hover:bg-yellow-500 transition duration-200"
+                    onClick={() => handleDetails(destination.destination_id)}
+                  >
+                    View Details
+                  </button>
+                </div>
               </div>
             </div>
           ))}

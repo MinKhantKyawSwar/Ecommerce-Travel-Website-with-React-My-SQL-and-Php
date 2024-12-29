@@ -8,6 +8,7 @@ const Reviews = ({ id }) => {
   const [reviewTitle, setReviewTitle] = useState("");
   const [description, setDescription] = useState("");
   const [rating, setRating] = useState(0);
+  const [totalRating, setTotalRating] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [reload, setReload] = useState(false);
@@ -38,6 +39,29 @@ const Reviews = ({ id }) => {
       setLoading(false); // Set loading to false after fetching
     }
   };
+  const totalRatingData = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:3000/backend/getReview.php`,
+        {
+          headers: {
+            "Rating": totalRating,
+            "Destination-Id": id,
+          },
+        }
+      );
+
+      if (response.data.status === 1) {
+        console.log(response.data.data);
+      } else {
+        setError("Cannot add rating.");
+      }
+    } catch (err) {
+      setError("Failed to add rating: " + err.message);
+    } finally {
+      setLoading(false); // Set loading to false after fetching
+    }
+  };
 
   //calculate total stars
   const calculateRatings = () => {
@@ -55,8 +79,10 @@ const Reviews = ({ id }) => {
   const ratingsCount = calculateRatings();
   const totalRatings = prevReview.length;
   const calculatePercentage = (count) => {
-    return totalRatings === 0 ? 0 : (count / totalRatings) * 100;
+    const percentage = totalRatings === 0 ? 0 : (count / totalRatings) * 100;
+    return percentage; // Return the percentage
   };
+
 
   // output stars
   const renderStars = (rating) => {

@@ -47,37 +47,61 @@ switch ($method) {
 
     case "POST":
         try {
-            // Retrieve all data
-            $data = json_decode($eData);
-            $review_title = $data->reviewTitle;
-            $description = $data->description;
-            $rating = $data->rating;
-            $created_at = $data->created_at;
-            $user = $data->userId;
-            $destination = $data->destination;
+            $headers = getallheaders();
+            if (isset($headers['Destination-Id']) && isset($headers['Rating'])) {
+                $destination_id = $headers['Destination-Id'];
+                $rating = $headers['Rating'];
 
-            $conn = $db->connect();
-            $setSavedItems = "INSERT INTO review (review_title, description, rating, created_at, user, destination) VALUES 
-            (:review_title, :description, :rating, :created_at, :user, :destination)";
-            $stmt = $conn->prepare($setSavedItems);
-            $stmt->bindParam(':review_title', $review_title);
-            $stmt->bindParam(':description', $description);
-            $stmt->bindParam(':rating', $rating);
-            $stmt->bindParam(':created_at', $created_at);
-            $stmt->bindParam(':user', $user);
-            $stmt->bindParam(':destination', $destination);
-            $status = $stmt->execute();
+                $conn = $db->connect();
+                $addReviews = "INSERT into destination values (rating = :rating)
+                                WHERE destination = :destination_id ";
+                $stmt = $conn->prepare($addReviews);
+                $stmt->bindParam(':destination_id', $destination_id, PDO::PARAM_INT);
+                $stmt->bindParam(':rating', $rating, PDO::PARAM_INT);
+                $stmt->execute();
 
-            if ($status) {
-                $response = ['status' => 1, 'message' => "Review Successfully given!"];
+                $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                if ($reviews) {
+                    $response = ['status' => 1, 'message' => "review added"];
+                } else {
+                    $response = ['status' => 0, 'message' => "No packages found."];
+                }
             } else {
-                $response = ['status' => 0, 'message' => "Failed to save item!"];
+
+                // Retrieve all data
+                $data = json_decode($eData);
+                $review_title = $data->reviewTitle;
+                $description = $data->description;
+                $rating = $data->rating;
+                $created_at = $data->created_at;
+                $user = $data->userId;
+                $destination = $data->destination;
+
+                $conn = $db->connect();
+                $setSavedItems = "INSERT INTO review (review_title, description, rating, created_at, user, destination) VALUES 
+                (:review_title, :description, :rating, :created_at, :user, :destination)";
+                $stmt = $conn->prepare($setSavedItems);
+                $stmt->bindParam(':review_title', $review_title);
+                $stmt->bindParam(':description', $description);
+                $stmt->bindParam(':rating', $rating);
+                $stmt->bindParam(':created_at', $created_at);
+                $stmt->bindParam(':user', $user);
+                $stmt->bindParam(':destination', $destination);
+                $status = $stmt->execute();
+
+                if ($status) {
+                    $response = ['status' => 1, 'message' => "Review Successfully given!"];
+                } else {
+                    $response = ['status' => 0, 'message' => "Failed to save item!"];
+                }
+
+                echo json_encode($response);
+                break;
             }
         } catch (PDOException $e) {
             $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
         }
-        echo json_encode($response);
-        break;
 
     case "PUT":
         try {

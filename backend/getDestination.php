@@ -51,13 +51,19 @@ switch ($method) {
                                             destination.*,
                                             category.*,
                                             location.*,
-                                            region.*
+                                            region.*,
+                                            package.*,
+                                            package_info.*
                                       FROM 
                                             destination
                                       JOIN 
                                             category ON destination.category = category.category_id
                                       JOIN 
                                             location ON destination.location = location.location_id
+                                      JOIN 
+                                            package ON package.destination = destination.destination_id
+                                      JOIN 
+                                            package_info ON package_info.package = package.package_id
                                       JOIN
                                             region ON location.region = region.region_id";
                 $stmt = $conn->prepare($getAllDestinations);
