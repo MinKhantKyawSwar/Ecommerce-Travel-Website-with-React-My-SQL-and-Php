@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios"; // Make sure to import axios
+import axios from "axios";
+import { IoIosClose, IoIosCreate, IoIosTrash } from "react-icons/io";
 import StarRating from "./StarRating";
 
 const Reviews = ({ id }) => {
@@ -258,53 +259,53 @@ const Reviews = ({ id }) => {
   return (
     <>
       <div className="flex flex-col lg:flex-row">
-        {showReviewForm && (
-          <div className="fixed bg-slate-600 top-1/4 left-1/4 p-4 rounded-lg shadow-lg z-10">
-            <button
-              onClick={() => goBackHandler()}
-              className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-200"
-            >
-              Go back
-            </button>
-
-            <form onSubmit={isEdit ? handleEditForm : handleAddReview}>
-              <input
-                type="text"
-                value={reviewTitle}
-                onChange={(e) => setReviewTitle(e.target.value)}
-                placeholder="Review Title"
-                className="w-full p-2 rounded-md bg-gray-600 text-white"
-              />
-              <StarRating setRating={setRating} />
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Add your review..."
-                className="w-full p-2 rounded-md bg-gray-600 text-white"
-                rows="3"
-              />
-              <button
-                type="submit"
-                className="mt-2 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-200"
-              >
-                {isEdit ? "Edit Review" : "Submit Review"}
-              </button>
-            </form>
-          </div>
-        )}
-
+        <div className="z-50">
+          {showReviewForm && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative">
+                <button
+                  onClick={() => goBackHandler()}
+                  className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
+                >
+                  <IoIosClose size={24} />
+                </button>
+                <form onSubmit={isEdit ? handleEditForm : handleAddReview}>
+                  <input
+                    type="text"
+                    value={reviewTitle}
+                    onChange={(e) => setReviewTitle(e.target.value)}
+                    placeholder="Review Title"
+                    className="w-full p-2 mb-4 border rounded-md"
+                  />
+                  <StarRating setRating={setRating} />
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Add your review..."
+                    className="w-full p-2 mb-4 border rounded-md"
+                    rows="3"
+                  />
+                  <button
+                    type="submit"
+                    className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-all duration-200"
+                  >
+                    {isEdit ? "Edit Review" : "Submit Review"}
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+        </div>
         <div className="flex flex-col lg:flex-1 lg:ml-4">
-          <h1 className="text-xl font-bold">Reviews</h1>
-          <div className="hidden lg:flex flex-col space-y-4">
+          <h1 className="text-2xl font-bold mb-4">Reviews</h1>
+          <div className="lg:flex flex-col space-y-4">
             <div className="flex items-center space-x-2">
               <span className="text-yellow-400 text-xl">
                 {renderStars(averageRating)}{" "}
-                {/* Render stars based on average rating */}
               </span>
               <p className="text-sm font-medium text-gray-900">
                 Average Rating:{" "}
-                <span className="font-bold">{averageRating}</span>{" "}
-                {/* Display average rating as a number */}
+                <span className="font-bold">{averageRating}</span>
               </p>
             </div>
             <p className="text-sm font-medium text-gray-500">
@@ -336,88 +337,121 @@ const Reviews = ({ id }) => {
             >
               {showReviewForm ? "Cancel" : "Add Review"}
             </button>
-            <button
-              onClick={() => setShowAllReview(!showAllReview)}
-              className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-200"
-            >
-              {showAllReview ? "Hide Reviews" : "Show Reviews"}
-            </button>
           </div>
-          {showAllReview && (
-            <div>
-              {loading && <p className="text-gray-300">Loading reviews...</p>}{" "}
-              {/* Loading indicator */}
-              {/* {error && <p className="text-red-500">{error}</p>}{" "} */}
-              {/* Error message */}
-              <div className="mt-4 space-y-4">
-                {prevReview.length > 0 ? (
-                  prevReview
-                    .slice()
-                    .reverse()
-                    .map((review, index) => (
-                      <div
-                        key={index}
-                        className="bg-gray-800 rounded-lg p-6 shadow-lg"
-                      >
-                        <div className="flex items-center mb-4">
-                          {review && review.profile_image ? (
-                            <img
-                              src={`http://localhost:3000/backend/${review.profile_image}`}
-                              alt="Profile"
-                              className="w-10 h-10 rounded-full border-2 border-gray-600 mr-4"
-                            />
-                          ) : (
-                            <p>No Profile Image Available</p>
-                          )}
-                          <h1 className="text-white text-lg font-bold">
-                            {review ? review.username : "Unknown User"}
-                          </h1>
-                        </div>
-                        <div className="flex justify-between">
-                          <h2 className="text-2xl font-semibold text-white">
-                            {review ? review.review_title : "No Title"}
-                          </h2>
-                          <p className="text-lg text-yellow-400 mb-2">
-                            {renderStars(review ? review.rating : 0)}
-                          </p>
-                        </div>
-                        <p className="font-medium text-gray-300 mb-2">
-                          Date:{" "}
-                          {review
-                            ? new Date(review.created_at).toLocaleDateString()
-                            : "N/A"}
-                        </p>
-                        <p className="text-sm text-gray-200">
-                          {review ? review.description : "No Description"}
-                        </p>
-                        {review &&
-                        review.user ===
-                          Number(localStorage.getItem("user_id")) ? (
-                          <div className="mt-4 flex space-x-2">
-                            <button
-                              onClick={() => handleEditReview(review.review_id)}
-                              className="bg-yellow-500 text-white py-1 px-3 rounded-md hover:bg-yellow-600 transition-all duration-200"
+          <button
+            className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-200"
+            onClick={() => document.getElementById("reviews").showModal()}
+          >
+            Show Reviews
+          </button>
+          <div className="z-10">
+            <dialog id="reviews" className="modal z-10">
+              <div className="modal-box max-w-3xl bg-white rounded-lg shadow-lg p-6">
+                <form method="dialog">
+                  <button
+                    className="absolute top-4 right-4 z-10 text-black hover:text-gray-800 focus:outline-none"
+                    aria-label="Close"
+                  >
+                    <IoIosClose size={32} />
+                  </button>
+                </form>
+                <div className="modal-action w-full flex flex-col items-center">
+                  {loading ? (
+                    <div className="flex items-center justify-center">
+                      <div className="loader border-4 border-t-4 border-gray-300 border-t-blue-500 rounded-full w-8 h-8 animate-spin"></div>
+                    </div>
+                  ) : (
+                    <div className="mt-4 space-y-4 w-full">
+                      {prevReview.length > 0 ? (
+                        prevReview
+                          .slice()
+                          .reverse()
+                          .map((review, index) => (
+                            <div
+                              key={index}
+                              className="bg-gray-800 w-full rounded-lg p-6 shadow-md"
                             >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() =>
-                                handleDeleteReview(review.review_id)
-                              }
-                              className="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600 transition-all duration-200"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        ) : null}
-                      </div>
-                    ))
-                ) : (
-                  <div className="text-xl text-gray-300">No reviews yet.</div>
-                )}
+                              <div className="flex flex-row justify-between items-center">
+                                <div className="flex items-center mb-4">
+                                  {review && review.profile_image ? (
+                                    <img
+                                      src={`http://localhost:3000/backend/${review.profile_image}`}
+                                      alt="Profile"
+                                      className="w-12 h-12 rounded-full border-2 border-gray-600 mr-4"
+                                    />
+                                  ) : (
+                                    <p className="text-gray-400">
+                                      No Profile Image Available
+                                    </p>
+                                  )}
+                                  <div>
+                                    <h1 className="text-white text-lg font-bold ">
+                                      {review
+                                        ? review.username
+                                        : "Unknown User"}
+                                    </h1>
+                                    <p className="text-xs text-gray-300 mb-2">
+                                      posted on:{" "}
+                                      {review
+                                        ? new Date(
+                                            review.created_at
+                                          ).toLocaleDateString()
+                                        : "N/A"}
+                                    </p>
+                                  </div>
+                                </div>
+                                <p className="text-lg text-yellow-400 mb-2 ">
+                                  {renderStars(review ? review.rating : 0)}
+                                </p>
+                              </div>
+                              <div className="flex justify-between ">
+                                <h2 className="text-xl font-semibold text-white">
+                                  {review ? review.review_title : "No Title"}
+                                </h2>
+                              </div>
+
+                              <p className="text-sm text-gray-200">
+                                {review ? review.description : "No Description"}
+                              </p>
+                              {review &&
+                              review.user ===
+                                Number(localStorage.getItem("user_id")) ? (
+                                <div className="mt-4 flex space-x-2">
+                                  <form method="dialog">
+                                    <button
+                                      onClick={() =>
+                                        handleEditReview(review.review_id)
+                                      }
+                                      className="bg-yellow-500 text-white py-1 px-3 rounded-md hover:bg-yellow-600 transition-all duration-200 flex items-center"
+                                    >
+                                      <IoIosCreate className="mr-1" />
+                                      Edit
+                                    </button>
+                                  </form>
+
+                                  <button
+                                    onClick={() =>
+                                      handleDeleteReview(review.review_id)
+                                    }
+                                    className="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600 transition-all duration-200 flex items-center"
+                                  >
+                                    <IoIosTrash className="mr-1" /> Delete
+                                  </button>
+                                </div>
+                              ) : null}
+                            </div>
+                          ))
+                      ) : (
+                        <div className="text-xl text-gray-300">
+                          No reviews yet.
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            </dialog>
+          </div>
         </div>
       </div>
     </>

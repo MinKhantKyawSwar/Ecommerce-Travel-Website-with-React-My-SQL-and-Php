@@ -99,7 +99,7 @@ const Index = () => {
                 {destinations.map((destination, index) => (
                   <div
                     key={index}
-                    className="relative bg-white rounded-lg overflow-hidden shadow-lg hover:scale-105 transition transform"
+                    className="relative bg-white rounded-lg overflow-hidden cursor-pointer shadow-lg hover:scale-105 transition transform"
                     onClick={() => handleDetails(destination.destination_id)}
                   >
                     <img
