@@ -1,16 +1,26 @@
-import React from 'react'
+import React from "react";
+import { IoLocationSharp } from "react-icons/io5";
 
-const DetailsTopSection = ({destination, activeTab}) => {
+const DetailsTopSection = ({ destination }) => {
   return (
     <>
-    <div className="mt-5 p-6 border rounded-lg shadow-md bg-white">
-        <div className="pb-6 border-b">
-          <p className="text-2xl font-semibold text-gray-800">
-            {destination.city}
-          </p>
-          <span className="text-gray-600 flex items-center mt-1">
-            📍 {destination.country}
-          </span>
+      <div className="mt-5 p-6 border rounded-lg shadow-md bg-white dark:bg-gray-800">
+        <div className="flex justify-between md:flex-row md:items-center md:justify-between">
+          <div className="pb-6 border-b md:border-b-0 md:pb-0 md:border-r md:pr-6">
+            <p className="text-2xl font-bold text-gray-800">
+              {destination.city}
+            </p>
+            <div className="flex items-center gap-4 mt-2 text-sm justify-center">
+              <p className="text-gray-500 flex items-center gap-1">
+                <span className="text-yellow-300 text-lg">★</span>
+                {destination.rating}
+              </p>
+              <span className="text-gray-600 flex items-center mt-1">
+                <IoLocationSharp /> {destination.country}
+              </span>
+            </div>
+          </div>
+          <div className="mr-4 mt-4 md:mt-0"></div>
         </div>
         <div className="flex flex-col md:flex-row mt-6 gap-6">
           {/* Main Image */}
@@ -51,25 +61,8 @@ const DetailsTopSection = ({destination, activeTab}) => {
           </div>
         </div>
       </div>
-
-      <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
-        <ul className="flex flex-wrap -mb-px text-sm font-medium text-center items-center justify-center">
-          {["overview", "packages", "faq"].map((tab) => (
-            <li className="me-2" key={tab}>
-              <button
-                className={`inline-block p-4 border-b-2 rounded-t-lg ${
-                  activeTab === tab ? "border-blue-500 text-blue-500" : ""
-                }`}
-                onClick={() => handleTabClick(tab)}
-              >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
     </>
-  )
-}
+  );
+};
 
-export default DetailsTopSection
+export default DetailsTopSection;

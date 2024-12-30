@@ -313,7 +313,7 @@ const Reviews = ({ id }) => {
             {[5, 4, 3, 2, 1].map((star) => (
               <div className="flex items-center mb-2" key={star}>
                 <span className="text-sm font-medium text-blue-600 hover:underline cursor-pointer">
-                  {star} star
+                  {star} ★
                 </span>
                 <div className="w-3/4 h-4 mx-2 bg-gray-200 rounded">
                   <div
@@ -347,7 +347,7 @@ const Reviews = ({ id }) => {
             <div>
               {loading && <p className="text-gray-300">Loading reviews...</p>}{" "}
               {/* Loading indicator */}
-              {error && <p className="text-red-500">{error}</p>}{" "}
+              {/* {error && <p className="text-red-500">{error}</p>}{" "} */}
               {/* Error message */}
               <div className="mt-4 space-y-4">
                 {prevReview.length > 0 ? (

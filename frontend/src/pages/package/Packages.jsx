@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
-const Packages = ({ destination_id, activeTab }) => {
-  const [packages, setPackages] = useState([]);
-  const [isSaved, setIsSaved] = useState(false);
+import { FaRegBookmark,FaBookmark } from "react-icons/fa";
+const Packages = ({
+  destination_id,
+  activeTab,
+  isSaved,
+  setIsSaved,
+  packages,
+  setPackages,
+}) => {
   const [error, setError] = useState(null);
+
   const navigate = useNavigate();
 
   const findPackage = async (id) => {
@@ -40,8 +46,9 @@ const Packages = ({ destination_id, activeTab }) => {
   };
 
   const savedItemHandler = async (id, least_price) => {
+    setIsSaved(true);
     const user_id = Number(localStorage.getItem("user_id"));
-  
+
     const data = {
       package: id,
       user: user_id,
@@ -58,7 +65,7 @@ const Packages = ({ destination_id, activeTab }) => {
           },
         }
       );
-  
+
       if (response.data.status === 1) {
         alert("Successfully saved");
       } else if (response.data.status === 2) {
@@ -91,20 +98,18 @@ const Packages = ({ destination_id, activeTab }) => {
                 className="border rounded-lg p-4 shadow-md w-full md:w-1/3"
               >
                 <button
-                  onClick={() => savedItemHandler(pkg.package_id, pkg.least_price)}
-                  className={`mb-2 px-4 py-2 rounded ${
-                    isSaved
-                      ? "bg-green-500 text-white"
-                      : "bg-blue-500 text-white"
-                  }`}
+                  onClick={() =>
+                    savedItemHandler(pkg.package_id, pkg.least_price)
+                  }
+                  className={`mb-2 px-2 py-2 rounded float-right text-lg`}
                 >
-                  {isSaved ? "Saved" : "Save"}
+                  {isSaved ? <FaBookmark /> : <FaRegBookmark />}
                 </button>
                 <p className="font-medium text-xl mb-2">
-                  {index + 1}. {pkg.package_name}
+                  {pkg.package_name}
                 </p>
                 <p className="text-sm mb-4">
-                  <b>Price:</b> Starting from <b> ${pkg.least_price}</b>
+                  Starting from <b> ${pkg.least_price}</b>/per person
                   <br />
                   <b>Facilities:</b> {pkg.facilities}
                   <br />

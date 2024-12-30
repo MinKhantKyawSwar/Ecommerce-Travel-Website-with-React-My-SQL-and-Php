@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../providers/UserContext";
 import axios from "axios";
+import { FaRegBookmark } from "react-icons/fa";
 
 const Nav = () => {
   const { token, updateToken, userInfo, setUserInfo, deleteToken } =
@@ -99,24 +100,11 @@ const Nav = () => {
                   role="button"
                   className="btn btn-ghost btn-circle"
                 >
-                  <div className="indicator">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                      />
-                    </svg>
-                    <span className="badge badge-sm indicator-item">
+                  <div className="indicator text-lg">
+                    <FaRegBookmark />
+                    {/* <span className="badge badge-sm indicator-item">
                       {cartItem}
-                    </span>
+                    </span> */}
                   </div>
                 </div>
               </Link>
@@ -129,7 +117,7 @@ const Nav = () => {
                   role="button"
                   className="btn btn-ghost btn-circle avatar"
                 >
-                  <div className="w-10 rounded-full">
+                  <div className="w-8 rounded-full">
                     <img
                       alt="Tailwind CSS Navbar component"
                       src={`http://localhost:3000/backend/${userInfo.profile_image}`}
