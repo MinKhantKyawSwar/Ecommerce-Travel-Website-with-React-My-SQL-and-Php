@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import StyledErrorMessage from "../../utils/StyledErrorMessage";
 import { Navigate, useParams, useSearchParams } from "react-router-dom";
 
-const PackageDetailsForm = () => {
+const EditPackageDetailsForm = () => {
   const [region, setRegion] = useState([]);
   const [redirect, setRedirect] = useState(false);
   const { id } = useParams();
@@ -46,6 +46,26 @@ const PackageDetailsForm = () => {
     }
   };
 
+  const getPrevData = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/backend/getPackageDetails.php",
+        {
+          headers: {
+            Package_Info_Id: id,
+          },
+        }
+      );
+      if (response.data.status === 1) {
+        setFormEntries(response.data.data);
+      } else {
+        console.error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching packages:", error.message);
+    }
+  };
+
   const addFormEntry = () => {
     setFormEntries((prevEntries) => [
       ...prevEntries,
@@ -66,19 +86,21 @@ const PackageDetailsForm = () => {
   };
 
   const handleSubmit = async (values) => {
-    let url = "http://localhost:3000/backend/getPackageDetails.php";
-
-    try {
-      const response = await axios.post(url, values);
-      if (response.data.status === 1) {
-        toast.success("Packages submitted successfully!");
-        setRedirect(true);
-      } else {
-        toast.error(response.data.message);
+    let 
+      url = "http://localhost:3000/backend/editPackageDetails.php";
+      try {
+        const response = await axios.post(url, values);
+        if (response.data.status === 1) {
+          toast.success("Packages updated successfully!");
+          setRedirect(true);
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        toast.error(
+          "An error occurred while submitting data: " + error.message
+        );
       }
-    } catch (error) {
-      toast.error("An error occurred while submitting data: " + error.message);
-    }
   };
 
   const handleFieldChange = (index, field, value) => {
@@ -92,6 +114,12 @@ const PackageDetailsForm = () => {
   useEffect(() => {
     getAllRegion();
   }, []);
+
+  useEffect(() => {
+    if (id) {
+      getPrevData(); // Fetch previous data
+    }
+  }, [id]);
 
   return (
     <>
@@ -235,24 +263,9 @@ const PackageDetailsForm = () => {
                       className="text-lg border-2 border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                     />
                   </div>
-
-                  <button
-                    type="button"
-                    className="text-red-500 border border-red-500 px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition"
-                    onClick={() => removeFormEntry(index)}
-                  >
-                    Remove
-                  </button>
                 </div>
               ))}
 
-              <button
-                type="button"
-                className="text-blue-600 border border-blue-600 px-6 py-2 rounded-lg hover:bg-blue-600 hover:text-white transition"
-                onClick={addFormEntry}
-              >
-                Add More
-              </button>
               <button
                 type="submit"
                 className="text-white bg-blue-600 py-3 font-medium w-full text-center rounded-lg hover:bg-teal-700 transition duration-200"
@@ -267,4 +280,4 @@ const PackageDetailsForm = () => {
   );
 };
 
-export default PackageDetailsForm;
+export default EditPackageDetailsForm;

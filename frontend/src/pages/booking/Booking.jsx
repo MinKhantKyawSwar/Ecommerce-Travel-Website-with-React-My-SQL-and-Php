@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Field, Form, Formik } from "formik";
+import { Field, FieldArray, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { Bounce, Slide, ToastContainer, toast } from "react-toastify"; // Ensure toast is imported
@@ -13,26 +13,26 @@ const Booking = () => {
   const [redirect, setRedirect] = useState(false);
   const [payment, setPayment] = useState([]);
   const [locationInfo, setLocationInfo] = useState([]);
+
   const [countryData, setCountryData] = useState([]);
   const [region, setRegion] = useState([]);
   const [basePrice, setBasePrice] = useState(0);
   const [addOn, setAddOn] = useState([]);
+
   const [discount, setDiscount] = useState([]);
   const [discountAdded, setDiscountAdded] = useState(false);
-  const [availability, setAvailability] = useState([]);
-  const [bookingId, setBookingId] = useState(0);
+  const [availability, setAvailability] = useState(0);
 
+  const [bookingId, setBookingId] = useState(0);
   const [travelDate, setTravelDate] = useState(null);
   const [availableDates, setAvailableDates] = useState(null);
-  const [travelDateSelected, setTravelDateSelected] = useState(false); // State to track if travel date is selected
 
+  const [travelDateSelected, setTravelDateSelected] = useState(false); // State to track if travel date is selected
   const [discountedPrice, setDiscountedPrice] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
+
   const [currentPackage, setCurrentPackage] = useState([]);
   const [totalPeople, setTotalPeople] = useState(1);
-  const [selectedRegionPrice, setSelectedRegionPrice] = useState(
-    currentPackage.price
-  );
   const [selectedAddOnPrice, setSelectedAddOnPrice] = useState(0);
   const [selectedDiscountPercentage, setSelectedDiscountPercentage] =
     useState(0);
@@ -47,9 +47,10 @@ const Booking = () => {
     country: "",
     city: "",
     payment_method: "",
-    number_of_people: 1,
+    number_of_people: 0,
     add_on: "",
     discount: "",
+    passports: [],
   };
 
   const AuthFormSchema = Yup.object().shape({
@@ -58,10 +59,13 @@ const Booking = () => {
     city: Yup.string().required("City is required"),
     payment_method: Yup.string().required("Payment method is required"),
     number_of_people: Yup.number()
-      .min(1, "At least one person is required")
+      .min(1, "At least one person is required").max(availability, "Not enough people available")
       .required("Number of people is required"),
     add_on: Yup.string().nullable(),
     discount: Yup.string().nullable(),
+    fullName: Yup.string().required("Full name is required"),
+    passportNumber: Yup.string().required("Passport number is required"),
+    expirationDate: Yup.date().required("Expiration date is required"),
   });
 
   const getRegionInfo = async () => {
@@ -118,13 +122,14 @@ const Booking = () => {
   };
 
   const getAvailabilityInfo = async () => {
+    const formattedDate = format(travelDate, "yyyy/MM/dd"); // Format the date
     try {
       const response = await axios.get(
         "http://localhost:3000/backend/getBooking.php",
         {
           headers: {
             Availability: id,
-            TravelDate: travelDate,
+            TravelDate: formattedDate,
           },
         }
       );
@@ -214,8 +219,7 @@ const Booking = () => {
           return format(localDate, "MM/dd/yyyy"); // Format the date
         });
 
-        setAvailableDates(formattedDates); // Update state with formatted dates
-        console.log(formattedDates); // Log the formatted dates
+        setAvailableDates(formattedDates); // Update state with formatted dates\
       }
     } catch (error) {
       console.error("Error fetching available dates:", error);
@@ -319,7 +323,6 @@ const Booking = () => {
       if (name === "travel_date" && value) {
         const selectedTravelDate = new Date(value);
         const formattedDate = selectedTravelDate.toISOString().split("T")[0];
-        setTravelDateSelected(true);
         setTravelDate(formattedDate); // Assuming you have a state setter for travel date
       }
 
@@ -433,7 +436,7 @@ const Booking = () => {
         "http://localhost:3000/backend/getTransactions.php",
         {
           headers: {
-            "User": Number(localStorage.getItem("user_id")),
+            User: Number(localStorage.getItem("user_id")),
           },
         }
       );
@@ -453,6 +456,7 @@ const Booking = () => {
   const handleDateSelect = (date, setFieldValue) => {
     setTravelDate(date); // Set the state with the Date object
     setFieldValue("travel_date", date); // Update Formik's travel_date field
+    setTravelDateSelected(true); // Set travel date selected to true
   };
 
   useEffect(() => {
@@ -480,7 +484,6 @@ const Booking = () => {
     [
       selectedAddOnPrice,
       selectedDiscountPercentage,
-      selectedRegionPrice,
       selectedAddOnPrice,
       totalPeople,
     ]
@@ -510,7 +513,7 @@ const Booking = () => {
         validationSchema={AuthFormSchema}
         onSubmit={(values) => submitHandler(values)}
       >
-        {({ setFieldValue }) => (
+        {({ values, setFieldValue }) => (
           <Form
             className="w-full max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg"
             onChange={getDataChange}
@@ -518,6 +521,19 @@ const Booking = () => {
             <h1 className="text-center font-semibold text-4xl my-4 text-teal-600">
               Order Form
             </h1>
+            {
+              <div>
+                {travelDateSelected ? (
+                  availability !== 0 ? (
+                    <p>Only {availability} people available</p>
+                  ) : (
+                    <p>Not available</p>
+                  )
+                ) : (
+                  "Please select a travel date to show available slot"
+                )}
+              </div>
+            }
             <div className="mb-3">
               <label htmlFor="travel_date" className="font-medium block mb-1">
                 Select Your Travel Date! (*be sure to choose it first to show up
@@ -633,15 +649,6 @@ const Booking = () => {
                 <StyledErrorMessage name="payment_method" />
               </div>
               <div>
-                {travelDateSelected && (
-                  <div>
-                    {availability !== null ? (
-                      <p>Only {availability} people available</p>
-                    ) : (
-                      <p>Not available</p>
-                    )}
-                  </div>
-                )}
                 <div className="mb-3">
                   <label
                     htmlFor="number_of_people"
@@ -654,11 +661,72 @@ const Booking = () => {
                     name="number_of_people"
                     id="number_of_people"
                     className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                    onChange={(e) => {
+                      const count = parseInt(e.target.value, 10) || 0;
+                      setFieldValue("number_of_people", count);
+
+                      const updatedPassports = Array.from(
+                        { length: count },
+                        (_, i) => ({
+                          fullName: "",
+                          passportNumber: "",
+                          expirationDate: "",
+                        })
+                      );
+
+                      setFieldValue("passports", updatedPassports);
+                    }}
                   />
                   <StyledErrorMessage name="number_of_people" />
                 </div>
               </div>
             </div>
+            {/* Passport Details */}
+            <FieldArray name="passports">
+              {({ remove, push }) => (
+                <>
+                  {values.passports.map((_, index) => (
+                    <div key={index} className="mb-4 border rounded-lg p-4">
+                      <h4 className="font-bold text-teal-600 mb-2">
+                        Passenger {index + 1}
+                      </h4>
+                      <div className="flex space-x-4">
+                        <div className="flex-1">
+                          <label className="font-medium block mb-1">
+                            Full Name
+                          </label>
+                          <Field
+                            type="text"
+                            name={`passports.${index}.fullName`}
+                            className="text-sm border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <label className="font-medium block mb-1">
+                            Passport Number
+                          </label>
+                          <Field
+                            type="text"
+                            name={`passports.${index}.passportNumber`}
+                            className="text-sm border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <label className="font-medium block mb-1">
+                            Expiration Date
+                          </label>
+                          <Field
+                            type="date"
+                            name={`passports.${index}.expirationDate`}
+                            className="text-sm border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+            </FieldArray>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="mb-3">
                 <label htmlFor="add_on" className="font-medium block mb-1">

@@ -5,6 +5,7 @@ import Packages from "../package/Packages";
 import Reviews from "../package/Reviews";
 import Overview from "../details/Overview";
 import DetailsTopSection from "../details/DetailsTopSection";
+import FAQ from "../details/FAQ";
 
 const Details = () => {
   const [packages, setPackages] = useState([]);
@@ -158,7 +159,7 @@ const Details = () => {
                   .filter((destination) => destination.destination_id !== id) // Exclude the same destination_id
                   .map((destination) => (
                     <div
-                      className="relative bg-white rounded-lg overflow-hidden shadow-lg transition-transform transform hover:scale-105"
+                      className="relative bg-white rounded-lg overflow-hidden shadow-lg"
                       key={destination.destination_id} // Use unique key
                     >
                       {/* Destination Image */}
@@ -198,7 +199,7 @@ const Details = () => {
                             ${destination.price}
                           </span>
                           <button
-                            className="px-4 py-2 text-white bg-black rounded-lg hover:bg-yellow-500 transition duration-200 transform hover:scale-105"
+                            className="px-4 py-2 text-white bg-black rounded-lg hover:bg-yellow-500"
                             onClick={() =>
                               handleDetails(destination.destination_id)
                             }
@@ -223,13 +224,7 @@ const Details = () => {
         )}
         {activeTab === "faq" && (
           <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              This is some placeholder content for the{" "}
-              <strong className="font-medium text-gray-800 dark:text-white">
-                faq tab
-              </strong>
-              .
-            </p>
+           <FAQ/>
           </div>
         )}
       </div>

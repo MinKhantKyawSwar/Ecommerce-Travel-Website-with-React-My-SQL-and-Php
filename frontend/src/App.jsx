@@ -19,6 +19,7 @@ import Main from "./layout/Main";
 import { UserContextProvider } from "./providers/UserContext";
 import DestinationForm from "./components/Forms/DestinationForm";
 import PackageDetailsForm from "./components/Forms/PackageDetailsForm";
+import EditPackageDetailsForm from "./components/Forms/EditPackageDetailsForm";
 function App() {
   const router = createBrowserRouter([
     {
@@ -91,7 +92,7 @@ function App() {
         },
         {
           path: "/admin/manage-destination/packages/manage-package-details/:id",
-          element: <PackageDetailsForm />,
+          element: <EditPackageDetailsForm />,
         },
         {
           path: "/admin/manage-guide/",

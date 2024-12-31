@@ -109,7 +109,7 @@ switch ($method) {
 
                 // Bind parameters
                 $stmt->bindParam(':id', $id, PDO::PARAM_INT); // Corrected to bind to :id
-                $stmt->bindParam(':travel_date', $travel_date, PDO::PARAM_STR); // Use PDO::PARAM_STR for date
+                $stmt->bindParam(':travel_date', $travel_date); // Use PDO::PARAM_STR for date
 
                 // Execute the statement
                 $stmt->execute();
