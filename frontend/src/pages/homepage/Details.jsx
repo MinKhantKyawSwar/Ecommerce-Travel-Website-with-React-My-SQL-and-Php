@@ -55,11 +55,9 @@ const Details = () => {
           },
         }
       );
-      console.log(destination.country, destination.category_name);
 
       if (response.data.status === 1) {
         setRandomDestinations(response.data.data);
-        console.log(response.data.data);
       } else {
         setError("No data found");
       }
@@ -78,7 +76,6 @@ const Details = () => {
 
       if (response.data.status === 1) {
         setDestination(response.data.data);
-        console.log(response.data.data);
       } else {
         setError("No details found for this destination");
       }
@@ -157,10 +154,10 @@ const Details = () => {
               {randomDestinations &&
                 randomDestinations
                   .filter((destination) => destination.destination_id !== id) // Exclude the same destination_id
-                  .map((destination) => (
+                  .map((destination, index) => (
                     <div
                       className="relative bg-white rounded-lg overflow-hidden shadow-lg"
-                      key={destination.destination_id} // Use unique key
+                      key={index} // Use unique key
                     >
                       {/* Destination Image */}
                       <figure className="relative">

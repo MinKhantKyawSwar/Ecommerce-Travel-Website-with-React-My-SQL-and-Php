@@ -20,12 +20,18 @@ import { UserContextProvider } from "./providers/UserContext";
 import DestinationForm from "./components/Forms/DestinationForm";
 import PackageDetailsForm from "./components/Forms/PackageDetailsForm";
 import EditPackageDetailsForm from "./components/Forms/EditPackageDetailsForm";
-import PassportForm from "./pages/booking/PassportForm";
+import ScrollToTopOnNavigation from "./providers/ScrollToTopOnNavigation";
+
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Main />,
+      element: (
+        <>
+          <ScrollToTopOnNavigation />
+          <Main />
+        </>
+      ),
       children: [
         {
           index: true,
@@ -106,10 +112,6 @@ function App() {
         {
           path: "/recipts/:id",
           element: <Recipts />,
-        },
-        {
-          path: "/recipts",
-          element: <PassportForm />,
         },
       ],
     },

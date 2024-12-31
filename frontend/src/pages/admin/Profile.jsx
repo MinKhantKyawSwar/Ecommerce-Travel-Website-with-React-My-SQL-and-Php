@@ -62,7 +62,7 @@ const Profile = () => {
         if (response.data.status === 1) {
           setBookedData(response.data.data); // Assuming the response contains bookings
         } else {
-          console.error(response.data.message);
+          // console.error(response.data.message);
         }
       } catch (error) {
         console.error("Error fetching booking data:", error);

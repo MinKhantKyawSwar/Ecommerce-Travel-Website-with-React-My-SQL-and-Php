@@ -64,8 +64,14 @@ const Booking = () => {
       .required("Number of people is required"),
     add_on: Yup.string().nullable(),
     discount: Yup.string().nullable(),
+    passports: Yup.array().of(
+      Yup.object().shape({
+        fullName: Yup.string().required("Full name is required"),
+        passportNumber: Yup.string().required("Passport number is required"),
+        expirationDate: Yup.date().required("Expiration date is required"),
+      })
+    ),
   });
-
   const getRegionInfo = async () => {
     try {
       const response = await axios.get(
@@ -363,8 +369,8 @@ const Booking = () => {
   };
 
   const submitHandler = async (values) => {
-    const { city, payment_method, number_of_people, travel_date} = values;
-    console.log(values);
+    const { city, payment_method, number_of_people, travel_date } = values;
+    console.log(values.passports);
 
     // Prepare the data object
     const data = {
@@ -378,6 +384,7 @@ const Booking = () => {
       add_on: addOnId,
       discount: discountId,
       total_price: totalPrice,
+      passports: values.passports,
     };
 
     const toastFire = (message) => {
@@ -517,26 +524,16 @@ const Booking = () => {
             className="w-full max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg"
             onChange={getDataChange}
           >
-            <h1 className="text-center font-semibold text-4xl my-4 text-teal-600">
+            <h1 className="text-center font-semibold text-4xl my-4 text-black">
               Order Form
             </h1>
-            {
-              <div>
-                {travelDateSelected ? (
-                  availability !== 0 ? (
-                    <p>Only {availability} people available</p>
-                  ) : (
-                    <p>Not available</p>
-                  )
-                ) : (
-                  "Please select a travel date to show available slot"
-                )}
-              </div>
-            }
+
             <div className="mb-3">
               <label htmlFor="travel_date" className="font-medium block mb-1">
-                Select Your Travel Date! (*be sure to choose it first to show up
-                your start location!)
+                Travel Date
+                <span className="text-sm text-gray-500 block">
+                  (*be sure to choose it first to show up your start location!)
+                </span>
               </label>
               <DatePicker
                 selected={travelDate}
@@ -548,45 +545,42 @@ const Booking = () => {
                       format(date, "MM/dd/yyyy") // Compare formatted dates
                   )
                 }
-                className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                className="text-lg border border-black py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
                 placeholderText="Select a travel date"
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="mb-3">
-                <label htmlFor="country" className="font-medium block mb-1">
-                  Country
-                </label>
-                <Field
-                  as="select"
-                  name="country" // Ensure this matches your Formik initial values
-                  id="country"
-                  className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
-                  required // Added required attribute directly to the Field component
-                >
-                  <option value="" label="Select one option" />
-                  {locationInfo && locationInfo.length > 0 ? ( // Check if locationInfo array is not empty
-                    [...new Set(locationInfo.map((item) => item.country))].map(
-                      (
-                        country,
-                        index // Get unique countries
-                      ) => (
-                        <option
-                          key={index} // Use index as the key (consider using a unique identifier if available)
-                          value={country} // Use country as the value
-                          label={country} // Use country as the label
-                        />
-                      )
+            <div className="mb-3">
+              <label htmlFor="country" className="font-medium block mb-1">
+                Country
+              </label>
+              <Field
+                as="select"
+                name="country" // Ensure this matches your Formik initial values
+                id="country"
+                className="text-lg border border-black py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                required // Added required attribute directly to the Field component
+              >
+                <option value="" label="Select one option" />
+                {locationInfo && locationInfo.length > 0 ? ( // Check if locationInfo array is not empty
+                  [...new Set(locationInfo.map((item) => item.country))].map(
+                    (
+                      country,
+                      index // Get unique countries
+                    ) => (
+                      <option
+                        key={index} // Use index as the key (consider using a unique identifier if available)
+                        value={country} // Use country as the value
+                        label={country} // Use country as the label
+                      />
                     )
-                  ) : (
-                    <option value="" label="No countries available" /> // Fallback option if no countries
-                  )}
-                </Field>
-                <StyledErrorMessage name="country" />{" "}
-                {/* Ensure this matches the Field name */}
-              </div>
-
+                  )
+                ) : (
+                  <option value="" label="No countries available" /> // Fallback option if no countries
+                )}
+              </Field>
+              <StyledErrorMessage name="country" />{" "}
+              {/* Ensure this matches the Field name */}
               <div className="mb-3">
                 <label htmlFor="city" className="font-medium block mb-1">
                   City
@@ -595,7 +589,7 @@ const Booking = () => {
                   as="select"
                   name="city"
                   id="city"
-                  className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="text-lg border border-black py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
                   required // Added required attribute directly to the Field component
                 >
                   <option value="" label="Select one option" />
@@ -622,78 +616,92 @@ const Booking = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="mb-3">
+              <label
+                htmlFor="payment_method"
+                className="font-medium block mb-1"
+              >
+                Payment Method
+              </label>
+              <Field
+                as="select"
+                name="payment_method"
+                id="payment_method"
+                className="text-lg border border-black py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+              >
+                <option value="" label="Select one option" required />
+                {payment.map((paymentMethod) => (
+                  <option
+                    key={paymentMethod.payment_id}
+                    value={paymentMethod.payment_id}
+                    label={paymentMethod.payment_name}
+                  />
+                ))}
+              </Field>
+              <StyledErrorMessage name="payment_method" />
+            </div>
+            <div>
+              {
+                <div className="flex justify-center items-center mb-3">
+                  {travelDateSelected ? (
+                    availability !== 0 ? (
+                      <p>
+                        Only <b>{availability}</b> slots available!
+                      </p>
+                    ) : (
+                      <p>Not available</p>
+                    )
+                  ) : (
+                    ""
+                  )}
+                </div>
+              }
               <div className="mb-3">
                 <label
-                  htmlFor="payment_method"
+                  htmlFor="number_of_people"
                   className="font-medium block mb-1"
                 >
-                  Payment Method
+                  Number Of People
                 </label>
                 <Field
-                  as="select"
-                  name="payment_method"
-                  id="payment_method"
-                  className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
-                >
-                  <option value="" label="Select one option" required />
-                  {payment.map((paymentMethod) => (
-                    <option
-                      key={paymentMethod.payment_id}
-                      value={paymentMethod.payment_id}
-                      label={paymentMethod.payment_name}
-                    />
-                  ))}
-                </Field>
-                <StyledErrorMessage name="payment_method" />
-              </div>
-              <div>
-                <div className="mb-3">
-                  <label
-                    htmlFor="number_of_people"
-                    className="font-medium block mb-1"
-                  >
-                    Number Of People
-                  </label>
-                  <Field
-                    type="number"
-                    name="number_of_people"
-                    id="number_of_people"
-                    className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
-                    onChange={(e) => {
-                      const count = parseInt(e.target.value, 10) || 0;
-                      setFieldValue("number_of_people", count);
+                  type="number"
+                  name="number_of_people"
+                  id="number_of_people"
+                  className="text-lg border border-black py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                  onChange={(e) => {
+                    const count = parseInt(e.target.value, 10) || 0;
+                    setFieldValue("number_of_people", count);
 
-                      // Dynamically update passports array
-                      const updatedPassports =
-                        count > values.passports.length
-                          ? [
-                              ...values.passports,
-                              ...Array.from(
-                                { length: count - values.passports.length },
-                                () => ({
-                                  fullName: "",
-                                  passportNumber: "",
-                                  expirationDate: "",
-                                })
-                              ),
-                            ]
-                          : values.passports.slice(0, count);
+                    // Dynamically update passports array
+                    const updatedPassports =
+                      count > values.passports.length
+                        ? [
+                            ...values.passports,
+                            ...Array.from(
+                              { length: count - values.passports.length },
+                              () => ({
+                                fullName: "",
+                                passportNumber: "",
+                                expirationDate: "",
+                              })
+                            ),
+                          ]
+                        : values.passports.slice(0, count);
 
-                      setFieldValue("passports", updatedPassports);
-                    }}
-                  />
-                  <StyledErrorMessage name="number_of_people" />
-                </div>
+                    setFieldValue("passports", updatedPassports);
+                  }}
+                />
+                <StyledErrorMessage name="number_of_people" />
               </div>
             </div>
+
             {/* Passport Details */}
             <FieldArray name="passports">
               {() => (
                 <>
                   {values.passports.map((_, index) => (
                     <div key={index} className="mb-4 border rounded-lg p-4">
-                      <h4 className="font-bold text-teal-600 mb-2">
+                      <h4 className="font-bold text-black mb-2">
                         Passenger {index + 1}
                       </h4>
                       <div className="flex space-x-4">
@@ -704,9 +712,13 @@ const Booking = () => {
                           <Field
                             type="text"
                             name={`passports.${index}.fullName`}
-                            className="text-sm border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                            className="text-sm border border-black py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
                           />
+                          <StyledErrorMessage
+                            name={`passports.${index}.fullName`}
+                          />{" "}
                         </div>
+
                         <div className="flex-1">
                           <label className="font-medium block mb-1">
                             Passport Number
@@ -714,8 +726,11 @@ const Booking = () => {
                           <Field
                             type="text"
                             name={`passports.${index}.passportNumber`}
-                            className="text-sm border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                            className="text-sm border border-black py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
                           />
+                          <StyledErrorMessage
+                            name={`passports.${index}.passportNumber`}
+                          />{" "}
                         </div>
                         <div className="flex-1">
                           <label className="font-medium block mb-1">
@@ -724,8 +739,11 @@ const Booking = () => {
                           <Field
                             type="date"
                             name={`passports.${index}.expirationDate`}
-                            className="text-sm border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                            className="text-sm border border-black py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
                           />
+                          <StyledErrorMessage
+                            name={`passports.${index}.expirationDate`}
+                          />{" "}
                         </div>
                       </div>
                     </div>
@@ -733,63 +751,61 @@ const Booking = () => {
                 </>
               )}
             </FieldArray>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="mb-3">
-                <label htmlFor="add_on" className="font-medium block mb-1">
-                  Add on
-                </label>
-                <Field
-                  as="select"
-                  name="add_on"
-                  id="add_on"
-                  className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
-                >
-                  <option value="" label="Select one option" required />
-                  {addOn.map((add_on) => (
-                    <option
-                      key={add_on.add_on_id}
-                      value={add_on.add_on}
-                      label={add_on.add_on}
-                    />
-                  ))}
-                </Field>
-                <StyledErrorMessage name="add_on" />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="discount" className="font-medium block mb-1">
-                  Discount
-                </label>
-                <Field
-                  as="select"
-                  name="discount"
-                  id="discount"
-                  className="text-lg border border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
-                >
-                  <option value="" label="Select one option" required />
-                  {discount.map((discountData) => (
-                    <option
-                      key={discountData.discount_id}
-                      value={discountData.discount_name}
-                      label={discountData.discount_name}
-                    />
-                  ))}
-                </Field>
-                <StyledErrorMessage name="discount" />
-              </div>
+            <div className="mb-3">
+              <label htmlFor="add_on" className="font-medium block mb-1">
+                Add on
+              </label>
+              <Field
+                as="select"
+                name="add_on"
+                id="add_on"
+                className="text-lg border border-black py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+              >
+                <option value="" label="Select one option" required />
+                {addOn.map((add_on) => (
+                  <option
+                    key={add_on.add_on_id}
+                    value={add_on.add_on}
+                    label={add_on.add_on}
+                  />
+                ))}
+              </Field>
+              <StyledErrorMessage name="add_on" />
             </div>
-            <div className="flex justify-between items-center mt-4">
-              <h2 className="text-2xl font-semibold">Total Price</h2>
+            <div className="mb-3">
+              <label htmlFor="discount" className="font-medium block mb-1">
+                Discount
+              </label>
+              <Field
+                as="select"
+                name="discount"
+                id="discount"
+                className="text-lg border border-black py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+              >
+                <option value="" label="Select one option" required />
+                {discount.map((discountData) => (
+                  <option
+                    key={discountData.discount_id}
+                    value={discountData.discount_name}
+                    label={discountData.discount_name}
+                  />
+                ))}
+              </Field>
+              <StyledErrorMessage name="discount" />
+            </div>
+            <div className="flex justify-between mb-4 mt-4">
+              <h2 className="text-2xl font-semibold mt-6">Total Price</h2>
               {discountedPrice && selectedDiscountPercentage !== 0 ? (
                 <div>
-                  <p className="text-lg font-medium">$ {totalPrice}</p>
                   <p className="text-red-600 font-medium text-lg">
                     <del>${discountedPrice}</del>
                   </p>
+                  <p className="text-2xl font-medium">$ {totalPrice}</p>
                 </div>
               ) : selectedDiscountPercentage === 0 ? (
-                <p className="font-medium text-lg">${totalPrice}</p>
+                <p className="font-medium text-2xl mt-6">${totalPrice}</p>
               ) : (
-                <p className="font-medium text-lg">${totalPrice}</p>
+                <p className="font-medium text-2xl mt-6">${totalPrice}</p>
               )}
             </div>
             <button

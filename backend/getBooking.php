@@ -272,6 +272,7 @@ switch ($method) {
             $discount = $data->discount;
             $total_price = $data->total_price;
 
+
             // Connection to database
             $conn = $db->connect();
 
@@ -334,8 +335,25 @@ switch ($method) {
                 $stmt->bindParam(':add_on', $add_on);
                 $stmt->bindParam(':discount', $discount);
                 $stmt->bindParam(':total_price', $total_price);
-
                 if ($stmt->execute()) {
+                    $booking_id = $conn->lastInsertId();
+
+                    // Insert passport data
+                    $sqlPassport = "INSERT INTO passport_info (booking_id, full_name, passport_number, expiration_date) 
+                                    VALUES (:booking_id, :full_name, :passport_number, :expiration_date)";
+                    $stmtPassport = $conn->prepare($sqlPassport);
+
+                    foreach ($data->passports as $passport) {
+                        $stmtPassport->bindParam(':booking_id', $booking_id);
+                        $stmtPassport->bindParam(':full_name', $passport->fullName);
+                        $stmtPassport->bindParam(':passport_number', $passport->passportNumber);
+                        $stmtPassport->bindParam(':expiration_date', $passport->expirationDate);
+
+                        if (!$stmtPassport->execute()) {
+                            throw new Exception("Failed to insert passport information for {$passport->fullName}");
+                        }
+                    }
+
                     $response = ['status' => 1, 'message' => "Successfully Booked!"];
                 } else {
                     throw new Exception("Failed to create booking! Please try again.");

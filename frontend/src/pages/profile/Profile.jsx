@@ -50,27 +50,27 @@ const Profile = () => {
     }
   }, [userInfo]);
 
-  useEffect(() => {
-    const fetchBookingData = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/backend/getBooking.php",
-          {
-            headers: {
-              User_Id: localStorage.getItem("user_id"),
-            },
-          }
-        );
-        if (response.data.status === 1) {
-          setBookedData(response.data.data); // Assuming the response contains bookings
-        } else {
-          console.error(response.data.message);
+  const fetchBookingData = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/backend/getBooking.php",
+        {
+          headers: {
+            User_Id: localStorage.getItem("user_id"),
+          },
         }
-      } catch (error) {
-        console.error("Error fetching booking data:", error);
+      );
+      if (response.data.status === 1) {
+        setBookedData(response.data.data); // Assuming the response contains bookings
+      } else {
+        // console.error(response.data.message);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching booking data:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchBookingData();
   }, []);
 
