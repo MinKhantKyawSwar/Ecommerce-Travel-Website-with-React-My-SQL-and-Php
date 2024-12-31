@@ -20,6 +20,7 @@ import { UserContextProvider } from "./providers/UserContext";
 import DestinationForm from "./components/Forms/DestinationForm";
 import PackageDetailsForm from "./components/Forms/PackageDetailsForm";
 import EditPackageDetailsForm from "./components/Forms/EditPackageDetailsForm";
+import PassportForm from "./pages/booking/PassportForm";
 function App() {
   const router = createBrowserRouter([
     {
@@ -105,6 +106,10 @@ function App() {
         {
           path: "/recipts/:id",
           element: <Recipts />,
+        },
+        {
+          path: "/recipts",
+          element: <PassportForm />,
         },
       ],
     },

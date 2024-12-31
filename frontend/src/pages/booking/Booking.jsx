@@ -59,13 +59,11 @@ const Booking = () => {
     city: Yup.string().required("City is required"),
     payment_method: Yup.string().required("Payment method is required"),
     number_of_people: Yup.number()
-      .min(1, "At least one person is required").max(availability, "Not enough people available")
+      .min(1, "At least one person is required")
+      .max(availability, "Not enough people available")
       .required("Number of people is required"),
     add_on: Yup.string().nullable(),
     discount: Yup.string().nullable(),
-    fullName: Yup.string().required("Full name is required"),
-    passportNumber: Yup.string().required("Passport number is required"),
-    expirationDate: Yup.date().required("Expiration date is required"),
   });
 
   const getRegionInfo = async () => {
@@ -365,7 +363,8 @@ const Booking = () => {
   };
 
   const submitHandler = async (values) => {
-    const { city, payment_method, number_of_people, travel_date } = values;
+    const { city, payment_method, number_of_people, travel_date} = values;
+    console.log(values);
 
     // Prepare the data object
     const data = {
@@ -665,14 +664,21 @@ const Booking = () => {
                       const count = parseInt(e.target.value, 10) || 0;
                       setFieldValue("number_of_people", count);
 
-                      const updatedPassports = Array.from(
-                        { length: count },
-                        (_, i) => ({
-                          fullName: "",
-                          passportNumber: "",
-                          expirationDate: "",
-                        })
-                      );
+                      // Dynamically update passports array
+                      const updatedPassports =
+                        count > values.passports.length
+                          ? [
+                              ...values.passports,
+                              ...Array.from(
+                                { length: count - values.passports.length },
+                                () => ({
+                                  fullName: "",
+                                  passportNumber: "",
+                                  expirationDate: "",
+                                })
+                              ),
+                            ]
+                          : values.passports.slice(0, count);
 
                       setFieldValue("passports", updatedPassports);
                     }}
@@ -683,7 +689,7 @@ const Booking = () => {
             </div>
             {/* Passport Details */}
             <FieldArray name="passports">
-              {({ remove, push }) => (
+              {() => (
                 <>
                   {values.passports.map((_, index) => (
                     <div key={index} className="mb-4 border rounded-lg p-4">
