@@ -35,7 +35,7 @@ const Index = () => {
         );
 
         // Select the first 3 items from the shuffled array
-        const randomDestinations = shuffledDestinations.slice(0, 3);
+        const randomDestinations = shuffledDestinations.slice(0, 4);
 
         // Set the random destinations
         setDestinations(randomDestinations);
@@ -90,94 +90,69 @@ const Index = () => {
             </p>
           </header>
 
-          <section className="bg-gray-100 py-16">
-            <div className="max-w-7xl mx-auto px-6">
-              <h2 className="text-3xl font-bold text-center mb-8">
-                Explore Exciting Locations
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {destinations.map((destination, index) => (
-                  <div
-                    key={index}
-                    className="relative bg-white rounded-lg overflow-hidden cursor-pointer shadow-lg hover:scale-105 transition transform"
-                    onClick={() => handleDetails(destination.destination_id)}
-                  >
-                    <img
-                      src={`http://localhost:3000/backend/${destination.destination_image}`}
-                      alt={destination.name}
-                      className="w-full h-48 object-cover"
-                    />
-                    <span className="absolute top-4 left-4 bg-black text-white text-sm font-semibold px-3 py-1 rounded-md">
-                      {destination.duration} Days
-                    </span>
-                    {/* Rating Badge */}
-                    <span className="absolute top-4 right-4 bg-yellow-500 text-white text-sm font-semibold px-2 py-1 rounded-md flex items-center">
-                      ⭐ {destination.rating}
-                    </span>
-                    <div className="absolute inset-0 bg-black bg-opacity-40 flex justify-center items-center opacity-0 hover:opacity-100 transition duration-300">
-                      <h3 className="text-xl font-bold text-white">
-                        {destination.city}
-                      </h3>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
           <h2 className="text-3xl font-bold text-center mb-8">
-            Popular Destinations
+            Available Destinations
           </h2>
           <div>
             <TopLocations />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 carousel rounded-box">
             {destinations.map((destination, index) => (
               <div
-                className="relative bg-white rounded-lg overflow-hidden shadow-lg"
+                className="relative bg-white rounded-lg border overflow-hidden shadow-lg md:h-80 h-72 w-full sm:w-80 lg:w-64"
                 key={index}
               >
-                {/* Destination Image */}
-                <figure className="relative">
-                  <img
-                    src={
-                      `http://localhost:3000/backend/${destination.destination_image}` ||
-                      "default-image.jpg"
-                    }
-                    alt={destination.city}
-                    className="w-full h-72 object-cover"
-                  />
-                  {/* Days Label */}
-                  <span className="absolute top-4 left-4 bg-black text-white text-sm font-semibold px-3 py-1 rounded-md">
-                    {destination.duration} Days
-                  </span>
-                  {/* Rating Badge */}
-                  <span className="absolute top-4 right-4 bg-yellow-500 text-white text-sm font-semibold px-2 py-1 rounded-md flex items-center">
-                    ⭐ {destination.rating}
-                  </span>
-                </figure>
+                {/* Destination Image with Overlay Text */}
+                <div
+                  className="relative h-72 sm:h-80 bg-cover bg-center bg-no-repeat"
+                  style={{
+                    backgroundImage: `url(${
+                      destination.destination_image
+                        ? `http://localhost:3000/backend/${destination.destination_image}`
+                        : "default-image.jpg"
+                    })`,
+                  }}
+                >
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
 
-                {/* Card Body */}
-                <div className="p-4">
-                  <h3 className="text-xl font-bold text-gray-900">
-                    {destination.city}
-                  </h3>
-                  <p className="text-sm text-gray-500 mb-1">
-                    {destination.country}
-                  </p>
-                  <p className="text-sm text-gray-700 mb-4">
-                    {destination.description}
-                  </p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-lg font-bold text-gray-900">
-                      ${destination.price}
-                    </span>
+                  {/* Text Overlay */}
+                  <div className="absolute bottom-4 left-4 right-4 text-white pb-2 rounded-lg shadow-lg">
+                   <div className="flex flex-row justify-between h-full">
+                     {/* City and Country */}
+                     <div className="mb-2">
+                      <h3 className="text-lg font-bold">{destination.city}</h3>
+                      <p className="text-xs text-gray-300">
+                        {destination.country}
+                      </p>
+                    </div>
+
+                    {/* Price */}
+                    <div className="mb-4">
+                      <span className="inline-block px-3 py-1 bg-yellow-500 text-white text-sm font-semibold rounded-lg">
+                        ${destination.price}
+                      </span>
+                    </div>
+                   </div>
+
+                    {/* View Details Button */}
                     <button
-                      className="px-4 py-2 text-white bg-black rounded-lg hover:bg-yellow-500 transition duration-200"
+                      className="w-full px-4 py-2 hover:text-black hover:bg-gray-100 rounded-lg border-white border bg-transparent text-white transition duration-200"
                       onClick={() => handleDetails(destination.destination_id)}
                     >
                       View Details
                     </button>
                   </div>
+
+                  {/* Category Label */}
+                  <span className="absolute top-4 left-4 bg-white/50 backdrop-blur-md backdrop-saturate-150 border border-gray-200 text-gray-900 text-sm font-semibold px-3 py-1 rounded-md shadow-sm">
+                    {destination.category_name}
+                  </span>
+
+                  {/* Rating Badge */}
+                  <span className="absolute top-4 right-4 bg-white/50 backdrop-blur-md backdrop-saturate-150 border border-gray-200 text-black text-sm font-semibold px-2 py-1 rounded-md flex items-center">
+                    ⭐ {destination.rating}
+                  </span>
                 </div>
               </div>
             ))}
@@ -209,14 +184,6 @@ const Index = () => {
             </div>
           )}
         </div>
-
-        <footer className="bg-blue-600 text-white py-6">
-          <div className="max-w-7xl mx-auto px-4 text-center">
-            <p className="text-sm">
-              &copy; 2024 Travel App. All rights reserved.
-            </p>
-          </div>
-        </footer>
       </div>
     </>
   );

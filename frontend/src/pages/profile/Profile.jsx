@@ -149,7 +149,7 @@ const Profile = () => {
 
   return (
     <>
-      <div className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-lg">
+      <div className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-lg mt-5">
         <div className="text-center mb-6">
           {userInfo ? (
             <>
@@ -286,7 +286,7 @@ const Profile = () => {
           )}
         </div>
       </div>
-      <div className="mt-2 rounded-lg px-4 py-4 bg-gray-100">
+      <div className="mt-2 rounded-lg px-4 py-4 bg-gray-100 pb-20">
         <h2 className="text-xl font-semibold mb-4">Previous Booked Trips</h2>
         {bookedData.length > 0 ? (
           <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

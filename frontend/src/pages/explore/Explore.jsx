@@ -9,6 +9,7 @@ const Explore = () => {
   const [error, setError] = useState(null);
   const [selectedCountries, setSelectedCountries] = useState([]);
   const [selectedCities, setSelectedCities] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredDestinations, setFilteredDestinations] = useState([]);
 
@@ -20,6 +21,7 @@ const Explore = () => {
       );
       if (response.data.status === 1) {
         setDestinations(response.data.data);
+        console.log(response.data.data);
       } else {
         setError("No data found");
       }
@@ -33,10 +35,13 @@ const Explore = () => {
   // Unique countries and cities for filtering
   const uniqueCountries = Array.from(
     new Set(destinations.map((destination) => destination.country))
-  );
+  ).sort();
   const uniqueCities = Array.from(
-    new Set(destinations.map((destination) => destination.destination_name))
-  );
+    new Set(destinations.map((destination) => destination.city))
+  ).sort();
+  const uniqueCategories = Array.from(
+    new Set(destinations.map((destination) => destination.category_name))
+  ).sort();
 
   // Handle country checkbox change
   const handleCountryCheckboxChange = (event) => {
@@ -54,6 +59,14 @@ const Explore = () => {
     );
   };
 
+  const handleCategoryCheckboxChange = (event) => {
+    const { name, checked } = event.target;
+    setSelectedCategories((prev) =>
+      checked ? [...prev, name] : prev.filter((category) => category !== name)
+    );
+  };
+
+
   // Handle search query change with debounce to prevent unnecessary filtering
   const handleSearchChange = debounce((e) => {
     setSearchQuery(e.target.value.toLowerCase());
@@ -64,8 +77,8 @@ const Explore = () => {
     const filtered = destinations.filter((destination) => {
       const matchesSearchQuery =
         destination.country.toLowerCase().includes(searchQuery) ||
-        destination.city.toLowerCase().includes(searchQuery) ||
-        destination.description.toLowerCase().includes(searchQuery);
+        destination.city.toLowerCase().includes(searchQuery) || 
+        destination.category_name.toLowerCase().includes(searchQuery);
 
       const matchesCountry =
         selectedCountries.length === 0 ||
@@ -89,22 +102,23 @@ const Explore = () => {
     <div className="p-4">
       <div className="text-center mb-8">
         <p className="text-4xl font-bold text-gray-900">
-          Find Your Dream Destination Here!
+          Find Your Dream Trip Here!
         </p>
-        <div className="mt-4">
-          <MdOutlineSearch />
-          {/* Search bar */}
-          <input
-            type="text"
-            placeholder="Search destinations..."
-            className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900"
-            onChange={handleSearchChange}
-          />
+        <div className="mt-4 flex items-center justify-center">
+          <label className="input input-bordered flex items-center gap-2">
+            <MdOutlineSearch className="mr-2" />
+            <input
+              type="text"
+              className="grow w-full max-w-md pr-32 py-2  focus:outline-none  focus:rounded-md focus:ring-2 focus:ring-gray-300"
+              placeholder="Search countries or cities..."
+              onChange={handleSearchChange}
+            />
+          </label>
         </div>
       </div>
 
       {/* Main Section with Sidebar at the top on smaller screens */}
-      <div className="w-full flex flex-col md:flex-row gap-10">
+      <div className="w-full flex flex-col md:flex-row gap-2">
         {/* Sidebar - Moves to top on smaller screens */}
         <div className="w-full md:w-1/3 px-4 mb-8 md:mb-0">
           <div className="mb-8">
@@ -135,7 +149,7 @@ const Explore = () => {
           </div>
 
           <div>
-            <p className="text-2xl font-semibold text-gray-900 mb-4">Cities</p>
+            <p className="text-2xl font-semibold  text-gray-900 mb-4">Cities</p>
             <form>
               <div className="flex flex-wrap">
                 {uniqueCities.map((city, index) => (
@@ -155,26 +169,55 @@ const Explore = () => {
               </div>
             </form>
           </div>
+          <div>
+            <p className="text-2xl font-semibold text-gray-900 mb-4">Cities</p>
+            <form>
+              <div className="flex flex-wrap">
+                {uniqueCategories.map((city, index) => (
+                  <div key={index} className="flex items-center mb-3 w-1/2">
+                    <input
+                      type="checkbox"
+                      id={`city-${index}`}
+                      name={city}
+                      onChange={handleCategoryCheckboxChange}
+                      className="mr-2 accent-gray-900"
+                    />
+                    <label htmlFor={`city-${index}`} className="text-gray-800">
+                      {city}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </form>
+          </div>
         </div>
 
         {/* Main Content */}
-        <div className="w-full md:w-2/3">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="flex w-full md:w-2/3 justify-center">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6">
             {filteredDestinations.map((destination, index) => (
               <div
                 key={index}
-                className="p-4 border border-gray-300 rounded-lg bg-gray-50"
+                className="p-4 bg-gray-50 top-4 left-4 bg-white/50 backdrop-blur-md backdrop-saturate-150 border border-gray-200 text-gray-900 text-sm font-semibold rounded-md shadow-lg"
               >
+                <img
+                  src={`http://localhost:3000/backend/${destination.destination_image}`}
+                  alt={destination.country}
+                  className="w-full h-24 object-cover"
+                />
                 <h1 className="text-lg font-semibold text-center text-gray-900 mb-3">
                   {destination.country}
                 </h1>
-                <p className="text-sm text-gray-700 mb-4 flex-grow">
-                  {destination.description}
-                </p>
+
                 <p className="text-sm text-gray-900 font-medium mb-2">
-                  {destination.destination_name}
+                  {destination.city}
                 </p>
-                <button className="border border-gray-900 text-gray-900 px-3 py-2 rounded-md text-sm font-medium w-full">
+                <p className="text-sm text-gray-700 mb-4 flex-grow">
+                  {destination.description.length > 0
+                    ? `${destination.description.slice(0, 24)}...`
+                    : destination.description}
+                </p>
+                <button className="border border-gray-900 text-gray-900 px-3 py-2 rounded-md text-sm font-medium w-full hover:bg-gray-900 hover:text-white transition duration-200">
                   Details
                 </button>
               </div>
