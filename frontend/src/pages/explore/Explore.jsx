@@ -1,5 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { debounce } from "lodash"; // Import lodash for debouncing
+import { MdOutlineSearch } from "react-icons/md";
 
 const Explore = () => {
   const [destinations, setDestinations] = useState([]);
@@ -7,6 +9,8 @@ const Explore = () => {
   const [error, setError] = useState(null);
   const [selectedCountries, setSelectedCountries] = useState([]);
   const [selectedCities, setSelectedCities] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredDestinations, setFilteredDestinations] = useState([]);
 
   // Fetch all destinations
   const getDestinations = async () => {
@@ -14,7 +18,6 @@ const Explore = () => {
       const response = await axios.get(
         "http://localhost:3000/backend/getDestination.php"
       );
-
       if (response.data.status === 1) {
         setDestinations(response.data.data);
       } else {
@@ -27,6 +30,7 @@ const Explore = () => {
     }
   };
 
+  // Unique countries and cities for filtering
   const uniqueCountries = Array.from(
     new Set(destinations.map((destination) => destination.country))
   );
@@ -34,58 +38,89 @@ const Explore = () => {
     new Set(destinations.map((destination) => destination.destination_name))
   );
 
+  // Handle country checkbox change
   const handleCountryCheckboxChange = (event) => {
     const { name, checked } = event.target;
-    if (checked) {
-      setSelectedCountries((prev) => [...prev, name]);
-    } else {
-      setSelectedCountries((prev) =>
-        prev.filter((country) => country !== name)
-      );
-    }
+    setSelectedCountries((prev) =>
+      checked ? [...prev, name] : prev.filter((country) => country !== name)
+    );
   };
 
+  // Handle city checkbox change
   const handleCityCheckboxChange = (event) => {
     const { name, checked } = event.target;
-    if (checked) {
-      setSelectedCities((prev) => [...prev, name]);
-    } else {
-      setSelectedCities((prev) =>
-        prev.filter((city) => city !== name)
-      );
-    }
+    setSelectedCities((prev) =>
+      checked ? [...prev, name] : prev.filter((city) => city !== name)
+    );
   };
 
+  // Handle search query change with debounce to prevent unnecessary filtering
+  const handleSearchChange = debounce((e) => {
+    setSearchQuery(e.target.value.toLowerCase());
+  }, 300); // Debounce time is 300ms
+
+  // Filter destinations based on search query and selected filters
+  useEffect(() => {
+    const filtered = destinations.filter((destination) => {
+      const matchesSearchQuery =
+        destination.country.toLowerCase().includes(searchQuery) ||
+        destination.city.toLowerCase().includes(searchQuery) ||
+        destination.description.toLowerCase().includes(searchQuery);
+
+      const matchesCountry =
+        selectedCountries.length === 0 ||
+        selectedCountries.includes(destination.country);
+      const matchesCity =
+        selectedCities.length === 0 ||
+        selectedCities.includes(destination.city);
+
+      return matchesSearchQuery && matchesCountry && matchesCity;
+    });
+
+    setFilteredDestinations(filtered);
+  }, [destinations, searchQuery, selectedCountries, selectedCities]);
+
+  // Fetch destinations on initial load
   useEffect(() => {
     getDestinations();
   }, []);
 
-  const filteredDestinations = destinations.filter((destination) => {
-    const matchesCountry = selectedCountries.length === 0 || selectedCountries.includes(destination.country);
-    const matchesCity = selectedCities.length === 0 || selectedCities.includes(destination.destination_name);
-    return matchesCountry && matchesCity;
-  });
-
   return (
-    <>
-      <div>
-        <p>Find your Dream Destination Here!</p>
-        search bar
+    <div className="p-4">
+      <div className="text-center mb-8">
+        <p className="text-4xl font-bold text-gray-900">
+          Find Your Dream Destination Here!
+        </p>
+        <div className="mt-4">
+          <MdOutlineSearch />
+          {/* Search bar */}
+          <input
+            type="text"
+            placeholder="Search destinations..."
+            className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900"
+            onChange={handleSearchChange}
+          />
+        </div>
       </div>
-      <div className="w-full flex gap-7">
-        <div className="w-1/3 px-2 py-4">
-          <div>
-            <p className="mb-5 font-medium text-2xl">Countries</p>
+
+      {/* Main Section with Sidebar at the top on smaller screens */}
+      <div className="w-full flex flex-col md:flex-row gap-10">
+        {/* Sidebar - Moves to top on smaller screens */}
+        <div className="w-full md:w-1/3 px-4 mb-8 md:mb-0">
+          <div className="mb-8">
+            <p className="text-2xl font-semibold text-gray-900 mb-4">
+              Countries
+            </p>
             <form>
               <div className="flex flex-wrap">
                 {uniqueCountries.map((country, index) => (
-                  <div key={index} className="flex items-center mb-2 w-1/2">
+                  <div key={index} className="flex items-center mb-3 w-1/2">
                     <input
                       type="checkbox"
                       id={`country-${index}`}
                       name={country}
                       onChange={handleCountryCheckboxChange}
-                      className="mr-2"
+                      className="mr-2 accent-gray-900"
                     />
                     <label
                       htmlFor={`country-${index}`}
@@ -98,18 +133,19 @@ const Explore = () => {
               </div>
             </form>
           </div>
-          <div className="px-2 py-4">
-          <p className="mb-5 font-medium text-2xl">Cities</p>
+
+          <div>
+            <p className="text-2xl font-semibold text-gray-900 mb-4">Cities</p>
             <form>
               <div className="flex flex-wrap">
                 {uniqueCities.map((city, index) => (
-                  <div key={index} className="flex items-center mb-2 w-1/2">
+                  <div key={index} className="flex items-center mb-3 w-1/2">
                     <input
                       type="checkbox"
                       id={`city-${index}`}
                       name={city}
                       onChange={handleCityCheckboxChange}
-                      className="mr-2"
+                      className="mr-2 accent-gray-900"
                     />
                     <label htmlFor={`city-${index}`} className="text-gray-800">
                       {city}
@@ -121,33 +157,32 @@ const Explore = () => {
           </div>
         </div>
 
-        <div className="w-2/3 px-2 py-4">
-          <div className="flex flex-wrap">
+        {/* Main Content */}
+        <div className="w-full md:w-2/3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredDestinations.map((destination, index) => (
-              <div key={index} className="w-1/3 p-4">
-                <div className="h-64 border border-red-100 p-4 rounded-lg shadow-md bg-white flex flex-col">
-                  <h1 className="text-2xl font-bold text-center mb-4">
-                    {destination.country}
-                  </h1>
-                  <p className="text-gray-600 mb-2 flex-grow">
-                    {destination.description}
-                  </p>
-                  <p className="text-gray-800 font-medium">
-                    {destination.destination_name}
-                  </p>
-                  <button
-                    className="border-2 border-teal-600 text-teal-600 px-3 py-2 mt-4 rounded-lg hover:bg-teal-600 hover:text-white transition duration-200 w-full"
-                    onClick={() => handleDetails(destination.destination_id)}
-                  >
-                    Details
-                  </button>
-                </div>
+              <div
+                key={index}
+                className="p-4 border border-gray-300 rounded-lg bg-gray-50"
+              >
+                <h1 className="text-lg font-semibold text-center text-gray-900 mb-3">
+                  {destination.country}
+                </h1>
+                <p className="text-sm text-gray-700 mb-4 flex-grow">
+                  {destination.description}
+                </p>
+                <p className="text-sm text-gray-900 font-medium mb-2">
+                  {destination.destination_name}
+                </p>
+                <button className="border border-gray-900 text-gray-900 px-3 py-2 rounded-md text-sm font-medium w-full">
+                  Details
+                </button>
               </div>
             ))}
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
