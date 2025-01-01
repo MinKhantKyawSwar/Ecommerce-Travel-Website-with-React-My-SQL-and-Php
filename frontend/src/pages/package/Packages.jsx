@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { FaRegBookmark,FaBookmark } from "react-icons/fa";
-const Packages = ({
-  destination_id,
-  activeTab,
-  isSaved,
-  setIsSaved,
-  packages,
-  setPackages,
-}) => {
+import { FaRegBookmark, FaBookmark } from "react-icons/fa";
+
+const Packages = ({ destination_id, activeTab, packages, setPackages }) => {
   const [error, setError] = useState(null);
+  const [savedPackages, setSavedPackages] = useState({}); // Track saved state for each package
 
   const navigate = useNavigate();
 
@@ -20,37 +15,15 @@ const Packages = ({
         `http://localhost:3000/backend/getPackages.php`,
         {
           headers: {
-            "Destination-ID": id, // Include id in the headers
+            "Destination-ID": id,
           },
         }
       );
 
       if (response.data.status === 1) {
-        const packages = response.data.data;
-
-        // Shuffle the array to get random items
-        const shuffledPackages = packages.sort(
-          () => 0.5 - Math.random()
-        );
-
-        // Filter to get unique destination IDs
-        const uniqueDestinations = [];
-        const destinationIds = new Set();
-
-        for (let packages of shuffledPackages) {
-          if (!destinationIds.has(packages.destination_id)) {
-            uniqueDestinations.push(packages);
-            destinationIds.add(packages.destination_id);
-          }
-
-          // Stop once we have 4 unique destinations
-          if (uniqueDestinations.length === 4) break;
-        }
-
-        // Set the random destinations
-        setPackages(uniqueDestinations); // Set packages data
+        setPackages(response.data.data);
       } else {
-        setPackages([]); // Clear the packages if no data found
+        setPackages([]);
         setError("No packages found for this destination.");
       }
     } catch (err) {
@@ -58,30 +31,29 @@ const Packages = ({
     }
   };
 
-  const handleDetails = async (id) => {
+  const handleDetails = (id) => {
     localStorage.setItem("activeTab", activeTab);
     navigate(`package/${id}`);
   };
-  const handleBooking = async (id) => {
-   if(localStorage.getItem("token")){
-    localStorage.removeItem("activeTab", activeTab);
-    navigate(`/booking/${id}`);
-   }
-    else{
+
+  const handleBooking = (id) => {
+    if (localStorage.getItem("token")) {
+      localStorage.removeItem("activeTab");
+      navigate(`/booking/${id}`);
+    } else {
       navigate("/register");
     }
   };
 
   const savedItemHandler = async (id, least_price) => {
-    setIsSaved(true);
     const user_id = Number(localStorage.getItem("user_id"));
-
     const data = {
       package: id,
       user: user_id,
       least_price: least_price,
       saved_at: new Date().toLocaleString(),
     };
+
     try {
       const response = await axios.post(
         `http://localhost:3000/backend/getSavedPackages.php`,
@@ -95,6 +67,10 @@ const Packages = ({
 
       if (response.data.status === 1) {
         alert("Successfully saved");
+        setSavedPackages((prevState) => ({
+          ...prevState,
+          [id]: true, // Mark this package as saved
+        }));
       } else if (response.data.status === 2) {
         alert("This package is already saved.");
       } else {
@@ -112,51 +88,56 @@ const Packages = ({
   }, [destination_id]);
 
   return (
-    <div className=" p-4 rounded-lg bg-gray-50 dark:bg-gray-800 mb-10">
+    <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800 mb-10">
       {!error && packages.length > 0 ? (
         <>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-            {packages.length} packages Available
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+            {packages.length} packages available
           </p>
-          <div className="flex gap-10">
-            {packages.map((pkg, index) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {packages.map((pkg) => (
               <div
                 key={pkg.package_id}
-                className="border rounded-lg p-4 shadow-md w-full md:w-1/3"
+                className="relative border rounded-lg p-6 shadow-lg bg-white dark:bg-gray-700 hover:shadow-xl transition-shadow duration-300"
               >
                 <button
                   onClick={() =>
                     savedItemHandler(pkg.package_id, pkg.least_price)
                   }
-                  className={`mb-2 px-2 py-2 rounded float-right text-lg`}
+                  className="absolute top-2 right-2 py-6 px-6 rounded-full text-lg text-gray-500 dark:text-gray-300 hover:text-blue-500"
                 >
-                  {isSaved ? <FaBookmark /> : <FaRegBookmark />}
+                  {savedPackages[pkg.package_id] ? (
+                    <FaBookmark />
+                  ) : (
+                    <FaRegBookmark />
+                  )}
                 </button>
-                <p className="font-medium text-xl mb-2">
-                  {pkg.package_name}
+
+                <div className="flex justify-center">
+                  <p className="font-bold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 mb-2">
+                    {pkg.package_name}
+                  </p>
+                </div>
+                <p className="text-md text-gray-600 dark:text-gray-400 mb-2">
+                  From <b>${pkg.least_price}</b>/person
+                  for <b>{pkg.duration}</b> Days
                 </p>
-                <p className="text-sm mb-4">
-                  Starting from <b> ${pkg.least_price}</b>/per person
-                  <br />
+
+                <p className="text-sm text-gray-700 dark:text-gray-300 mb-6">
                   <b>Facilities:</b> {pkg.facilities}
                   <br />
-                  <b>Meals:</b> {pkg.meals}
+                  <b>Meals:</b> {pkg.meals.substring(0, 40)}...
                   <br />
-                  <b>Activities:</b> {pkg.activities}
-                  <br />
-                  <b>Duration:</b> {pkg.duration}
                 </p>
                 <div className="flex justify-between">
                   <button
-                    className="border-2 border-blue-500 text-blue-500 px-3 py-2 rounded hover:bg-blue-500 hover:text-white transition"
-                    onClick={() => {
-                      handleDetails(pkg.package_id);
-                    }}
+                    className="border-2 border-gray-800 text-gray-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-900 hover:text-white transition"
+                    onClick={() => handleDetails(pkg.package_id)}
                   >
                     Check More
                   </button>
                   <button
-                    className="border-2 border-green-500 text-green-500 px-3 py-2 rounded hover:bg-green-500 hover:text-white transition"
+                    className="border-2 border-gray-800 hover:bg-transparent hover:text-gray-800 px-4 py-2 rounded-lg text-sm font-medium bg-gray-900 text-white transition"
                     onClick={() => handleBooking(pkg.package_id)}
                   >
                     Book Package
@@ -168,7 +149,7 @@ const Packages = ({
         </>
       ) : (
         !error && (
-          <p className="text-red-500">
+          <p className="text-center text-red-500">
             No packages available for this destination.
           </p>
         )

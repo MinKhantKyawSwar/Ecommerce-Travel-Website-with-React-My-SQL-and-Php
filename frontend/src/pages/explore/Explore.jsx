@@ -114,7 +114,9 @@ const Explore = () => {
         selectedCities.length === 0 ||
         selectedCities.includes(destination.city);
 
-      return matchesSearchQuery && matchesCountry && matchesCity && matchesCategory;
+      return (
+        matchesSearchQuery && matchesCountry && matchesCity && matchesCategory
+      );
     });
 
     setFilteredDestinations(filtered);
@@ -132,17 +134,15 @@ const Explore = () => {
   }, []);
 
   return (
-    <div className="p-4">
-      <div className="text-center mb-8">
-        <p className="text-4xl font-bold text-gray-900">
-          Find Your Dream Trip Here!
-        </p>
-        <div className="mt-4 flex items-center justify-center">
+    <div className="p-4 m-6">
+      <div className="text-center mb-8 flx items-center justify-center">
+        Find your next destination
+        <div className="mt-2">
           <label className="input input-bordered flex items-center gap-2">
             <MdOutlineSearch className="mr-2" />
             <input
               type="text"
-              className="grow w-full max-w-md pr-32 py-2  focus:outline-none  focus:rounded-md focus:ring-2 focus:ring-gray-300"
+              className="grow w-full max-w-md"
               placeholder="Search countries or cities..."
               onChange={handleSearchChange}
             />
@@ -154,12 +154,13 @@ const Explore = () => {
       <div className="w-full flex flex-col md:flex-row gap-2">
         {/* Sidebar - Moves to top on smaller screens */}
         <div className="w-full md:w-1/4 px-4 mb-8 md:mb-0">
-          <div className="mb-8">
-            <p className="text-2xl font-semibold text-gray-900 mb-4">
+          <div>
+            <p className="text-2xl font-semibold text-gray-900 mb-2">
               Countries
             </p>
+            <hr />
             <form>
-              <div className="flex flex-wrap">
+              <div className="flex flex-wrap py-2">
                 {uniqueCountries.map((country, index) => (
                   <div key={index} className="flex items-center mb-3 w-1/2">
                     <input
@@ -182,9 +183,10 @@ const Explore = () => {
           </div>
 
           <div>
-            <p className="text-2xl font-semibold  text-gray-900 mb-4">Cities</p>
+            <p className="text-2xl font-semibold  text-gray-900 mb-2">Cities</p>
+            <hr />
             <form>
-              <div className="flex flex-wrap">
+              <div className="flex flex-wrap py-2">
                 {uniqueCities.map((city, index) => (
                   <div key={index} className="flex items-center mb-3 w-1/2">
                     <input
@@ -203,9 +205,12 @@ const Explore = () => {
             </form>
           </div>
           <div>
-            <p className="text-2xl font-semibold text-gray-900 mb-4">Cities</p>
+            <p className="text-2xl font-semibold text-gray-900 mb-4">
+              Categories
+            </p>
+            <hr />
             <form>
-              <div className="flex flex-wrap">
+              <div className="flex flex-wrap py-2">
                 {uniqueCategories.map((city, index) => (
                   <div key={index} className="flex items-center mb-3 w-1/2">
                     <input
@@ -231,30 +236,31 @@ const Explore = () => {
             {filteredDestinations.map((destination, index) => (
               <div
                 key={index}
-                className="p-4 bg-gray-50 top-4 left-4 bg-white/50 backdrop-blur-md backdrop-saturate-150 border border-gray-200 text-gray-900 text-sm font-semibold rounded-md shadow-lg"
+                className="p-4 bg-white rounded-md shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300"
               >
                 <img
                   src={`http://localhost:3000/backend/${destination.destination_image}`}
                   alt={destination.country}
-                  className="w-full h-24 object-cover"
+                  className="w-full h-40 object-cover rounded-md mb-4"
                 />
-                <h1 className="text-lg font-semibold text-center text-gray-900 mb-3">
-                  {destination.city}
-                </h1>
-
-                <p className="text-sm text-gray-900 font-medium mb-2">
-                  {destination.country}
-                </p>
-                <p className="text-sm text-gray-700 mb-4 flex-grow">
-                  {destination.description.length > 0
-                    ? `${destination.description.slice(0, 24)}...`
-                    : destination.description}
-                </p>
+                <div className="text-center">
+                  <h1 className="text-lg font-semibold text-gray-800 mb-2">
+                    {destination.city}
+                  </h1>
+                  <p className="text-sm text-gray-600 font-medium mb-1">
+                    {destination.country}
+                  </p>
+                  <p className="text-sm text-gray-700 mb-3">
+                    {destination.description.length > 24
+                      ? `${destination.description.slice(0, 24)}...`
+                      : destination.description}
+                  </p>
+                </div>
                 <button
-                  className="border border-gray-900 text-gray-900 px-3 py-2 rounded-md text-sm font-medium w-full hover:bg-gray-900 hover:text-white transition duration-200 "
+                  className="w-full px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-md hover:bg-gray-700 transition-colors duration-200"
                   onClick={() => handleDetails(destination.destination_id)}
                 >
-                  Details
+                  View Details
                 </button>
               </div>
             ))}
