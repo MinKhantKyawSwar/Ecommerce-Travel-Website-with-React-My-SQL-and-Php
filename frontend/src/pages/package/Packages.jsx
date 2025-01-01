@@ -26,7 +26,29 @@ const Packages = ({
       );
 
       if (response.data.status === 1) {
-        setPackages(response.data.data); // Set packages data
+        const packages = response.data.data;
+
+        // Shuffle the array to get random items
+        const shuffledPackages = packages.sort(
+          () => 0.5 - Math.random()
+        );
+
+        // Filter to get unique destination IDs
+        const uniqueDestinations = [];
+        const destinationIds = new Set();
+
+        for (let packages of shuffledPackages) {
+          if (!destinationIds.has(packages.destination_id)) {
+            uniqueDestinations.push(packages);
+            destinationIds.add(packages.destination_id);
+          }
+
+          // Stop once we have 4 unique destinations
+          if (uniqueDestinations.length === 4) break;
+        }
+
+        // Set the random destinations
+        setPackages(uniqueDestinations); // Set packages data
       } else {
         setPackages([]); // Clear the packages if no data found
         setError("No packages found for this destination.");
@@ -41,8 +63,13 @@ const Packages = ({
     navigate(`package/${id}`);
   };
   const handleBooking = async (id) => {
+   if(localStorage.getItem("token")){
     localStorage.removeItem("activeTab", activeTab);
     navigate(`/booking/${id}`);
+   }
+    else{
+      navigate("/register");
+    }
   };
 
   const savedItemHandler = async (id, least_price) => {

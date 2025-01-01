@@ -168,13 +168,13 @@ const Nav = () => {
         <div className="navbar-end px-4 flex space-x-3">
           <Link
             to="/register"
-            className="btn btn-outline border-gray-300 hover:border-blue-600 hover:text-blue-600"
+            className="btn btn-outline border-gray-300 hover:border-blue-600 hover:text-white"
           >
             Register
           </Link>
           <Link
             to="/login"
-            className="btn btn-primary bg-blue-600 text-white hover:bg-blue-700 rounded-xl"
+            className="btn  bg-gray-900 hover:bg-gray-900 text-white rounded-xl"
           >
             Login
           </Link>

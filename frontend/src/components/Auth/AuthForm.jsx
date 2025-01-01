@@ -25,9 +25,9 @@ const AuthForm = ({ isLogin }) => {
     username: isLogin
       ? null
       : Yup.string()
-          .min(3, "Username is too short.")
-          .max(10, "Username is too long.")
-          .required("Username is required."),
+        .min(3, "Username is too short.")
+        .max(10, "Username is too long.")
+        .required("Username is required."),
     email: Yup.string()
       .required("Email is required.")
       .email("Please enter a valid email."),
@@ -64,7 +64,7 @@ const AuthForm = ({ isLogin }) => {
       const toastFire = (message) => {
         toast.success(message, {
           position: "top-center",
-          autoClose: 1000,
+          autoClose: 500,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -78,7 +78,7 @@ const AuthForm = ({ isLogin }) => {
       const toastError = (message) => {
         toast.error(message, {
           position: "top-center",
-          autoClose: 1000,
+          autoClose: 500,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -94,7 +94,7 @@ const AuthForm = ({ isLogin }) => {
       } else if (response.data.status === 1) {
         updateToken(response.data.token);
         toastFire(response.data.message);
-        setTimeout(() => setRedirect(true), 2000);
+        setTimeout(() => setRedirect(true), 1000);
       } else if (response.data.status == 6) {
         toastError(response.data.message);
       }
@@ -125,73 +125,95 @@ const AuthForm = ({ isLogin }) => {
         theme="light"
         transition={Slide}
       />
-      <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md my-20">
+      <div className="max-w-md mx-auto p-6 border-gray-900 border bg-white rounded-lg shadow-md my-20">
         <Formik
           initialValues={initialValues}
           validationSchema={AuthFormSchema}
           onSubmit={submitHandler}
         >
           {({ isSubmitting }) => (
-            <Form className="space-y-4">
-              <h1 className="text-center font-semibold text-3xl my-4 text-blue-600">
+            <Form className="space-y-6 max-w-md mx-auto bg-white p-6">
+              <h1 className="text-center font-semibold text-3xl mb-6 text-gray-800">
                 {isLogin ? "Login" : "Register"}
               </h1>
+
               {!isLogin && (
-                <div className="mb-3">
-                  <label htmlFor="username" className="font-medium block">
+                <div className="mb-4">
+                  <label
+                    htmlFor="username"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Username
                   </label>
                   <Field
                     type="text"
                     name="username"
                     id="username"
-                    className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                    placeholder="Enter your username"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-gray-200 focus:outline-none"
                   />
-                  <StyledErrorMessage name="username" />
+                  <StyledErrorMessage name="username" className="text-red-500 text-sm mt-1" />
                 </div>
               )}
-              <div className="mb-3">
-                <label htmlFor="email" className="font-medium block">
+
+              <div className="mb-4">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Email
                 </label>
                 <Field
                   type="email"
                   name="email"
                   id="email"
-                  className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  placeholder="Enter your email"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-gray-200 focus:outline-none"
                 />
-                <StyledErrorMessage name="email" />
+                <StyledErrorMessage name="email" className="text-red-500 text-sm mt-1" />
               </div>
+
               {!isLogin && (
-                <div className="mb-3">
-                  <label htmlFor="phone" className="font-medium block">
+                <div className="mb-4">
+                  <label
+                    htmlFor="phone"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Phone
                   </label>
                   <Field
                     type="tel"
                     name="phone"
                     id="phone"
-                    className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                    placeholder="Enter your phone number"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-gray-200 focus:outline-none"
                   />
-                  <StyledErrorMessage name="phone" />
+                  <StyledErrorMessage name="phone" className="text-red-500 text-sm mt-1" />
                 </div>
               )}
-              <div className="mb-3">
-                <label htmlFor="password" className="font-medium block">
+
+              <div className="mb-4">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Password
                 </label>
                 <Field
                   type="password"
                   name="password"
                   id="password"
-                  className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  placeholder="Enter your password"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-gray-200 focus:outline-none"
                 />
-                <StyledErrorMessage name="password" />
+                <StyledErrorMessage name="password" className="text-red-500 text-sm mt-1" />
               </div>
+
               <button
-                className="text-white bg-blue-600 py-3 font-medium w-full text-center rounded-lg hover:bg-teal-700 transition duration-200"
                 type="submit"
                 disabled={isSubmitting}
+                className={`py-3 w-full font-medium text-center rounded-lg text-white ${isSubmitting ? "bg-gray-600 cursor-not-allowed" : "bg-gray-800 hover:bg-gray-700"
+                  } transition duration-200`}
               >
                 {isLogin
                   ? `${isSubmitting ? "Submitting..." : "Login"}`
@@ -200,6 +222,7 @@ const AuthForm = ({ isLogin }) => {
             </Form>
           )}
         </Formik>
+
       </div>
     </>
   );

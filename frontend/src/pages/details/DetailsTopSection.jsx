@@ -43,13 +43,14 @@ const DetailsTopSection = ({ destination }) => {
             {[
               destination.destination_second_image,
               destination.destination_third_image,
+              destination.accommodation_image
             ].map((image, index) => (
               <div key={index}>
                 {image ? (
                   <img
                     src={`http://localhost:3000/backend/${image}`}
                     alt={`Destination Side ${index + 1}`}
-                    className="w-full h-40 rounded-lg shadow-lg object-cover"
+                    className="w-full h-44 rounded-lg shadow-lg object-cover"
                   />
                 ) : (
                   <p className="text-gray-500 text-center py-10 border rounded-lg">

@@ -168,7 +168,7 @@ const Index = () => {
                   <b>Country:</b> {selectedDestination.country}
                 </p>
                 <p className="mb-2">
-                  <b>Description:</b> {selectedDestination.description}
+                  <b>Description:</b> {selectedDestination.description.substring(0, 32)}...
                 </p>
                 <p className="mb-4">
                   <b>Bookings:</b> {selectedDestination.booking}

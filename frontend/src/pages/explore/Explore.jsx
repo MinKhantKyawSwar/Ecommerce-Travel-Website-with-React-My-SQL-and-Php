@@ -153,7 +153,7 @@ const Explore = () => {
       {/* Main Section with Sidebar at the top on smaller screens */}
       <div className="w-full flex flex-col md:flex-row gap-2">
         {/* Sidebar - Moves to top on smaller screens */}
-        <div className="w-full md:w-1/3 px-4 mb-8 md:mb-0">
+        <div className="w-full md:w-1/4 px-4 mb-8 md:mb-0">
           <div className="mb-8">
             <p className="text-2xl font-semibold text-gray-900 mb-4">
               Countries
@@ -226,7 +226,7 @@ const Explore = () => {
         </div>
 
         {/* Main Content */}
-        <div className="flex w-full md:w-2/3 justify-center">
+        <div className="flex w-full md:w-3/4  justify-start">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6">
             {filteredDestinations.map((destination, index) => (
               <div
@@ -239,11 +239,11 @@ const Explore = () => {
                   className="w-full h-24 object-cover"
                 />
                 <h1 className="text-lg font-semibold text-center text-gray-900 mb-3">
-                  {destination.country}
+                  {destination.city}
                 </h1>
 
                 <p className="text-sm text-gray-900 font-medium mb-2">
-                  {destination.city}
+                  {destination.country}
                 </p>
                 <p className="text-sm text-gray-700 mb-4 flex-grow">
                   {destination.description.length > 0

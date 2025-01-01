@@ -108,9 +108,8 @@ const Reviews = ({ id }) => {
         {[1, 2, 3, 4, 5].map((value) => (
           <span
             key={value}
-            className={`text-2xl ${
-              value <= rating ? "text-yellow-500" : "text-gray-400"
-            }`}
+            className={`text-2xl ${value <= rating ? "text-yellow-500" : "text-gray-400"
+              }`}
           >
             ★
           </span>
@@ -120,44 +119,48 @@ const Reviews = ({ id }) => {
   };
 
   const handleAddReview = async (e) => {
-    e.preventDefault();
+    if (localStorage.getItem("token")) {
+      e.preventDefault();
 
-    if (rating === 0) {
-      setError("Rating is required");
-      return; // Prevent form submission
-    }
-    const data = {
-      reviewTitle,
-      description,
-      rating,
-      created_at: new Date(),
-      userId: Number(localStorage.getItem("user_id")),
-      destination: id,
-    };
-
-    try {
-      const response = await axios.post(
-        `http://localhost:3000/backend/getReview.php`,
-        data,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.data.status === 1) {
-        totalRatingData(averageRating);
-        setPrevReview([...prevReview, response.data.data]);
-        setReviewTitle("");
-        setDescription("");
-        setRating(0);
-        setShowReviewForm(false);
-      } else {
-        setError("Failed to add review");
+      if (rating === 0) {
+        setError("Rating is required");
+        return; // Prevent form submission
       }
-    } catch (err) {
-      setError("Failed to add review: " + err.message);
+      const data = {
+        reviewTitle,
+        description,
+        rating,
+        created_at: new Date(),
+        userId: Number(localStorage.getItem("user_id")),
+        destination: id,
+      };
+
+      try {
+        const response = await axios.post(
+          `http://localhost:3000/backend/getReview.php`,
+          data,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.data.status === 1) {
+          totalRatingData(averageRating);
+          setPrevReview([...prevReview, response.data.data]);
+          setReviewTitle("");
+          setDescription("");
+          setRating(0);
+          setShowReviewForm(false);
+        } else {
+          setError("Failed to add review");
+        }
+      } catch (err) {
+        setError("Failed to add review: " + err.message);
+      }
+    } else {
+      navigate("/register");
     }
   };
 
@@ -331,12 +334,17 @@ const Reviews = ({ id }) => {
             ))}
           </div>
           <div className="flex flex-col">
-            <button
-              onClick={() => setShowReviewForm(!showReviewForm)}
-              className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-200"
-            >
-              {showReviewForm ? "Cancel" : "Add Review"}
-            </button>
+            {
+              localStorage.getItem("token") && (
+                <button
+                  onClick={() => setShowReviewForm(!showReviewForm)}
+                  className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-200"
+                >
+                  {showReviewForm ? "Cancel" : "Add Review"}
+                </button>
+              )
+            }
+
           </div>
           <button
             className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-200"
@@ -394,8 +402,8 @@ const Reviews = ({ id }) => {
                                       posted on:{" "}
                                       {review
                                         ? new Date(
-                                            review.created_at
-                                          ).toLocaleDateString()
+                                          review.created_at
+                                        ).toLocaleDateString()
                                         : "N/A"}
                                     </p>
                                   </div>
@@ -414,7 +422,7 @@ const Reviews = ({ id }) => {
                                 {review ? review.description : "No Description"}
                               </p>
                               {review &&
-                              review.user ===
+                                review.user ===
                                 Number(localStorage.getItem("user_id")) ? (
                                 <div className="mt-4 flex space-x-2">
                                   <form method="dialog">
