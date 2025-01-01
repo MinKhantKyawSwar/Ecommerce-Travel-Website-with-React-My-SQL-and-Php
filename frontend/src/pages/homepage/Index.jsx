@@ -10,15 +10,6 @@ const Index = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const collections = [
-    { name: "Mondrian", image: "mondrian.jpg" },
-    { name: "Nirnia", image: "nirnia.jpg" },
-    { name: "Artex", image: "artex.jpg" },
-    { name: "Brera", image: "brera.jpg" },
-    { name: "Alea Pro", image: "alea-pro.jpg" },
-    { name: "Nirnia", image: "nirnia-2.jpg" },
-  ];
-
   const getDestinations = async () => {
     try {
       const response = await axios.get(
@@ -26,7 +17,6 @@ const Index = () => {
       );
 
       if (response.data.status === 1) {
-        // Get the data array
         const destinations = response.data.data;
 
         // Shuffle the array to get random items
@@ -34,11 +24,22 @@ const Index = () => {
           () => 0.5 - Math.random()
         );
 
-        // Select the first 3 items from the shuffled array
-        const randomDestinations = shuffledDestinations.slice(0, 4);
+        // Filter to get unique destination IDs
+        const uniqueDestinations = [];
+        const destinationIds = new Set();
+
+        for (let destination of shuffledDestinations) {
+          if (!destinationIds.has(destination.destination_id)) {
+            uniqueDestinations.push(destination);
+            destinationIds.add(destination.destination_id);
+          }
+
+          // Stop once we have 4 unique destinations
+          if (uniqueDestinations.length === 4) break;
+        }
 
         // Set the random destinations
-        setDestinations(randomDestinations);
+        setDestinations(uniqueDestinations);
       } else {
         setError("No data found");
       }
@@ -103,37 +104,35 @@ const Index = () => {
                 key={index}
               >
                 {/* Destination Image with Overlay Text */}
-                <div
-                  className="relative h-72 sm:h-80 bg-cover bg-center bg-no-repeat"
-                  style={{
-                    backgroundImage: `url(${
-                      destination.destination_image
-                        ? `http://localhost:3000/backend/${destination.destination_image}`
-                        : "default-image.jpg"
-                    })`,
-                  }}
-                >
+                <div className="relative h-72 sm:h-80 bg-cover bg-center bg-no-repeat">
+                  <img
+                    src={`http://localhost:3000/backend/${destination.destination_image}`}
+                    alt={destination.city}
+                    className="w-full h-full object-cover"
+                  />
                   {/* Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
 
                   {/* Text Overlay */}
                   <div className="absolute bottom-4 left-4 right-4 text-white pb-2 rounded-lg shadow-lg">
-                   <div className="flex flex-row justify-between h-full">
-                     {/* City and Country */}
-                     <div className="mb-2">
-                      <h3 className="text-lg font-bold">{destination.city}</h3>
-                      <p className="text-xs text-gray-300">
-                        {destination.country}
-                      </p>
-                    </div>
+                    <div className="flex flex-row justify-between h-full">
+                      {/* City and Country */}
+                      <div className="mb-2">
+                        <h3 className="text-lg font-bold">
+                          {destination.city}
+                        </h3>
+                        <p className="text-xs text-gray-300">
+                          {destination.country}
+                        </p>
+                      </div>
 
-                    {/* Price */}
-                    <div className="mb-4">
-                      <span className="inline-block px-3 py-1 bg-yellow-500 text-white text-sm font-semibold rounded-lg">
-                        ${destination.price}
-                      </span>
+                      {/* Price */}
+                      <div className="mb-4">
+                        <span className="flex mt-4 gap-1 px-3 py-1 bg-yellow-500 text-white text-sm font-semibold rounded-lg">
+                          <p>from</p>${destination.price}
+                        </span>
+                      </div>
                     </div>
-                   </div>
 
                     {/* View Details Button */}
                     <button

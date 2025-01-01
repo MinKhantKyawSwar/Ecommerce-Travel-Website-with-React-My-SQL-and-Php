@@ -2,16 +2,20 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { debounce } from "lodash"; // Import lodash for debouncing
 import { MdOutlineSearch } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 const Explore = () => {
   const [destinations, setDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCountries, setSelectedCountries] = useState([]);
+  const [selectedDestination, setSelectedDestination] = useState([]);
   const [selectedCities, setSelectedCities] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredDestinations, setFilteredDestinations] = useState([]);
+
+  const navigate = useNavigate();
 
   // Fetch all destinations
   const getDestinations = async () => {
@@ -27,6 +31,27 @@ const Explore = () => {
       }
     } catch (err) {
       setError("Failed to fetch data: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch details of a single destination
+  const handleDetails = async (id) => {
+    try {
+      setLoading(true); // Show loading for details
+      const response = await axios.get(
+        `http://localhost:3000/backend/getDestination.php?id=${id}`
+      );
+
+      if (response.data.status === 1) {
+        setSelectedDestination(response.data.data); // Save details of the selected destination
+        navigate(`/destination/${id}`);
+      } else {
+        setError("No details found for this destination");
+      }
+    } catch (err) {
+      setError("Failed to fetch details: " + err.message);
     } finally {
       setLoading(false);
     }
@@ -66,7 +91,6 @@ const Explore = () => {
     );
   };
 
-
   // Handle search query change with debounce to prevent unnecessary filtering
   const handleSearchChange = debounce((e) => {
     setSearchQuery(e.target.value.toLowerCase());
@@ -77,21 +101,30 @@ const Explore = () => {
     const filtered = destinations.filter((destination) => {
       const matchesSearchQuery =
         destination.country.toLowerCase().includes(searchQuery) ||
-        destination.city.toLowerCase().includes(searchQuery) || 
+        destination.city.toLowerCase().includes(searchQuery) ||
         destination.category_name.toLowerCase().includes(searchQuery);
 
       const matchesCountry =
         selectedCountries.length === 0 ||
         selectedCountries.includes(destination.country);
+      const matchesCategory =
+        selectedCategories.length === 0 ||
+        selectedCategories.includes(destination.category_name);
       const matchesCity =
         selectedCities.length === 0 ||
         selectedCities.includes(destination.city);
 
-      return matchesSearchQuery && matchesCountry && matchesCity;
+      return matchesSearchQuery && matchesCountry && matchesCity && matchesCategory;
     });
 
     setFilteredDestinations(filtered);
-  }, [destinations, searchQuery, selectedCountries, selectedCities]);
+  }, [
+    destinations,
+    searchQuery,
+    selectedCountries,
+    selectedCities,
+    selectedCategories,
+  ]);
 
   // Fetch destinations on initial load
   useEffect(() => {
@@ -217,7 +250,10 @@ const Explore = () => {
                     ? `${destination.description.slice(0, 24)}...`
                     : destination.description}
                 </p>
-                <button className="border border-gray-900 text-gray-900 px-3 py-2 rounded-md text-sm font-medium w-full hover:bg-gray-900 hover:text-white transition duration-200">
+                <button
+                  className="border border-gray-900 text-gray-900 px-3 py-2 rounded-md text-sm font-medium w-full hover:bg-gray-900 hover:text-white transition duration-200 "
+                  onClick={() => handleDetails(destination.destination_id)}
+                >
                   Details
                 </button>
               </div>

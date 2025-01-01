@@ -50,11 +50,13 @@ const Details = () => {
         {
           headers: {
             Country: destination.country,
-            Category: destination.category_name,
+            Category: destination.category_id,
             Destination_Id: id,
           },
         }
       );
+
+      console.log( destination.country,destination.category_id, id);
 
       if (response.data.status === 1) {
         setRandomDestinations(response.data.data);
@@ -104,15 +106,12 @@ const Details = () => {
       getRandomDestinations();
     }
   }, [destination]);
-  if (loading) return <div className="text-center mt-10">Loading...</div>;
-
-  if (error)
-    return <div className="text-red-500 text-center mt-10">{error}</div>;
+  if (loading) return <div className="text-center mt-10">Loading...</div>
 
   return (
     <>
       <button
-        className="border-2 px-4 py-2 m-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-all duration-200"
+        className="border-2 px-4 py-2 m-2 bg-gray-800  text-white hover:bg-black transition-all duration-200 mt-10 rounded-xl"
         onClick={goBackHandler}
       >
         Go Back
@@ -159,7 +158,7 @@ const Details = () => {
                       className="relative bg-white rounded-lg overflow-hidden shadow-lg"
                       key={index} // Use unique key
                     >
-                      {/* Destination Image */}
+                      
                       <figure className="relative">
                         <img
                           src={
@@ -167,7 +166,7 @@ const Details = () => {
                               ? `http://localhost:3000/backend/${destination.destination_image}`
                               : "default-image.jpg"
                           }
-                          alt={`Image of ${destination.city}, ${destination.country}`} // More descriptive alt text
+                          alt={`Image of ${destination.city}, ${destination.country}`}
                           className="w-full h-72 object-cover"
                         />
                         {/* Days Label */}

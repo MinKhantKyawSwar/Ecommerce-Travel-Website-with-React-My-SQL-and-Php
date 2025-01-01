@@ -45,7 +45,7 @@ switch ($method) {
                                       JOIN
                                             region ON location.region = region.region_id
                                       WHERE 
-                                            (location.country = :country OR category.category_name = :category) AND destination.destination_id != :destination_id LIMIT 3";
+                                            (location.country = :country OR category.category_id = :category) AND destination.destination_id != :destination_id";
 
                 $stmt = $conn->prepare($getRandomDestinations);
                 $stmt->bindParam(':country', $country);

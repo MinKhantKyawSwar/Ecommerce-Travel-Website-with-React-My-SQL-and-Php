@@ -85,7 +85,7 @@ const Packages = ({
   }, [destination_id]);
 
   return (
-    <div className=" p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+    <div className=" p-4 rounded-lg bg-gray-50 dark:bg-gray-800 mb-10">
       {!error && packages.length > 0 ? (
         <>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">

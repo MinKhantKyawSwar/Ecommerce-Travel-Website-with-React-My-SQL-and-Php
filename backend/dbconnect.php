@@ -5,7 +5,7 @@ Class dbconnect{
     private $port = 3306;
     private $user = "root";
     private $password = "";
-    private $dbname="ecommtest";
+    private $dbname="trailblaze_tour_ecommerce";
 
     public function connect(){
         try {
