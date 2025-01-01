@@ -62,7 +62,7 @@ switch ($method) {
 
                 $conn = $db->connect();
                 $getSavedPackages = "
-                        SELECT 
+                        SELECT DISTINCT
                             saveditems.*,
                             package.*,
                             package_info.price,

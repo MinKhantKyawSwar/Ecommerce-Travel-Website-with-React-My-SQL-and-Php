@@ -22,6 +22,7 @@ const Packages = ({ destination_id, activeTab, packages, setPackages }) => {
 
       if (response.data.status === 1) {
         setPackages(response.data.data);
+        console.log(response.data.data);
       } else {
         setPackages([]);
         setError("No packages found for this destination.");
@@ -38,7 +39,6 @@ const Packages = ({ destination_id, activeTab, packages, setPackages }) => {
 
   const handleBooking = (id) => {
     if (localStorage.getItem("token")) {
-      localStorage.removeItem("activeTab");
       navigate(`/booking/${id}`);
     } else {
       navigate("/register");

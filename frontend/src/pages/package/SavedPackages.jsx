@@ -63,7 +63,7 @@ const SavedPackages = () => {
   }, []);
 
   return (
-    <div className="container mx-auto p-4 mb-10 mt-10">
+    <div className="container mx-auto p-4 mb-10 mt-10 min-h-96">
       <div className="text-lg font-bold mb-4">Saved Packages</div>
 
       {savedItem.length > 0 ? (
