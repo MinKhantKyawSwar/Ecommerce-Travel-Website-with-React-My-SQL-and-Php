@@ -21,6 +21,7 @@ import DestinationForm from "./components/Forms/DestinationForm";
 import PackageDetailsForm from "./components/Forms/PackageDetailsForm";
 import EditPackageDetailsForm from "./components/Forms/EditPackageDetailsForm";
 import ScrollToTopOnNavigation from "./providers/ScrollToTopOnNavigation";
+import ResetPassword from "./components/Auth/ResetPassword";
 
 function App() {
   const router = createBrowserRouter([
@@ -44,6 +45,10 @@ function App() {
         {
           path: "/login",
           element: <Login />,
+        },
+        {
+          path: "/reset-password",
+          element: <ResetPassword />,
         },
         {
           path: "/profile",

@@ -7,10 +7,10 @@ import { FaRegBookmark } from "react-icons/fa";
 const Nav = () => {
   const { token, updateToken, userInfo, setUserInfo, deleteToken } =
     useContext(UserContext);
+  const [savedNoti, setSavedNoti] = useState(0); // State to store saved items count
   const navigate = useNavigate();
 
-  const [cartItem, setCartItem] = useState(0);
-
+  // Logout handler
   const logoutHandler = () => {
     updateToken(null);
     localStorage.removeItem("token", "user_id", "username");
@@ -20,6 +20,7 @@ const Nav = () => {
     navigate("/login");
   };
 
+  // Get user information
   const getUserId = async () => {
     try {
       if (!token) {
@@ -35,7 +36,6 @@ const Nav = () => {
       );
 
       if (response.data.status === 1 && response.data.customer) {
-        // Set username in state and localStorage
         const customer = response.data.customer;
         localStorage.setItem("user_id", customer.user_id);
         localStorage.setItem("username", customer.username);
@@ -48,34 +48,39 @@ const Nav = () => {
     }
   };
 
-  const getSavedItems = async () => {
-    const data = {
-      user_id: localStorage.getItem("user_id"),
-    };
-    try {
-      const response = await axios.get(
-        "http://localhost:3000/backend/getCartInfo.php",
-        data
-      );
+  // Fetch the saved items count for the logged-in user
+  const fetchSavedItemsCount = async () => {
+    const userId = localStorage.getItem("user_id");
+    if (userId) {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/backend/getCartInfo.php`,
+          {
+            params: { user_id: userId },
+          }
+        );
 
-      if (response.data.status === 1) {
-        setCartItem(response.data.data);
-      } else {
-        setError("No data found");
+        if (response.data.status === 1) {
+          setSavedNoti(response.data.data.item_count); // Set the saved items count
+        } else {
+          setSavedNoti(0); // No saved items
+        }
+      } catch (error) {
+        console.error("Error fetching saved items count:", error.message);
       }
-    } catch (err) {
-      setError("Failed to fetch data: " + err.message);
-    } finally {
-      setLoading(false);
     }
   };
 
+  // Fetch user ID and saved items count when the token is available
   useEffect(() => {
     if (token) {
-      // Fetch user ID only if the token exists
-      getUserId();
+      getUserId(); // Fetch user ID if the token is available
     }
-  }, [token]); // Run effect when token changes
+  }, [token]); // Run the effect when token changes
+
+  useEffect(()=>{
+    fetchSavedItemsCount(); // Fetch saved items count
+  },[])
 
   return (
     <div className="navbar bg-white text-gray-900 rounded-2xl border border-gray-400 shadow-md fixed top-0 left-0 max-w-[95%] ml-[3%] pt-2 mt-2 z-50">
@@ -106,10 +111,12 @@ const Nav = () => {
               >
                 <div className="indicator text-lg">
                   <FaRegBookmark />
-                  {/* Uncomment and use cart item count if needed */}
-                  {/* <span className="badge badge-sm indicator-item bg-red-500 text-white">
-                  {cartItem}
-                </span> */}
+                  {/* Display saved notification badge */}
+                  {savedNoti > 0 && (
+                    <span className="badge badge-sm indicator-item bg-red-500 text-white">
+                      {savedNoti}
+                    </span>
+                  )}
                 </div>
               </div>
             </Link>
@@ -174,7 +181,7 @@ const Nav = () => {
           </Link>
           <Link
             to="/login"
-            className="btn  bg-gray-900 hover:bg-gray-900 text-white rounded-xl"
+            className="btn bg-gray-900 hover:bg-gray-900 text-white rounded-xl"
           >
             Login
           </Link>

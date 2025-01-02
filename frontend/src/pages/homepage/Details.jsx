@@ -59,29 +59,7 @@ const Details = () => {
       console.log( destination.country,destination.category_id, id);
 
       if (response.data.status === 1) {
-        const destinations = response.data.data;
-
-        // Shuffle the array to get random items
-        const shuffledDestinations = destinations.sort(
-          () => 0.5 - Math.random()
-        );
-
-        // Filter to get unique destination IDs
-        const uniqueDestinations = [];
-        const destinationIds = new Set();
-
-        for (let destination of shuffledDestinations) {
-          if (!destinationIds.has(destination.destination_id)) {
-            uniqueDestinations.push(destination);
-            destinationIds.add(destination.destination_id);
-          }
-
-          // Stop once we have 4 unique destinations
-          if (uniqueDestinations.length === 4) break;
-        }
-
-        // Set the random destinations
-        setRandomDestinations(uniqueDestinations);
+        setRandomDestinations(response.data.data);
       } else {
         setError("No data found");
       }
@@ -128,7 +106,8 @@ const Details = () => {
       getRandomDestinations();
     }
   }, [destination]);
-  if (loading) return <div className="text-center mt-10">Loading...</div>
+  if (loading) return <div className="text-center mt-10">Loading...</div>;
+
 
   return (
     <>
@@ -210,7 +189,7 @@ const Details = () => {
                           {destination.country}
                         </p>
                         <p className="text-sm text-gray-700 mb-4">
-                          {destination.description.substring(0, 55)}...
+                          {destination.description}
                         </p>
                         <div className="flex justify-between items-center">
                           <span className="text-lg font-bold text-gray-900">

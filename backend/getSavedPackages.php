@@ -22,30 +22,19 @@ switch ($method) {
             $saved_at = $data->saved_at;
 
             $conn = $db->connect();
-            // Check if the package is already saved by the user
-            $checkPackage = "SELECT * FROM saveditems WHERE user = :user AND package = :package";
-            $stmt = $conn->prepare($checkPackage);
+
+            $setSavedItems = "INSERT INTO saveditems (user, package, price, saved_at) VALUES (:user, :package, :least_price, :saved_at)";
+            $stmt = $conn->prepare($setSavedItems);
             $stmt->bindParam(':user', $user);
             $stmt->bindParam(':package', $package);
-            $stmt->execute();
-            $existingPackage = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt->bindParam(':saved_at', $saved_at);
+            $stmt->bindParam(':least_price', $least_price);
+            $status = $stmt->execute();
 
-            if ($existingPackage) {
-                $response = ['status' => 2, 'message' => "Package already saved!"];
+            if ($status) {
+                $response = ['status' => 1, 'message' => "Package Successfully saved!"];
             } else {
-                $setSavedItems = "INSERT INTO saveditems (user, package, price, saved_at) VALUES (:user, :package, :least_price, :saved_at)";
-                $stmt = $conn->prepare($setSavedItems);
-                $stmt->bindParam(':user', $user);
-                $stmt->bindParam(':package', $package);
-                $stmt->bindParam(':saved_at', $saved_at);
-                $stmt->bindParam(':least_price', $least_price);
-                $status = $stmt->execute();
-
-                if ($status) {
-                    $response = ['status' => 1, 'message' => "Package Successfully saved!"];
-                } else {
-                    $response = ['status' => 0, 'message' => "Failed to save package!"];
-                }
+                $response = ['status' => 0, 'message' => "Failed to save package!"];
             }
         } catch (PDOException $e) {
             $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
