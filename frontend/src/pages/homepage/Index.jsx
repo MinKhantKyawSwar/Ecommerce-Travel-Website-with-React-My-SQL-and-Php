@@ -97,14 +97,14 @@ const Index = () => {
           <div>
             <TopLocations />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-1 h-full lg:grid-cols-4 gap-4 carousel rounded-box">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 carousel rounded-box">
             {destinations.map((destination, index) => (
               <div
                 className="relative bg-white rounded-lg border overflow-hidden shadow-lg md:h-80 h-72 w-full sm:w-80 lg:w-64"
                 key={index}
               >
                 {/* Destination Image with Overlay Text */}
-                <div className="relative h-72 bg-cover bg-center bg-no-repeat">
+                <div className="relative h-72 sm:h-80 bg-cover bg-center bg-no-repeat">
                   <img
                     src={`http://localhost:3000/backend/${destination.destination_image}`}
                     alt={destination.city}
@@ -168,7 +168,7 @@ const Index = () => {
                   <b>Country:</b> {selectedDestination.country}
                 </p>
                 <p className="mb-2">
-                  <b>Description:</b> {selectedDestination.description.substring(0, 32)}...
+                  <b>Description:</b> {selectedDestination.description}
                 </p>
                 <p className="mb-4">
                   <b>Bookings:</b> {selectedDestination.booking}
