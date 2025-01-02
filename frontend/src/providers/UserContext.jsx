@@ -14,6 +14,7 @@ export const UserContextProvider = ({ children }) => {
     const savedItemsCount = localStorage.getItem("savedNoti");
     return savedItemsCount ? JSON.parse(savedItemsCount) : 0;
   });
+  
 
   const updateToken = (JWTtoken) => {
     const token = JSON.stringify(JWTtoken);

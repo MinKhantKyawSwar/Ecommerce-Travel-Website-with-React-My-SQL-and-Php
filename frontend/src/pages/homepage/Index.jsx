@@ -12,6 +12,7 @@ const Index = () => {
 
   const getDestinations = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(
         "http://localhost:3000/backend/getIndexInfo.php"
       );
@@ -50,16 +51,15 @@ const Index = () => {
     }
   };
 
-  // Fetch details of a single destination
   const handleDetails = async (id) => {
     try {
-      setLoading(true); // Show loading for details
+      setLoading(true);
       const response = await axios.get(
         `http://localhost:3000/backend/getDestination.php?id=${id}`
       );
 
       if (response.data.status === 1) {
-        setSelectedDestination(response.data.data); // Save details of the selected destination
+        setSelectedDestination(response.data.data);
         navigate(`/destination/${id}`);
       } else {
         setError("No details found for this destination");
@@ -71,6 +71,7 @@ const Index = () => {
     }
   };
 
+  // Trigger data fetching on component mount
   useEffect(() => {
     getDestinations();
   }, []);
@@ -94,6 +95,7 @@ const Index = () => {
           <h2 className="text-3xl font-bold text-center mb-8">
             Available Destinations
           </h2>
+          
           <div>
             <TopLocations />
           </div>
@@ -156,32 +158,6 @@ const Index = () => {
               </div>
             ))}
           </div>
-
-          {selectedDestination && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg p-6 w-96">
-                <h2 className="text-2xl font-bold mb-4">Destination Details</h2>
-                <p className="mb-2">
-                  <b>Name:</b> {selectedDestination.destination_name}
-                </p>
-                <p className="mb-2">
-                  <b>Country:</b> {selectedDestination.country}
-                </p>
-                <p className="mb-2">
-                  <b>Description:</b> {selectedDestination.description}
-                </p>
-                <p className="mb-4">
-                  <b>Bookings:</b> {selectedDestination.booking}
-                </p>
-                <button
-                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
-                  onClick={() => setSelectedDestination(null)}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </>

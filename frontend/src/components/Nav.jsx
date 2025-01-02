@@ -5,29 +5,39 @@ import axios from "axios";
 import { FaRegBookmark } from "react-icons/fa";
 
 const Nav = () => {
-  const { token, updateToken, userInfo, setUserInfo, deleteToken } =
-    useContext(UserContext);
-  const [savedNoti, setSavedNoti] = useState(0); // State to store saved items count
+  const {
+    token,
+    updateToken,
+    userInfo,
+    setUserInfo,
+    deleteToken,
+    savedNoti,
+    updateSavedNoti,
+  } = useContext(UserContext);
   const navigate = useNavigate();
+
+  const [savedArr, setSavedArr] = useState([]);
 
   // Logout handler
   const logoutHandler = () => {
     updateToken(null);
-    localStorage.removeItem("token", "user_id", "username");
-    localStorage.removeItem("user_id");
-    localStorage.removeItem("username");
-    setUserInfo("");
+    const user_id = localStorage.getItem("user_id");
+    localStorage.clear(); // Clear all localStorage items
+    if (user_id) {
+      localStorage.removeItem(`savedPackages_${user_id}`); // Remove user-specific saved packages
+    }
+    setUserInfo(null);
     navigate("/login");
   };
 
   // Get user information
   const getUserId = async () => {
-    try {
-      if (!token) {
-        console.error("No token found, user may not be logged in.");
-        return;
-      }
+    if (!token) {
+      console.error("No token found, user may not be logged in.");
+      return;
+    }
 
+    try {
       const response = await axios.get(
         "http://localhost:3000/backend/login.php",
         {
@@ -39,7 +49,7 @@ const Nav = () => {
         const customer = response.data.customer;
         localStorage.setItem("user_id", customer.user_id);
         localStorage.setItem("username", customer.username);
-        setUserInfo(customer); // Optionally, update userInfo if needed
+        setUserInfo(customer);
       } else {
         console.error("Failed to fetch user ID:", response.data.message);
       }
@@ -51,36 +61,42 @@ const Nav = () => {
   // Fetch the saved items count for the logged-in user
   const fetchSavedItemsCount = async () => {
     const userId = localStorage.getItem("user_id");
-    if (userId) {
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/backend/getCartInfo.php`,
-          {
-            params: { user_id: userId },
-          }
-        );
+    if (!userId) return;
 
-        if (response.data.status === 1) {
-          setSavedNoti(response.data.data.item_count); // Set the saved items count
-        } else {
-          setSavedNoti(0); // No saved items
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/backend/getCartInfo.php`,
+        {
+          params: { user_id: userId },
         }
-      } catch (error) {
-        console.error("Error fetching saved items count:", error.message);
+      );
+
+      if (response.data.status === 1) {
+        setSavedArr(response.data.data.item_count); // Update the saved items count
+
+        const savedKey = `savedPackages_${userId}`;
+        localStorage.setItem(savedKey, savedArr);
+        updateSavedNoti(response.data.data.item_count); // Update the saved items count
+
+      } else {
+        updateSavedNoti(0); // Reset saved items count
       }
+    } catch (error) {
+      console.error("Error fetching saved items count:", error.message);
     }
   };
 
-  // Fetch user ID and saved items count when the token is available
+  // Fetch user ID and saved items count when the token changes
   useEffect(() => {
     if (token) {
-      getUserId(); // Fetch user ID if the token is available
+      getUserId(); // Fetch user ID
+      fetchSavedItemsCount(); // Fetch saved items count
     }
-  }, [token]); // Run the effect when token changes
+  }, [token]); // Dependency on token
 
-  useEffect(()=>{
-    fetchSavedItemsCount(); // Fetch saved items count
-  },[])
+  useEffect(() => { 
+    fetchSavedItemsCount();
+  }, [savedArr]);
 
   return (
     <div className="navbar bg-white text-gray-900 rounded-2xl border border-gray-400 shadow-md fixed top-0 left-0 max-w-[95%] ml-[3%] pt-2 mt-2 z-50">
