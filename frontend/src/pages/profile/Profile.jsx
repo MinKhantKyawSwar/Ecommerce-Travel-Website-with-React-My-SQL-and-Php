@@ -150,135 +150,142 @@ const Profile = () => {
   return (
     <>
       <div className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-lg mt-5">
-        <div className="text-center mb-6">
+        <div className="flex  items-center mb-6">
           {userInfo ? (
             <>
-              <div className="text-center absolute right-50">
-                <button
-                  onClick={EditHandler}
-                  className="text-green-600 font-medium py-2 px-10 mt-4 rounded-lg border border-green-600 hover:bg-green-600 hover:text-white transition duration-200"
-                >
-                  {editMode ? "Go Back" : "Edit"}
-                </button>
-              </div>
               {!editMode ? (
                 <>
-                  <div className="flex justify-center mb-4">
+                  <div className="flex flex-row items-center mb-4">
                     <img
                       src={`http://localhost:3000/backend/${userInfo.profile_image}`}
                       alt="profile"
-                      className={`rounded-full w-32 h-32 border-4 ${borderColor} object-cover`}
+                      className={`w-36 h-36 border-4 object-cover`}
                     />
+                    <div>
+                      <h2 className="text-2xl font-semibold text-gray-800 mt-4">
+                        {userInfo.username}
+                      </h2>
+                      <p className="text-gray-600">Email: {userInfo.email}</p>
+                      <p className="text-gray-600">Phone: {userInfo.phone}</p>
+                    </div>
                   </div>
-                  <h2 className="text-2xl font-semibold text-gray-800">
-                    {userInfo.username}
-                  </h2>
-                  <p className="text-gray-600">Email: {userInfo.email}</p>
-                  <p className="text-gray-600">Phone: {userInfo.phone}</p>
-                  <p className="text-gray-600">Role: {userInfo.role}</p>
+                 <div className="absolute right-20 top-20">
+                 <button
+                    onClick={EditHandler}
+                    className="mt-6 py-2 px-7 rounded-lg hover:bg-gray-900 hover:text-white transition duration-200"
+                  >
+                    Edit
+                  </button>
+                 </div>
                 </>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="mb-3">
-                    <label
-                      htmlFor="profile_image"
-                      className="font-medium block text-gray-700 mb-2"
-                    >
-                      Profile Image
-                    </label>
+                <>
+                  <button
+                    onClick={EditHandler}
+                    className="mt-6 bg-teal-600 text-white py-2 px-4 rounded-lg hover:bg-teal-700 transition duration-200"
+                  >
+                    Go Back
+                  </button>
+                  <form
+                    onSubmit={handleSubmit}
+                    className="w-full max-w-md space-y-6 bg-white p-6 shadow-lg rounded-lg"
+                  >
                     <div className="flex flex-col items-center">
+                      <label
+                        htmlFor="profile_image"
+                        className="font-medium text-gray-700 mb-2"
+                      >
+                        Profile Image
+                      </label>
                       <img
-                        src={previewImage} // Use the preview image URL
-                        alt="profile"
+                        src={previewImage}
+                        alt="profile preview"
                         className={`rounded-full w-32 h-32 mb-4 border-4 ${borderColor} object-cover`}
                       />
                       <input
                         type="file"
-                        name="profile_image"
                         id="profile_image"
                         onChange={handleFileChange}
-                        className="text-lg py-2 w-3/4 rounded-lg border border-teal-600 bg-white text-black"
+                        className="block text-lg py-2 w-full border border-teal-600 rounded-lg"
                       />
                     </div>
-                  </div>
-                  <div className="mb-3">
-                    <label
-                      htmlFor="border_color"
-                      className="font-medium block text-gray-700"
-                    >
-                      Border Color
-                    </label>
-                    <select
-                      name="border_color"
-                      id="border_color"
-                      onChange={(e) => setBorderColor(e.target.value)}
-                      className="text-lg border-2 border-teal-600 py-2 w-1/2 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600" // Adjusted width
-                    >
-                      {colorOptions.map((color) => (
-                        <option key={color} value={color}>
-                          {color.replace("border-", "").replace("-600", "")}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
 
-                  <div className="mb-3">
-                    <label
-                      htmlFor="username"
-                      className="font-medium block text-gray-700"
-                    >
-                      Username
-                    </label>
-                    <input
-                      type="text"
-                      name="username"
-                      id="username"
-                      value={formData.username}
-                      onChange={handleInputChange}
-                      className="text-lg border-2 border-teal-600 py-2 w-1/2 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600" // Adjusted width
-                    />
-                  </div>
+                    <div>
+                      <label
+                        htmlFor="border_color"
+                        className="font-medium block text-gray-700 mb-2"
+                      >
+                        Border Color
+                      </label>
+                      <select
+                        id="border_color"
+                        onChange={(e) => setBorderColor(e.target.value)}
+                        className="text-lg w-full border border-teal-600 rounded-lg py-2 focus:outline-none focus:ring-2 focus:ring-teal-600"
+                      >
+                        {colorOptions.map((color) => (
+                          <option key={color} value={color}>
+                            {color.replace("border-", "").replace("-600", "")}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-                  <div className="mb-3">
-                    <label
-                      htmlFor="email"
-                      className="font-medium block text-gray-700"
-                    >
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      id="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className="text-lg border-2 border-teal-600 py-2 w-1/2 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600" // Adjusted width
-                    />
-                  </div>
+                    <div>
+                      <label
+                        htmlFor="username"
+                        className="font-medium block text-gray-700 mb-2"
+                      >
+                        Username
+                      </label>
+                      <input
+                        type="text"
+                        id="username"
+                        value={formData.username}
+                        onChange={handleInputChange}
+                        className="text-lg w-full border border-teal-600 rounded-lg py-2 focus:outline-none focus:ring-2 focus:ring-teal-600"
+                      />
+                    </div>
 
-                  <div className="mb-3">
-                    <label
-                      htmlFor="phone"
-                      className="font-medium block text-gray-700"
+                    <div>
+                      <label
+                        htmlFor="email"
+                        className="font-medium block text-gray-700 mb-2"
+                      >
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className="text-lg w-full border border-teal-600 rounded-lg py-2 focus:outline-none focus:ring-2 focus:ring-teal-600"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="phone"
+                        className="font-medium block text-gray-700 mb-2"
+                      >
+                        Phone
+                      </label>
+                      <input
+                        type="text"
+                        id="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        className="text-lg w-full border border-teal-600 rounded-lg py-2 focus:outline-none focus:ring-2 focus:ring-teal-600"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="w-full bg-teal-600 text-white py-3 font-medium rounded-lg hover:bg-teal-700 transition duration-200"
                     >
-                      Phone
-                    </label>
-                    <input
-                      type="text"
-                      name="phone"
-                      id="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      className="text-lg border-2 border-teal-600 py-2 w-1/2 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600" // Adjusted width
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="text-white bg-teal-600 py-3 font-medium w-full rounded-lg hover:bg-teal-700 transition duration-200"
-                  >
-                    Save Changes
-                  </button>
-                </form>
+                      Save Changes
+                    </button>
+                  </form>
+                </>
               )}
             </>
           ) : (

@@ -62,75 +62,91 @@ const PackageDetails = () => {
           <div>{error}</div>
         ) : (
           <div className="mt-6">
-            <div className="flex justify-between mb-5">
-              <h2 className="text-3xl font-semibold text-gray-800 mb-4">
-                Package Details
-              </h2>
-              <button
-                className="border-2 border-green-500 text-green-500 px-3 rounded hover:bg-green-500 hover:text-white transition"
-                onClick={() => handleBooking(id)}
-              >
-                Book Package
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex justify-between">
-                <p className="text-lg font-medium text-gray-700">
-                  Package Name:
-                </p>
-                <p className="text-lg text-gray-600">
-                  {packageDetails.package_name}
-                </p>
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              {/* Image Container */}
+              <div className="col-span-2 relative">
+                <div className="relative w-full h-full">
+                  <img
+                    src={`http://localhost:3000/backend/${packageDetails.destination_image}`}
+                    alt={packageDetails.city}
+                    className="w-full h-full object-cover rounded-lg shadow-lg"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                </div>
+                <div className="absolute w-full bottom-20 bg-opacity-90 px-4 py-3 ">
+                  <h2 className="text-3xl font-extrabold text-white tracking-wide">
+                    {packageDetails.package_name}
+                  </h2>
+                  <h2 className="text-3xl font-semibold text-gray-800 mb-4"></h2>
+                  <button
+                    className="btn btn-ghost w-full border-green-500 text-green-500 px-3 rounded hover:bg-green-500 hover:text-white transition"
+                    onClick={() => handleBooking(id)}
+                  >
+                    Book Package
+                  </button>
+                </div>
               </div>
 
-              <div className="flex justify-between">
-                <p className="text-lg font-medium text-gray-700">Price:</p>
-                <p className="text-lg text-gray-600">{packageDetails.price}</p>
-              </div>
+              {/* Details Container */}
+              <div className="col-span-3">
+                <div className="space-y-4">
+                  <div className="flex flex-col ">
+                    <div className="flex justify">
+                      <p className="text-gray-600 tracking-wider">
+                        for {packageDetails.duration} days /{" "}
+                        {packageDetails.duration - 1} nights
+                      </p>
+                    </div>
+                  </div>
 
-              <div className="flex justify-between">
-                <p className="text-lg font-medium text-gray-700">Facilities:</p>
-                <p className="text-lg text-gray-600">
-                  {packageDetails.facilities}
-                </p>
-              </div>
+                  <div className="flex justify-between">
+                    <p className="text-lg font-medium text-gray-700">Price:</p>
+                    <p className="text-lg text-gray-600">
+                      {packageDetails.price}
+                    </p>
+                  </div>
 
-              <div className="space-y-2">
-                <img
-                  src={`http://localhost:3000/backend/${packageDetails.facilities_image}`}
-                  alt="Facilities"
-                  className="w-5/12 rounded-lg shadow-md"
-                />
-              </div>
+                  <div className="flex justify-between">
+                    <p className="text-lg font-medium text-gray-700">
+                      Facilities:
+                    </p>
+                    <p className="text-lg text-gray-600">
+                      {packageDetails.facilities}
+                    </p>
+                  </div>
 
-              <div className="flex justify-between">
-                <p className="text-lg font-medium text-gray-700">Duration:</p>
-                <p className="text-lg text-gray-600">
-                  {packageDetails.duration} days
-                </p>
-              </div>
+                  <div className="space-y-2">
+                    <img
+                      src={`http://localhost:3000/backend/${packageDetails.facilities_image}`}
+                      alt="Facilities"
+                      className="w-5/12 rounded-lg shadow-md"
+                    />
+                  </div>
 
-              <div className="flex justify-between">
-                <p className="text-lg font-medium text-gray-700">Meals:</p>
-                <p className="text-lg text-gray-600">{packageDetails.meals}</p>
-              </div>
+                  <div className="flex justify-between">
+                    <p className="text-lg font-medium text-gray-700">Meals:</p>
+                    <p className="text-lg text-gray-600">
+                      {packageDetails.meals}
+                    </p>
+                  </div>
 
-              <div className="space-y-2">
-                <img
-                  src={`http://localhost:3000/backend/${packageDetails.meals_image}`}
-                  alt="Meals"
-                  className="w-5/12  rounded-lg shadow-md"
-                />
-              </div>
+                  <div className="space-y-2">
+                    <img
+                      src={`http://localhost:3000/backend/${packageDetails.meals_image}`}
+                      alt="Meals"
+                      className="w-5/12 rounded-lg shadow-md"
+                    />
+                  </div>
 
-              <div className="flex justify-between">
-                <p className="text-lg font-medium text-gray-700">
-                  Destination Name:
-                </p>
-                <p className="text-lg text-gray-600">
-                  {packageDetails.destination_name}
-                </p>
+                  <div className="flex justify-between">
+                    <p className="text-lg font-medium text-gray-700">
+                      Destination Name:
+                    </p>
+                    <p className="text-lg text-gray-600">
+                      {packageDetails.city}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 

@@ -91,7 +91,8 @@ switch ($method) {
                     destination.*,
                     tourguide.*,
                     tourguide.description As guide_description,
-                    package_info.*
+                    package_info.*,
+                    location.*
                 FROM 
                     package
                 JOIN 
@@ -100,6 +101,8 @@ switch ($method) {
                     tourguide ON tourguide.guide_id = package.tour_guide
                 JOIN 
                     package_info ON package_info.package = package.package_id
+                JOIN 
+                    location ON location.location_id = destination.location
                 WHERE 
                     package.package_id = :package_id;
 

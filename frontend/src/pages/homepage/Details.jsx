@@ -56,10 +56,31 @@ const Details = () => {
         }
       );
 
-      console.log( destination.country,destination.category_id, id);
-
       if (response.data.status === 1) {
-        setRandomDestinations(response.data.data);
+
+        const destinations = response.data.data;
+
+        // Shuffle the array to get random items
+        const shuffledDestinations = destinations.sort(
+          () => 0.5 - Math.random()
+        );
+
+        // Filter to get unique destination IDs
+        const uniqueDestinations = [];
+        const destinationIds = new Set();
+
+        for (let destination of shuffledDestinations) {
+          if (!destinationIds.has(destination.destination_id)) {
+            uniqueDestinations.push(destination);
+            destinationIds.add(destination.destination_id);
+          }
+
+          // Stop once we have 4 unique destinations
+          if (uniqueDestinations.length === 3) break;
+        }
+
+        // Set the random destinations
+        setRandomDestinations(uniqueDestinations);
       } else {
         setError("No data found");
       }
@@ -189,7 +210,7 @@ const Details = () => {
                           {destination.country}
                         </p>
                         <p className="text-sm text-gray-700 mb-4">
-                          {destination.description}
+                          {destination.description.substring(0, 30)}...
                         </p>
                         <div className="flex justify-between items-center">
                           <span className="text-lg font-bold text-gray-900">

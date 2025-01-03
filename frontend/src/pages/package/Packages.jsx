@@ -6,7 +6,6 @@ import { UserContext } from "../../providers/UserContext";
 import "react-toastify/dist/ReactToastify.css";
 import { Bounce, Slide, ToastContainer, toast } from "react-toastify";
 
-
 const Packages = ({ destination_id, packages, setPackages }) => {
   const [error, setError] = useState(null);
   const [savedPackages, setSavedPackages] = useState([]);
@@ -135,11 +134,11 @@ const Packages = ({ destination_id, packages, setPackages }) => {
   }, [destination_id]);
 
   const handleDetails = (id) => {
-    navigate(`/package-details/${id}`);
+    navigate(`package/${id}`);
   };
 
   const handleBooking = (id) => {
-    navigate(`/book-package/${id}`);
+    navigate(`/booking/${id}`);
   };
 
   return (
