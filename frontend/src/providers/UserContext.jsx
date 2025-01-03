@@ -12,7 +12,7 @@ export const UserContextProvider = ({ children }) => {
   const [isEmail, setIsEmail] = useState("");
   const [savedNoti, setSavedNoti] = useState(() => {
     const savedItemsCount = localStorage.getItem("savedNoti");
-    return savedItemsCount ? JSON.parse(savedItemsCount) : 0;
+    return savedItemsCount ? savedItemsCount : 0;
   });
   
 
@@ -30,7 +30,7 @@ export const UserContextProvider = ({ children }) => {
 
   const updateSavedNoti = (newCount) => {
     setSavedNoti(newCount);
-    localStorage.setItem("savedNoti", JSON.stringify(newCount));
+    localStorage.setItem("savedNoti", newCount);
   };
 
   useEffect(() => {
@@ -41,7 +41,7 @@ export const UserContextProvider = ({ children }) => {
 
     const savedItemsCount = localStorage.getItem("savedNoti");
     if (savedItemsCount) {
-      setSavedNoti(JSON.parse(savedItemsCount)); // Initialize saved items count
+      setSavedNoti(savedItemsCount); // Initialize saved items count
     }
   }, []);
 

@@ -96,7 +96,7 @@ const Nav = () => {
 
   useEffect(() => { 
     fetchSavedItemsCount();
-  }, [savedArr]);
+  }, [userInfo, savedArr]);
 
   return (
     <div className="navbar bg-white text-gray-900 rounded-2xl border border-gray-400 shadow-md fixed top-0 left-0 max-w-[95%] ml-[3%] pt-2 mt-2 z-50">

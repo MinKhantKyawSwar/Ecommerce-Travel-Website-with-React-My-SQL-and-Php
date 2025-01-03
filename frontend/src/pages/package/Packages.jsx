@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FaRegBookmark, FaBookmark } from "react-icons/fa";
 import { UserContext } from "../../providers/UserContext";
 
-const Packages = ({ destination_id, activeTab, packages, setPackages }) => {
+const Packages = ({ destination_id, packages, setPackages }) => {
   const [error, setError] = useState(null);
   const [savedPackages, setSavedPackages] = useState([]);
   const navigate = useNavigate();
@@ -14,8 +14,12 @@ const Packages = ({ destination_id, activeTab, packages, setPackages }) => {
   const savedKey = `savedPackages_${user_id}`; // User-specific key for saved packages
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem(savedKey)) || [];
-    setSavedPackages(saved);
+    const saved = JSON.parse(localStorage.getItem(savedKey) || "[]");
+    if (Array.isArray(saved)) {
+      setSavedPackages(saved);
+    } else {
+      setSavedPackages([]); // Fallback in case of invalid data
+    }
   }, [savedKey]);
 
   const findPackage = async (id) => {
@@ -57,7 +61,7 @@ const Packages = ({ destination_id, activeTab, packages, setPackages }) => {
             (pkgId) => pkgId !== id
           );
           setSavedPackages(updatedSavedPackages);
-          localStorage.setItem(savedKey, JSON.stringify(updatedSavedPackages));
+          localStorage.setItem(savedKey, updatedSavedPackages);
           updateSavedNoti(savedNoti - 1);
         } else {
           setError("Failed to remove item");
@@ -86,8 +90,8 @@ const Packages = ({ destination_id, activeTab, packages, setPackages }) => {
         if (response.data.status === 1) {
           const updatedSavedPackages = [...savedPackages, id];
           setSavedPackages(updatedSavedPackages);
-          localStorage.setItem(savedKey, JSON.stringify(updatedSavedPackages));
-          updateSavedNoti(savedNoti + 1);
+          localStorage.setItem(savedKey, updatedSavedPackages);
+          updateSavedNoti(Number(savedNoti) + 1);
         } else if (response.data.status === 2) {
           alert("Already saved");
         } else {
@@ -104,6 +108,14 @@ const Packages = ({ destination_id, activeTab, packages, setPackages }) => {
       findPackage(destination_id);
     }
   }, [destination_id]);
+
+  const handleDetails = (id) => {
+    navigate(`/package-details/${id}`);
+  };
+
+  const handleBooking = (id) => {
+    navigate(`/book-package/${id}`);
+  };
 
   return (
     <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800 mb-10">
@@ -132,7 +144,7 @@ const Packages = ({ destination_id, activeTab, packages, setPackages }) => {
                 </button>
                 <p className="font-medium text-xl mb-2">{pkg.package_name}</p>
                 <p className="text-sm mb-4">
-                  Starting from <b> ${pkg.least_price}</b>/per person
+                  Starting from <b>${pkg.least_price}</b>/per person
                   <br />
                   <b>Facilities:</b> {pkg.facilities}
                   <br />

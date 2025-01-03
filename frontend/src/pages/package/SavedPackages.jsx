@@ -41,10 +41,10 @@ const SavedPackages = () => {
       );
 
       if (response.data.status === 1) {
+        navigate(0)
         setSavedItem((prevItems) =>
           prevItems.filter((item) => item.saved_id !== savedItemId)
         );
-        alert("Successfully deleted!");
       } else {
         setError("Item does not saved");
       }
