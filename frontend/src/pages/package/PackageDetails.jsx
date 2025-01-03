@@ -38,6 +38,10 @@ const PackageDetails = () => {
     navigate(`/booking/${id}`);
   };
 
+  const handleDetails = (id) => {
+    navigate(`package/${id}`);
+  };
+
   const goBackHandler = () => {
     navigate(-1);
     localStorage.getItem("activeTab");
@@ -73,72 +77,63 @@ const PackageDetails = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
                 </div>
-                <div className="absolute w-full bottom-20 bg-opacity-90 px-4 py-3 ">
+                <div className="absolute w-full bottom-5 bg-opacity-90 px-4 py-3 ">
                   <h2 className="text-3xl font-extrabold text-white tracking-wide">
                     {packageDetails.package_name}
                   </h2>
+                  <p className="text-lg font-medium text-white">{packageDetails.city} ( {packageDetails.country} )</p>
+                  <p className="text-4xl font-semibold tracking-wider text-green-400">
+                    $ {packageDetails.price}.00
+                  </p>
                   <h2 className="text-3xl font-semibold text-gray-800 mb-4"></h2>
-                  <button
-                    className="btn btn-ghost w-full border-green-500 text-green-500 px-3 rounded hover:bg-green-500 hover:text-white transition"
-                    onClick={() => handleBooking(id)}
-                  >
-                    Book Package
-                  </button>
+                  <div className="space-y-3">
+                    <button
+                      className=" w-full text-sm font-semibold border-green-500 hover:bg-green-500 bg-green-600 text-white px-3 py-2 rounded transition duration-300"
+                      onClick={() => handleBooking(id)}
+                    >
+                      Book Package
+                    </button>
+                  </div>
                 </div>
               </div>
 
               {/* Details Container */}
-              <div className="col-span-3">
+              <div className="col-span-3 bg-white p-6 rounded-lg shadow-lg space-y-6">
                 <div className="space-y-4">
-                  <div className="flex flex-col ">
-                    <div className="flex justify">
-                      <p className="text-gray-600 tracking-wider">
-                        for {packageDetails.duration} days /{" "}
-                        {packageDetails.duration - 1} nights
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <p className="text-lg font-medium text-gray-700">Price:</p>
-                    <p className="text-lg text-gray-600">
-                      {packageDetails.price}
+                  <div className="flex flex-col">
+                    <p className="text-2xl font-bold text-gray-900">
+                      Accommodation
+                    </p>
+                    <p className="text-gray-600 tracking-wide mt-1">
+                      for {packageDetails.duration} days /{" "}
+                      {packageDetails.duration - 1} nights
                     </p>
                   </div>
 
-                  <div className="flex justify-between">
-                    <p className="text-lg font-medium text-gray-700">
-                      Facilities:
-                    </p>
-                    <p className="text-lg text-gray-600">
+                  <div className="flex items-center space-x-6">
+                    <img
+                      src={`http://localhost:3000/backend/${packageDetails.facilities_image}`}
+                      alt="Facilities"
+                      className="w-6/12 rounded-lg shadow-md object-cover"
+                    />
+                    <p className="text-base text-gray-600 leading-relaxed">
                       {packageDetails.facilities}
                     </p>
                   </div>
 
-                  <div className="space-y-2">
-                    <img
-                      src={`http://localhost:3000/backend/${packageDetails.facilities_image}`}
-                      alt="Facilities"
-                      className="w-5/12 rounded-lg shadow-md"
-                    />
-                  </div>
-
-                  <div className="flex justify-between">
+                  <div className="flex items-center space-x-6">
                     <p className="text-lg font-medium text-gray-700">Meals:</p>
-                    <p className="text-lg text-gray-600">
+                    <p className="text-base text-gray-600">
                       {packageDetails.meals}
                     </p>
                   </div>
+                  <img
+                    src={`http://localhost:3000/backend/${packageDetails.meals_image}`}
+                    alt="Meals"
+                    className="w-full rounded-lg shadow-md object-cover"
+                  />
 
-                  <div className="space-y-2">
-                    <img
-                      src={`http://localhost:3000/backend/${packageDetails.meals_image}`}
-                      alt="Meals"
-                      className="w-5/12 rounded-lg shadow-md"
-                    />
-                  </div>
-
-                  <div className="flex justify-between">
+                  <div className="flex items-center justify-between border-t pt-4 mt-4">
                     <p className="text-lg font-medium text-gray-700">
                       Destination Name:
                     </p>
