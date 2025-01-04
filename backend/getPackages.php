@@ -119,7 +119,36 @@ switch ($method) {
                     $response = ['status' => 0, 'message' => "No packages found.", "package_id" => $packageDetail];
                 }
             } else {
-                $response = ['status' => 0, 'message' => "Destination-ID header missing."];
+                $conn = $db->connect();
+                $getPackageDetails = "
+                SELECT 
+                    package.*, 
+                    package.description As package_description,
+                    destination.*,
+                    tourguide.*,
+                    tourguide.description As guide_description,
+                    package_info.*,
+                    location.*
+                FROM 
+                    package
+                JOIN 
+                    destination ON package.destination = destination.destination_id
+                JOIN 
+                    tourguide ON tourguide.guide_id = package.tour_guide
+                JOIN 
+                    package_info ON package_info.package = package.package_id
+                JOIN 
+                    location ON location.location_id = destination.location; ";
+                $stmt = $conn->prepare($getPackageDetails);
+                $stmt->execute();
+
+                $packageDetail = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                if ($packageDetail) {
+                    $response = ['status' => 1, 'message' => "Data found", 'data' => $packageDetail];
+                } else {
+                    $response = ['status' => 0, 'message' => "No packages found.", "package_id" => $packageDetail];
+                }
             }
         } catch (PDOException $e) {
             $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];

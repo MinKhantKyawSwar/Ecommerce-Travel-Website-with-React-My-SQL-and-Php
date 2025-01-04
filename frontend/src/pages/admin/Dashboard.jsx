@@ -1,96 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Bar, Pie } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-} from "chart.js";
 import axios from "axios";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement
-);
 
 const Dashboard = () => {
   const [packagesCount, setPackagesCount] = useState(0);
   const [totalIncome, setTotalIncome] = useState(0);
+  const [travellers, setTravellers] = useState(0);
+  const [allPackages, setAllPackages] = useState(0);
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Sample data
-  // const totalIncome = 50000;
-  const totalPeople = 300;
-  const packages = 30;
-  const topCountries = [
-    { name: "USA", count: 300 },
-    { name: "Canada", count: 200 },
-    { name: "UK", count: 150 },
-    { name: "Australia", count: 100 },
-    { name: "Germany", count: 80 },
-  ];
-  const monthlyTravelLocations = {
-    January: ["Paris", "New York", "Tokyo"],
-    February: ["London", "Berlin", "Sydney"],
-    March: ["Dubai", "Singapore", "Barcelona"],
-    // Add more months as needed
-  };
-
-  // Data for charts
-  const incomeData = {
-    labels: [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ],
-    datasets: [
-      {
-        label: "Total Income",
-        data: [
-          4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000,
-          15000,
-        ], // Sample monthly income data
-        backgroundColor: "rgba(54, 162, 235, 0.6)", // Changed to blue
-      },
-    ],
-  };
-
-  const countryData = {
-    labels: topCountries.map((country) => country.name),
-    datasets: [
-      {
-        label: "Top Countries",
-        data: topCountries.map((country) => country.count),
-        backgroundColor: [
-          "rgba(255, 99, 132, 0.6)",
-          "rgba(54, 162, 235, 0.6)",
-          "rgba(255, 206, 86, 0.6)",
-          "rgba(75, 192, 192, 0.6)",
-          "rgba(153, 102, 255, 0.6)",
-        ],
-      },
-    ],
-  };
-
+  // Fetch Packages Count
   const getPackageCount = async () => {
     try {
       const response = await axios.get(
@@ -102,18 +22,17 @@ const Dashboard = () => {
           },
         }
       );
-      console.log(response.data.total_packages);
-
       if (response.data.status === 1) {
         setPackagesCount(response.data.total_packages);
       } else {
-        setError("No data found");
+        setError("No data found for packages");
       }
     } catch (err) {
       setError("Failed to fetch data: " + err.message);
     }
   };
 
+  // Fetch Total Income
   const getTotalPrice = async () => {
     try {
       const response = await axios.get(
@@ -125,25 +44,68 @@ const Dashboard = () => {
           },
         }
       );
-
       if (response.data.status === 1) {
         setTotalIncome(response.data.total_price);
       } else {
-        setError("No data found");
+        setError("No data found for income");
       }
     } catch (err) {
       setError("Failed to fetch data: " + err.message);
     }
   };
 
+  // Fetch Customer Count
+  const getCustomerCount = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/backend/getCustomerCount.php",
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.data.status === 1) {
+        setTravellers(response.data.data.customer_count);
+      } else {
+        setError("No data found for customers");
+      }
+    } catch (err) {
+      setError("Failed to fetch data: " + err.message);
+    }
+  };
+
+  // Fetch all data when component mounts
   useEffect(() => {
-    getPackageCount();
-    getTotalPrice();
+    setLoading(true); // Set loading to true when data fetch starts
+    Promise.all([getPackageCount(), getTotalPrice(), getCustomerCount()])
+      .then(() => {
+        setLoading(false); // Set loading to false when all data is fetched
+      })
+      .catch((err) => {
+        setLoading(false); // Set loading to false in case of error
+        setError("An error occurred while fetching data.");
+      });
   }, []);
+
+  // Loading state for data fetching
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-2xl text-gray-700">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-gray-200 min-h-screen">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">Admin Dashboard</h1>
+
+      {error && (
+        <div className="bg-red-200 p-4 rounded-lg mb-6">
+          <p className="text-red-600">{error}</p>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Total Income Card */}
@@ -160,36 +122,11 @@ const Dashboard = () => {
 
         {/* Total Travellers Card */}
         <div className="h-24 bg-white p-5 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <p className="text-3xl font-bold text-blue-600">{totalPeople}</p>
+          <p className="text-3xl font-bold text-blue-600">{travellers}</p>
           <h2 className="text-sm font-semibold text-gray-700">
             Total Travellers
           </h2>
         </div>
-      </div>
-
-      <div className="mt-6 bg-white p-4 rounded-lg shadow-lg">
-        <h2 className="text-xl font-semibold mb-4 text-gray-800">
-          Monthly Income
-        </h2>
-        <Bar data={incomeData} />
-      </div>
-
-      <div className="mt-6 bg-white p-4 rounded-lg shadow-lg">
-        <h2 className="text-xl font-semibold mb-4 text-gray-800">
-          Most Travel Locations by Month
-        </h2>
-        {Object.entries(monthlyTravelLocations).map(([month, locations]) => (
-          <div key={month} className="mb-4 border-b pb-2">
-            <h3 className="font-bold text-lg text-gray-800">{month}</h3>
-            <ul className="list-disc pl-5">
-              {locations.map((location, index) => (
-                <li key={index} className="text-gray-600">
-                  {location}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
       </div>
     </div>
   );

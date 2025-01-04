@@ -73,7 +73,7 @@ const Index = () => {
   }, []);
 
   return (
-    <section className="container mx-auto py-20">
+    <section className="container mx-auto mt-10">
       <button
         className="text-blue-600 font-medium py-2 px-10 mt-4 rounded-lg border border-blue-600 hover:bg-blue-600 hover:text-white transition duration-200"
         onClick={goBackHandler}

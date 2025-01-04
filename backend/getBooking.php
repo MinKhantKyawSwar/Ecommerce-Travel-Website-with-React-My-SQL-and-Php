@@ -24,6 +24,7 @@ switch ($method) {
                 $getBookingInfo = "SELECT 
                                     booking.*, 
                                     users.*,
+                                    location.*,
                                     region.*,
                                     package.*,
                                     package_info.*,
@@ -37,7 +38,9 @@ switch ($method) {
                                 JOIN 
                                     package ON booking.package = package.package_id
                                 JOIN 
-                                    region ON booking.region = region.region_id
+                                    location ON booking.source_location = location.location_id
+                                JOIN 
+                                    region ON location.region = region.region_id
                                 JOIN 
                                     payment ON booking.payment_method = payment.payment_id
                                 JOIN 
