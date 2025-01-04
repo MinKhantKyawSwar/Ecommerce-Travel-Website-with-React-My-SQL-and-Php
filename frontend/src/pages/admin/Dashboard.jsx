@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import DailyRevenueChart from "./Dashboards/DailyRevenueChart";
+import UserAccountCreationChart from "./Dashboards/UserAccountCreationChart";
 
 const Dashboard = () => {
   const [packagesCount, setPackagesCount] = useState(0);
   const [totalIncome, setTotalIncome] = useState(0);
   const [travellers, setTravellers] = useState(0);
   const [dailyRevenue, setDailyRevenue] = useState([]);
-
+  const [userAccountsData, setUserAccountsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -68,7 +69,28 @@ const Dashboard = () => {
       );
       if (response.data.status === 1) {
         setDailyRevenue(response.data.daily_revenue);
-        console.log(response.data.daily_revenue);
+      } else {
+        setError("No data found for income");
+      }
+    } catch (err) {
+      setError("Failed to fetch data: " + err.message);
+    }
+  };
+
+  const getAccountCreation = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/backend/dashboard.php",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            User_Account_Creation: "",
+          },
+        }
+      );
+      if (response.data.status === 1) {
+        setUserAccountsData(response.data.daily_account_creation);
+        console.log(response.data.daily_account_creation);
       } else {
         setError("No data found for income");
       }
@@ -106,6 +128,7 @@ const Dashboard = () => {
       getTotalPrice(),
       getCustomerCount(),
       getDailyRevenue(),
+      getAccountCreation(),
     ])
       .then(() => {
         setLoading(false); // Set loading to false when all data is fetched
@@ -137,19 +160,19 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Total Income Card */}
-        <div className="h-24 bg-white p-5 rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300">
+        <div className="h-24 bg-white p-5 rounded-lg shadow-lg">
           <p className="text-3xl font-bold text-blue-600">${totalIncome}</p>
           <h2 className="text-sm font-semibold text-gray-700">Total Income</h2>
         </div>
 
         {/* Total Packages Card */}
-        <div className="h-24 bg-white p-5 rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300">
+        <div className="h-24 bg-white p-5 rounded-lg shadow-lg">
           <p className="text-3xl font-bold text-blue-600">{packagesCount}</p>
           <h2 className="text-sm font-semibold text-gray-700">Packages</h2>
         </div>
 
         {/* Total Travellers Card */}
-        <div className="h-24 bg-white p-5 rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300">
+        <div className="h-24 bg-white p-5 rounded-lg shadow-lg">
           <p className="text-3xl font-bold text-blue-600">{travellers}</p>
           <h2 className="text-sm font-semibold text-gray-700">
             Total Travellers
@@ -164,6 +187,15 @@ const Dashboard = () => {
         </h2>
         <div className="relative h-[400px] min-h-[300px] overflow-hidden">
           <DailyRevenueChart dailyRevenue={dailyRevenue} />
+        </div>
+      </div>
+
+      <div className="mt-8 bg-white p-6 rounded-lg shadow-lg">
+        <h2 className="text-lg font-semibold text-gray-700 mb-4">
+          User Account Creation in Past and Current Month
+        </h2>
+        <div className="relative h-[100%] min-h-[100%] overflow-hidden">
+          <UserAccountCreationChart userAccountsData={userAccountsData} />
         </div>
       </div>
     </div>

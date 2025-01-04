@@ -30,7 +30,7 @@ const DailyRevenueChart = ({ dailyRevenue }) => {
     const today = new Date();
 
     // Generate past 10 days
-    for (let i = 10; i > 0; i--) {
+    for (let i = 30; i > 0; i--) {
       const pastDate = new Date();
       pastDate.setDate(today.getDate() - i);
       dates.push(pastDate.toISOString().split("T")[0]); // Format: YYYY-MM-DD
@@ -40,7 +40,7 @@ const DailyRevenueChart = ({ dailyRevenue }) => {
     dates.push(today.toISOString().split("T")[0]);
 
     // Generate next 10 days
-    for (let i = 1; i <= 10; i++) {
+    for (let i = 1; i <= 30; i++) {
       const futureDate = new Date();
       futureDate.setDate(today.getDate() + i);
       dates.push(futureDate.toISOString().split("T")[0]); // Format: YYYY-MM-DD
@@ -56,26 +56,16 @@ const DailyRevenueChart = ({ dailyRevenue }) => {
     datasets: [
       {
         label: "Daily Sales",
-        type: "bar",
+        type: "line",
         data: dates.map((date) => {
           const match = dailyRevenue.find(
             (entry) => entry.booking_day === date
           );
           return match ? match.total_price : 0; // Use 0 if no data for the date
         }),
-        backgroundColor: "rgba(75, 192, 192, 0.6)",
-        borderColor: "rgba(75, 192, 192, 1)",
-        borderWidth: 1,
-      },
-      {
-        label: "Max Revenue",
-        type: "line",
-        data: new Array(dates.length).fill(), // Use max revenue for all dates
-        borderColor: "rgba(255, 99, 132, 1)",
-        backgroundColor: "rgba(255, 99, 132, 0.2)",
-        borderWidth: 2,
-        pointRadius: 0,
-        fill: false,
+        backgroundColor: "rgba(100, 100, 100, 0.5)", // Adjusted to a transparent black fill
+        borderColor: "rgba(10, 10, 14, 1)", // Changed line color to black
+        borderWidth: 2, // Adjusted line thickness
       },
     ],
   };
