@@ -98,6 +98,7 @@ switch ($method) {
                                     booking.*, 
                                     users.*,
                                     region.*,
+                                    location.*,
                                     package.*,
                                     payment.*,
                                     add_on.*,
@@ -109,7 +110,9 @@ switch ($method) {
                                 JOIN 
                                     package ON booking.package = package.package_id
                                 JOIN 
-                                    region ON booking.region = region.region_id
+                                    location ON location.location_id = booking.source_location
+                                JOIN 
+                                    region ON location.region = region.region_id
                                 JOIN 
                                     payment ON booking.payment_method = payment.payment_id
                                 JOIN 

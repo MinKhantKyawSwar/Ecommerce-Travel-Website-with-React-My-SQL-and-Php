@@ -44,7 +44,31 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "No booking found."];
                 }
-            } else {
+            }
+            else if (isset($headers['Total_Revenue_Each_Day'])) { 
+                // Connection to database
+                $conn = $db->connect();
+            
+                // SQL query to calculate total revenue for each day
+                $getTotalCount = "
+                    SELECT DATE(booking_date) as booking_day, SUM(total_price) as total_price 
+                    FROM booking 
+                    GROUP BY DATE(booking_date)
+                    ORDER BY booking_day DESC";
+            
+                $stmt = $conn->prepare($getTotalCount);
+                $stmt->execute();
+            
+                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+                if ($result) {
+                    $response = ['status' => 1, 'message' => "Data found", 'daily_revenue' => $result];
+                } else {
+                    $response = ['status' => 0, 'message' => "No booking found."];
+                }
+            }
+            
+            else {
                 $response = ['status' => 0, 'message' => "Header missing."];
             }
         } catch (PDOException $e) {
