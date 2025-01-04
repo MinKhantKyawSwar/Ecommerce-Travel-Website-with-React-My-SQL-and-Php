@@ -29,14 +29,6 @@ const AuthForm = ({ isLogin }) => {
     created_at: null,
   };
 
-  const handleShowPasswordToggle = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleShowConfirmPasswordToggle = () => {
-    setShowConfirmPassword(!showConfirmPassword);
-  };
-
   const passwordRules = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}$/;
   // min 5 characters, 1 upper case letter, 1 lower case letter, 1 numeric digit.
 
@@ -398,7 +390,7 @@ const AuthForm = ({ isLogin }) => {
                 type="submit"
                 className="px-2 py-4 rounded-lg bg-gray-800 text-white w-full"
               >
-                Send Reset Link
+                Reset Password
               </button>
             </form>
           </div>

@@ -53,7 +53,7 @@ const ResetPassword = () => {
           theme: "light",
         });
         setIsEmail("");
-        navigate("/login");
+        navigate(-1);
       } else {
         toast.error(response.data.message || "Failed to reset password.", {
           position: "top-center",

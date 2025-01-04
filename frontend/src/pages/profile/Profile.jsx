@@ -1,10 +1,13 @@
 import React, { useContext, useState, useEffect } from "react";
 import { UserContext } from "../../providers/UserContext";
+import { Bounce, Slide, ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
-  const { token, userInfo, setUserInfo } = useContext(UserContext);
+  const { token, userInfo, setUserInfo, updateToken, setIsEmail } = useContext(UserContext);
+
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
@@ -16,22 +19,7 @@ const Profile = () => {
   const [fileData, setFileData] = useState([]);
   const [bookedData, setBookedData] = useState([]);
   const [previewImage, setPreviewImage] = useState(null); // State for preview image
-  const [borderColor, setBorderColor] = useState("border-teal-600"); // State for border color
   const navigate = useNavigate();
-
-  // Array of color options
-  const colorOptions = [
-    "border-teal-600",
-    "border-red-600",
-    "border-blue-600",
-    "border-yellow-600",
-    "border-green-600",
-    "border-purple-600",
-    "border-pink-600",
-    "border-orange-600",
-    "border-gray-600",
-    "border-indigo-600",
-  ];
 
   // Use useEffect to set formData when userInfo changes (initial loading)
   useEffect(() => {
@@ -147,153 +135,245 @@ const Profile = () => {
     return <p>Loading user info...</p>; // Show a loading message while waiting for user data
   }
 
+  const resetPasswordHandler = async (values) => {
+    const { resetEmail } = values;
+    setIsEmail(resetEmail);
+    const url = "http://localhost:3000/backend/checkUser.php"; // Backend endpoint for resetting passwords
+    const data = { email: resetEmail }; // Match the backend payload structure
+
+    try {
+      const response = await axios.post(url, data, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.data.status === 1) {
+        toast.success("Email Found", {
+          position: "top-center",
+          autoClose: 2000,
+          theme: "light",
+        });
+        navigate("/reset-password");
+      } else {
+        toast.error(response.data.message || "Failed to send reset email.", {
+          position: "top-center",
+          autoClose: 2000,
+          theme: "light",
+        });
+      }
+    } catch (error) {
+      console.error("Error during reset password request:", error.message);
+      toast.error("An error occurred. Please try again later.", {
+        position: "top-center",
+        autoClose: 2000,
+        theme: "light",
+      });
+    }
+  };
+
   return (
     <>
-      <div className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-lg mt-5">
-        <div className="flex  items-center mb-6">
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Slide}
+      />
+      <div className="container mx-auto p-6 rounded-lg shadow-lg mt-10">
+        <div className="flex flex-col lg:flex-row items-center lg:items-start mb-6">
           {userInfo ? (
             <>
               {!editMode ? (
-                <>
-                  <div className="flex flex-row items-center mb-4">
+                <div className="w-full">
+                  <div className="flex flex-col lg:flex-row items-center lg:items-start">
                     <img
                       src={`http://localhost:3000/backend/${userInfo.profile_image}`}
                       alt="profile"
-                      className={`w-36 h-36 border-4 object-cover`}
+                      className="w-24 h-24 lg:w-36 lg:h-36 rounded-badge border-4 object-cover mx-auto lg:mx-10 mb-4 lg:mb-0"
                     />
-                    <div>
-                      <h2 className="text-2xl font-semibold text-gray-800 mt-4">
+                    <div className="text-center lg:text-left">
+                      <h2 className="text-2xl lg:text-3xl font-bold text-gray-800">
                         {userInfo.username}
                       </h2>
-                      <p className="text-gray-600">Email: {userInfo.email}</p>
-                      <p className="text-gray-600">Phone: {userInfo.phone}</p>
+                      <p className="text-gray-600">{userInfo.email}</p>
+                      <p className="text-gray-600">{userInfo.phone}</p>
                     </div>
                   </div>
-                 <div className="absolute right-20 top-20">
-                 <button
-                    onClick={EditHandler}
-                    className="mt-6 py-2 px-7 rounded-lg hover:bg-gray-900 hover:text-white transition duration-200"
-                  >
-                    Edit
-                  </button>
-                 </div>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={EditHandler}
-                    className="mt-6 bg-teal-600 text-white py-2 px-4 rounded-lg hover:bg-teal-700 transition duration-200"
-                  >
-                    Go Back
-                  </button>
-                  <form
-                    onSubmit={handleSubmit}
-                    className="w-full max-w-md space-y-6 bg-white p-6 shadow-lg rounded-lg"
-                  >
-                    <div className="flex flex-col items-center">
-                      <label
-                        htmlFor="profile_image"
-                        className="font-medium text-gray-700 mb-2"
-                      >
-                        Profile Image
-                      </label>
-                      <img
-                        src={previewImage}
-                        alt="profile preview"
-                        className={`rounded-full w-32 h-32 mb-4 border-4 ${borderColor} object-cover`}
-                      />
-                      <input
-                        type="file"
-                        id="profile_image"
-                        onChange={handleFileChange}
-                        className="block text-lg py-2 w-full border border-teal-600 rounded-lg"
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="border_color"
-                        className="font-medium block text-gray-700 mb-2"
-                      >
-                        Border Color
-                      </label>
-                      <select
-                        id="border_color"
-                        onChange={(e) => setBorderColor(e.target.value)}
-                        className="text-lg w-full border border-teal-600 rounded-lg py-2 focus:outline-none focus:ring-2 focus:ring-teal-600"
-                      >
-                        {colorOptions.map((color) => (
-                          <option key={color} value={color}>
-                            {color.replace("border-", "").replace("-600", "")}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="username"
-                        className="font-medium block text-gray-700 mb-2"
-                      >
-                        Username
-                      </label>
-                      <input
-                        type="text"
-                        id="username"
-                        value={formData.username}
-                        onChange={handleInputChange}
-                        className="text-lg w-full border border-teal-600 rounded-lg py-2 focus:outline-none focus:ring-2 focus:ring-teal-600"
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="email"
-                        className="font-medium block text-gray-700 mb-2"
-                      >
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        className="text-lg w-full border border-teal-600 rounded-lg py-2 focus:outline-none focus:ring-2 focus:ring-teal-600"
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="phone"
-                        className="font-medium block text-gray-700 mb-2"
-                      >
-                        Phone
-                      </label>
-                      <input
-                        type="text"
-                        id="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        className="text-lg w-full border border-teal-600 rounded-lg py-2 focus:outline-none focus:ring-2 focus:ring-teal-600"
-                      />
-                    </div>
-
+                  <div className="flex justify-center lg:justify-end mt-6 lg:absolute lg:right-20 lg:top-20">
                     <button
-                      type="submit"
-                      className="w-full bg-teal-600 text-white py-3 font-medium rounded-lg hover:bg-teal-700 transition duration-200"
+                      onClick={EditHandler}
+                      className="py-2 px-6 rounded-lg border border-gray-800 hover:bg-gray-900 hover:text-white transition duration-200"
                     >
-                      Save Changes
+                      Edit
                     </button>
-                  </form>
-                </>
+                  </div>
+                </div>
+              ) : (
+                <div className="w-full">
+                  {/* Go Back Button */}
+                  <div className="flex justify-start">
+                    <button
+                      onClick={EditHandler}
+                      className=" border border-black hover:text-white hover:bg-black py-2 px-6 rounded-lg shadow-md transition duration-200"
+                    >
+                      Go Back
+                    </button>
+                  </div>
+
+                  {/* Form Container */}
+                  <div className="flex flex-col items-center justify-center mt-6">
+                    <form
+                      onSubmit={handleSubmit}
+                      className="w-full max-w-md space-y-6 bg-white p-8 shadow-xl rounded-lg border border-gray-200"
+                    >
+                      {/* Profile Image Section */}
+                      <div className="flex flex-col items-center">
+                        <label
+                          htmlFor="profile_image"
+                          className="font-medium text-gray-700 mb-2"
+                        >
+                          Profile Image
+                        </label>
+                        <img
+                          src={previewImage}
+                          alt="Profile Preview"
+                          className="rounded-full w-24 h-24 lg:w-32 lg:h-32 mb-4 border-2 border-black object-cover shadow-md hover:scale-105 transition-transform duration-300"
+                        />
+                        <input
+                          type="file"
+                          id="profile_image"
+                          onChange={handleFileChange}
+                          className="block w-full text-gray-700 py-2 border border-black rounded-lg focus:outline-none focus:ring-2 transition duration-200"
+                        />
+                      </div>
+
+                      {/* Username Field */}
+                      <div>
+                        <label
+                          htmlFor="username"
+                          className="font-medium block text-gray-700 mb-2"
+                        >
+                          Username
+                        </label>
+                        <input
+                          type="text"
+                          id="username"
+                          value={formData.username}
+                          onChange={handleInputChange}
+                          className="w-full text-lg border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 shadow-sm transition duration-200"
+                        />
+                      </div>
+
+                      {/* Email Field */}
+                      <div>
+                        <label
+                          htmlFor="email"
+                          className="font-medium block text-gray-700 mb-2"
+                        >
+                          Email
+                        </label>
+                        <input
+                          type="email"
+                          id="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          className="w-full text-lg border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 shadow-sm transition duration-200"
+                        />
+                      </div>
+
+                      {/* Phone Field */}
+                      <div>
+                        <label
+                          htmlFor="phone"
+                          className="font-medium block text-gray-700 mb-2"
+                        >
+                          Phone
+                        </label>
+                        <input
+                          type="text"
+                          id="phone"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          className="w-full text-lg border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 shadow-sm transition duration-200"
+                        />
+                      </div>
+
+                      {/* Reset Password Button */}
+                      <div className="flex items-center justify-between">
+                        <a
+                          className="cursor-pointer mt-6 py-2 px-6 rounded-lg border border-gray-800 hover:bg-gray-900 hover:text-white transition duration-200 text-center w-full"
+                          onClick={() =>
+                            document.getElementById("my_modal_3").showModal()
+                          }
+                        >
+                          Reset Password
+                        </a>
+                      </div>
+
+                      {/* Save Changes Button */}
+                      <button
+                        type="submit"
+                        className="w-full bg-gray-800 text-white py-3 font-medium rounded-lg hover:bg-black shadow-md transition duration-200"
+                      >
+                        Save Changes
+                      </button>
+                    </form>
+                  </div>
+                </div>
               )}
             </>
           ) : (
             <p className="text-gray-600">Loading user info...</p>
           )}
         </div>
+
+        {/* Modal */}
+        <dialog id="my_modal_3" className="modal">
+          <div className="modal-box">
+            <form method="dialog">
+              <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                ✕
+              </button>
+              <h3 className="font-bold text-lg">Hello!</h3>
+              <p className="py-4 text-gray-700">
+                Press ESC key or click on ✕ button to close
+              </p>
+            </form>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const resetEmail = e.target.resetEmail.value;
+                resetPasswordHandler({ resetEmail });
+              }}
+            >
+              <label className="input input-bordered flex items-center gap-2 mb-4">
+                Email
+                <input
+                  type="email"
+                  className="grow"
+                  name="resetEmail"
+                  placeholder="Enter your email"
+                  required
+                />
+              </label>
+              <button
+                type="submit"
+                className="px-2 py-4 rounded-lg bg-gray-800 text-white w-full"
+              >
+                Reset Password
+              </button>
+            </form>
+          </div>
+        </dialog>
       </div>
-      <div className="mt-2 rounded-lg px-4 py-4 bg-gray-100 pb-20">
+
+      <div className="h-full mt-5 my-10 rounded-lg px-4 py-4 bg-gray-100 pb-20">
         <h2 className="text-xl font-semibold mb-4">Previous Booked Trips</h2>
         {bookedData.length > 0 ? (
           <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
