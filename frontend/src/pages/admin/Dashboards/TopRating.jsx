@@ -8,8 +8,8 @@ const TopRating = ({ topRating }) => {
         {/* Table Header */}
         <div className="flex justify-between items-center font-semibold text-gray-700 mb-4 border-b pb-2">
           <div className="pr-2 text-left">No.</div>
-          <div className="w-1/2 text-left">Traveller</div>
-          <div className="w-1/2 text-right">Total Spent</div>
+          <div className="w-1/2 text-left">Destination</div>
+          <div className="w-1/2 text-right">Average Rating</div>
         </div>
   
         {/* Destination List */}
@@ -25,7 +25,7 @@ const TopRating = ({ topRating }) => {
                     {rating.city}, {rating.country}
                   </h3>
                   <p className="text-sm text-gray-600 text-right">
-                    $ {rating.average_rating}
+                     {rating.average_rating} ★
                   </p>
                 </div>
               </li>

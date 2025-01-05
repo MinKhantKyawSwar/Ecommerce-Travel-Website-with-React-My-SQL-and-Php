@@ -264,6 +264,7 @@ const Profile = () => {
                         <input
                           type="text"
                           id="username"
+                          name="username"
                           value={formData.username}
                           onChange={handleInputChange}
                           className="w-full text-lg border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 shadow-sm transition duration-200"
@@ -281,6 +282,7 @@ const Profile = () => {
                         <input
                           type="email"
                           id="email"
+                          name="email"
                           value={formData.email}
                           onChange={handleInputChange}
                           className="w-full text-lg border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 shadow-sm transition duration-200"
@@ -298,6 +300,7 @@ const Profile = () => {
                         <input
                           type="text"
                           id="phone"
+                          name="phone"
                           value={formData.phone}
                           onChange={handleInputChange}
                           className="w-full text-lg border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 shadow-sm transition duration-200"

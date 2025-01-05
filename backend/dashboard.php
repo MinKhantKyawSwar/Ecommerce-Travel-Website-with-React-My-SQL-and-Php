@@ -118,7 +118,7 @@ switch ($method) {
                 $conn = $db->connect();
 
                 // SQL query to calculate total revenue for each day
-                $getTotalCount ="SELECT 
+                $getTotalCount = "SELECT 
                                     users.username,
                                     SUM(booking.total_price) AS total_spent
                                 FROM 
@@ -131,6 +131,39 @@ switch ($method) {
                                     users.username
                                 ORDER BY 
                                     total_spent DESC
+                                LIMIT 5;";
+
+                $stmt = $conn->prepare($getTotalCount);
+                $stmt->execute();
+
+                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                if ($result) {
+                    $response = ['status' => 1, 'message' => "Data found", 'data' => $result];
+                } else {
+                    $response = ['status' => 0, 'message' => "No customers found."];
+                }
+            } else if (isset($headers['Average_Rating'])) {
+                // Connection to database
+                $conn = $db->connect();
+
+                // SQL query to calculate total revenue for each day
+                $getTotalCount ="SELECT
+                                    location.city,
+                                    location.country,
+                                    ROUND(AVG(review.rating)) AS average_rating
+                                FROM
+                                    review
+                                JOIN
+                                    destination ON review.destination = destination.destination_id
+                                JOIN 
+                                    users ON users.user_id = review.user
+                                JOIN 
+                                    location ON location.location_id = destination.location
+                                GROUP BY
+                                    location.city, location.country
+                                ORDER BY
+                                    average_rating DESC
                                 LIMIT 5;";
 
                 $stmt = $conn->prepare($getTotalCount);

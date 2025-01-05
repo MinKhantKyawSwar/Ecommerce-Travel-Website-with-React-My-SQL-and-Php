@@ -6,7 +6,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
-  const { token, userInfo, setUserInfo, updateToken, setIsEmail } = useContext(UserContext);
+  const { userInfo, setUserInfo, setIsEmail } = useContext(UserContext);
 
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
@@ -65,6 +65,7 @@ const Profile = () => {
   // Handler for form field changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    console.log(`Updating ${name} to ${value}`); // Debug log
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -264,6 +265,7 @@ const Profile = () => {
                         <input
                           type="text"
                           id="username"
+                          name="username"
                           value={formData.username}
                           onChange={handleInputChange}
                           className="w-full text-lg border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 shadow-sm transition duration-200"
@@ -281,6 +283,7 @@ const Profile = () => {
                         <input
                           type="email"
                           id="email"
+                          name="email"
                           value={formData.email}
                           onChange={handleInputChange}
                           className="w-full text-lg border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 shadow-sm transition duration-200"
@@ -298,6 +301,7 @@ const Profile = () => {
                         <input
                           type="text"
                           id="phone"
+                          name="phone"
                           value={formData.phone}
                           onChange={handleInputChange}
                           className="w-full text-lg border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 shadow-sm transition duration-200"
@@ -340,7 +344,7 @@ const Profile = () => {
               <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
                 ✕
               </button>
-              <h3 className="font-bold text-lg">Hello!</h3>
+              <h3 className="font-bold text-lg">Enter Your email to reset</h3>
               <p className="py-4 text-gray-700">
                 Press ESC key or click on ✕ button to close
               </p>

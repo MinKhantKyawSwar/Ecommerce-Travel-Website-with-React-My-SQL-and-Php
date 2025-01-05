@@ -125,7 +125,7 @@ const Dashboard = () => {
       );
       if (response.data.status === 1) {
         setTopRating(response.data.data);
-      
+      console.log(response.data.data)
       } else {
         setError("No data found for destination");
       }
