@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaHome, FaBox, FaBars, FaQuestionCircle, FaUser } from "react-icons/fa"; // Importing icons
+import {
+  FaHome,
+  FaBox,
+  FaBars,
+  FaQuestionCircle,
+  FaUser,
+  FaTimes
+} from "react-icons/fa"; // Importing icons
 import axios from "axios";
 import Dashboard from "./Dashboard";
 import Transactions from "./Transactions";
@@ -76,13 +83,20 @@ const Index = () => {
   return (
     <section className="container mx-auto mt-10">
       <button
-        className="text-blue-600 font-medium py-2 px-10 mt-4 rounded-lg border border-blue-600 hover:bg-blue-600 hover:text-white transition duration-200"
+        className="text-gray-600 font-medium py-2 px-10 mt-4 rounded-lg border border-gray-600 hover:bg-gray-600 hover:text-white transition duration-200"
         onClick={goBackHandler}
       >
         Go Back
       </button>
 
       <div className="flex flex-col md:flex-row">
+         {/* Sidebar Toggle Button for Mobile */}
+      <button
+        className="md:hidden w-full top-96 left-4 bg-gray-50 text-blue-600 p-3 "
+        onClick={() => setSidebarVisible(!isSidebarVisible)}
+      >
+        {isSidebarVisible ? <FaTimes /> : <FaBars />}
+      </button>
         {/* Sidebar */}
         <div
           className={`w-full md:w-1/5 bg-gray-50 dark:bg-gray-800 p-4 shadow-xl transition-all duration-300 ${
@@ -126,13 +140,7 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Sidebar Toggle Button for Mobile */}
-      <button
-        className="md:hidden fixed top-4 left-4 text-blue-600 p-3 rounded-full shadow-lg"
-        onClick={() => setSidebarVisible(!isSidebarVisible)}
-      >
-        {isSidebarVisible ? <FaTimes /> : <FaBars />}
-      </button>
+     
     </section>
   );
 };

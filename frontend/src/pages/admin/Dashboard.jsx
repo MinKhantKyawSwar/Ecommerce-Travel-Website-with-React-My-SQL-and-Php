@@ -4,6 +4,10 @@ import DailyRevenueChart from "./Dashboards/DailyRevenueChart";
 import UserAccountCreationChart from "./Dashboards/UserAccountCreationChart";
 import TopDestinations from "./Dashboards/TopDestinations";
 import TopPackages from "./Dashboards/TopPackages";
+import TotalIncome from "./Dashboards/TotalIncome";
+import TotalTravellers from "./Dashboards/TotalTravellers";
+import TopCustomers from "./Dashboards/TopCustomers";
+import TopRating from "./Dashboards/TopRating";
 
 const Dashboard = () => {
   const [packagesCount, setPackagesCount] = useState(0);
@@ -12,6 +16,10 @@ const Dashboard = () => {
   const [dailyRevenue, setDailyRevenue] = useState([]);
   const [userAccountsData, setUserAccountsData] = useState([]);
   const [destinationsData, setDestinationsData] = useState([]);
+  const [topCustomers, setTopCustomers] = useState([]);
+  const [topRating, setTopRating] = useState([]);
+  
+  
   const [packagesData, setPackagesData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -103,6 +111,29 @@ const Dashboard = () => {
     }
   };
 
+  // here
+  const getTopRating = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/backend/dashboard.php",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Average_Rating: "",
+          },
+        }
+      );
+      if (response.data.status === 1) {
+        setTopRating(response.data.data);
+      
+      } else {
+        setError("No data found for destination");
+      }
+    } catch (err) {
+      setError("Failed to fetch data: " + err.message);
+    }
+  };
+
   const getTopPackages = async () => {
     try {
       const response = await axios.get(
@@ -166,6 +197,27 @@ const Dashboard = () => {
     }
   };
 
+  const getTopCustomers = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/backend/dashboard.php",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Total_Spent_Customers:"",
+          },
+        }
+      );
+      if (response.data.status === 1) {
+        setTopCustomers(response.data.data);
+      } else {
+        setError("No data found for customers");
+      }
+    } catch (err) {
+      setError("Failed to fetch data: " + err.message);
+    }
+  };
+
   // Fetch all data when component mounts
   useEffect(() => {
     setLoading(true); // Set loading to true when data fetch starts
@@ -177,6 +229,8 @@ const Dashboard = () => {
       getAccountCreation(),
       getTopDestinations(),
       getTopPackages(),
+      getTopCustomers(),
+      getTopRating()
     ])
       .then(() => {
         setLoading(false); // Set loading to false when all data is fetched
@@ -206,126 +260,19 @@ const Dashboard = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Total Income Card */}
-        <div className="h-auto min-h-[200px] bg-white p-5 rounded-lg shadow-lg">
-          <div className="flex items-center justify-between">
-            <p className="text-3xl font-bold text-blue-600">
-              ${totalIncome.total_income}
-            </p>
-
-            {/* Conditional rendering for the arrow and difference */}
-            <div className="ml-2 flex items-center mt-4">
-              {totalIncome.is_higher ? (
-                <div className="flex items-center text-green-600">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="w-5 h-5 mr-1"
-                  >
-                    <path d="M12 19V5m-7 7l7-7 7 7" />
-                  </svg>
-                </div>
-              ) : totalIncome.difference < 0 ? (
-                <div className="flex items-center text-red-600">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="w-5 h-5 mr-1"
-                  >
-                    <path d="M12 5v14m7-7l-7 7-7-7" />
-                  </svg>
-                </div>
-              ) : null}
-              {/* Display difference */}
-              {totalIncome.difference && (
-                <p
-                  className={`ml-1 font-semibold text-sm ${
-                    totalIncome.is_higher ? "text-green-500" : "text-red-500"
-                  }`}
-                >
-                  {totalIncome.difference > 0
-                    ? `+${totalIncome.difference}`
-                    : totalIncome.difference}
-                </p>
-              )}
-            </div>
-          </div>
-          <h2 className="text-sm font-semibold text-gray-700">Total Income</h2>
-        </div>
+        <TotalIncome totalIncome={totalIncome} />
 
         {/* Total Packages Card */}
-        <div className="h-auto min-h-[200px] bg-white p-5 rounded-lg shadow-lg">
+        <div className="bg-white p-6 rounded-lg shadow-lg">
           <p className="text-3xl font-bold text-blue-600">{packagesCount}</p>
-          <h2 className="text-sm font-semibold text-gray-700">Packages</h2>
+          <h2 className="text-sm font-semibold text-gray-700 mt-2">Packages</h2>
         </div>
 
         {/* Total Travellers Card */}
-        <div className="h-auto min-h-[200px] bg-white p-5 rounded-lg shadow-lg flex items-center justify-between">
-          <div>
-            <p className="text-3xl font-bold text-blue-600">
-              {travellers.current_month_count + travellers.previous_month_count}
-            </p>
-            <h2 className="text-sm font-semibold text-gray-700">
-              Total Travellers
-            </h2>
-          </div>
-
-          <div className="flex items-center">
-            {travellers.current_month_count >
-            travellers.previous_month_count ? (
-              <div className="flex items-center text-green-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-5 h-5 mr-1"
-                >
-                  <path d="M12 19V5m-7 7l7-7 7 7" />
-                </svg>
-                <span className="text-sm font-semibold">
-                  +{travellers.difference}
-                </span>
-              </div>
-            ) : travellers.current_month_count <
-              travellers.previous_month_count ? (
-              <div className="flex items-center text-red-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-5 h-5 mr-1"
-                >
-                  <path d="M12 5v14m7-7l-7 7-7-7" />
-                </svg>
-                <span className="text-sm font-semibold">
-                  -{travellers.difference}
-                </span>
-              </div>
-            ) : (
-              <div className="text-gray-600 text-sm font-semibold">
-                No Change
-              </div>
-            )}
-          </div>
+        <div className="bg-white p-6 rounded-lg shadow-lg">
+          <TotalTravellers travellers={travellers} />
         </div>
       </div>
 
@@ -339,6 +286,20 @@ const Dashboard = () => {
           {/* Right Section */}
           <div className="flex-1 relative h-[100%] min-h-[100%] overflow-hidden">
             <TopDestinations destinationsData={destinationsData} />
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-8 bg-white p-6 rounded-lg shadow-lg">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+          {/* Left Section */}
+          <div className="flex-1 relative h-[100%] min-h-[100%] overflow-hidden">
+            <TopCustomers topCustomers={topCustomers} />
+          </div>
+
+          {/* Right Section */}
+          <div className="flex-1 relative h-[100%] min-h-[100%] overflow-hidden">
+            <TopRating topRating={topRating} />
           </div>
         </div>
       </div>

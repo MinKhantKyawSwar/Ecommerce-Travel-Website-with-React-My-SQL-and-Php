@@ -33,16 +33,16 @@ switch ($method) {
             } else if (isset($headers['Total_Income'])) {
                 // Connection to database
                 $conn = $db->connect();
-            
+
                 // Get current and previous month date ranges
                 $currentDate = new DateTime();
                 $currentMonthStart = (clone $currentDate)->modify('first day of this month')->format('Y-m-d'); // Start of current month
                 $currentMonthEnd = (clone $currentDate)->modify('last day of this month')->format('Y-m-d'); // End of current month
-            
+
                 // Calculate previous month start and end
                 $previousMonthStart = (clone $currentDate)->modify('first day of last month')->format('Y-m-d'); // Start of previous month
                 $previousMonthEnd = (clone $currentDate)->modify('last day of last month')->format('Y-m-d'); // End of previous month
-            
+
                 // Query to get total income for the current month
                 $getCurrentMonthIncome = "SELECT SUM(total_price) as total_price FROM booking WHERE booking_date BETWEEN :currentMonthStart AND :currentMonthEnd";
                 $stmt = $conn->prepare($getCurrentMonthIncome);
@@ -50,7 +50,7 @@ switch ($method) {
                 $stmt->bindParam(':currentMonthEnd', $currentMonthEnd);
                 $stmt->execute();
                 $currentMonthResult = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
                 // Query to get total income for the previous month
                 $getPreviousMonthIncome = "SELECT SUM(total_price) as total_price FROM booking WHERE booking_date BETWEEN :previousMonthStart AND :previousMonthEnd";
                 $stmt = $conn->prepare($getPreviousMonthIncome);
@@ -58,21 +58,21 @@ switch ($method) {
                 $stmt->bindParam(':previousMonthEnd', $previousMonthEnd);
                 $stmt->execute();
                 $previousMonthResult = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
                 // Query to get total income for all time
                 $getTotalIncome = "SELECT SUM(total_price) as total_price FROM booking";
                 $stmt = $conn->prepare($getTotalIncome);
                 $stmt->execute();
                 $totalIncomeResult = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
                 // Calculate the income difference between the current and previous months
                 $currentMonthIncome = $currentMonthResult['total_price'] ? $currentMonthResult['total_price'] : 0;
                 $previousMonthIncome = $previousMonthResult['total_price'] ? $previousMonthResult['total_price'] : 0;
                 $difference = $currentMonthIncome - $previousMonthIncome;
-            
+
                 // Check if the current month's income is higher
                 $isHigher = $difference > 0;
-            
+
                 // Prepare response
                 if ($currentMonthIncome !== false && $previousMonthIncome !== false && $totalIncomeResult) {
                     $response = [
@@ -112,6 +112,36 @@ switch ($method) {
                     $response = ['status' => 1, 'message' => "Data found", 'daily_revenue' => $result];
                 } else {
                     $response = ['status' => 0, 'message' => "No booking found."];
+                }
+            } else if (isset($headers['Total_Spent_Customers'])) {
+                // Connection to database
+                $conn = $db->connect();
+
+                // SQL query to calculate total revenue for each day
+                $getTotalCount ="SELECT 
+                                    users.username,
+                                    SUM(booking.total_price) AS total_spent
+                                FROM 
+                                    booking
+                                JOIN 
+                                    users ON users.user_id = booking.user
+                                JOIN 
+                                    package ON package.package_id = booking.package
+                                GROUP BY 
+                                    users.username
+                                ORDER BY 
+                                    total_spent DESC
+                                LIMIT 5;";
+
+                $stmt = $conn->prepare($getTotalCount);
+                $stmt->execute();
+
+                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                if ($result) {
+                    $response = ['status' => 1, 'message' => "Data found", 'data' => $result];
+                } else {
+                    $response = ['status' => 0, 'message' => "No customers found."];
                 }
             } else if (isset($headers['User_Account_Creation'])) {
                 // Connection to database
@@ -174,7 +204,7 @@ switch ($method) {
                                     city
                                 ORDER BY 
                                     total_travellers DESC
-                                LIMIT 10;";
+                                LIMIT 5;";
 
                 $stmt = $conn->prepare($getTotalCount);
                 // Bind the dynamic date parameters
@@ -221,7 +251,7 @@ switch ($method) {
                     package.package_id
                   ORDER BY 
                     total_travellers DESC
-                  LIMIT 10;";
+                  LIMIT 5;";
 
                 $stmt = $conn->prepare($getTotalCount);
                 $stmt->bindParam(':previousMonthStart', $previousMonthStart);

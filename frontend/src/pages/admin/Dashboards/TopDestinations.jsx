@@ -7,7 +7,7 @@ const TopDestinations = ({ destinationsData }) => {
 
       {/* Table Header */}
       <div className="flex justify-between items-center font-semibold text-gray-700 mb-4 border-b pb-2">
-        <div className="pr-10 text-left">No</div>
+        <div className="pr-2 text-left">No.</div>
         <div className="w-1/2 text-left">Destination</div>
         <div className="w-1/2 text-right">Travellers</div>
       </div>
