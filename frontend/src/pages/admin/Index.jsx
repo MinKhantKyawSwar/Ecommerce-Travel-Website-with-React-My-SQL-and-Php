@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaHome, FaBox, FaQuestionCircle, FaUser } from "react-icons/fa"; // Importing icons
+import { FaHome, FaBox, FaBars, FaQuestionCircle, FaUser } from "react-icons/fa"; // Importing icons
 import axios from "axios";
 import Dashboard from "./Dashboard";
 import Transactions from "./Transactions";
@@ -13,6 +13,7 @@ const Index = () => {
   const [activeTabKey, setActiveTabKey] = useState(
     localStorage.getItem("activeTabKey") || "dashboard"
   );
+  const [isSidebarVisible, setSidebarVisible] = useState(false);
   const [adminInfo, setAdminInfo] = useState({});
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -83,7 +84,11 @@ const Index = () => {
 
       <div className="flex flex-col md:flex-row">
         {/* Sidebar */}
-        <div className="w-1/5 bg-gray-50 dark:bg-gray-800 p-4 shadow-xl">
+        <div
+          className={`w-full md:w-1/5 bg-gray-50 dark:bg-gray-800 p-4 shadow-xl transition-all duration-300 ${
+            isSidebarVisible ? "block" : "hidden md:block"
+          }`}
+        >
           <ul className="flex flex-col space-y-2">
             {[
               { name: "dashboard", icon: <FaHome /> },
@@ -111,7 +116,7 @@ const Index = () => {
         </div>
 
         {/* Content Area */}
-        <div className="w-4/5 p-4">
+        <div className="w-full md:w-4/5 p-4">
           {activeTabKey === "dashboard" && <Dashboard />}
           {activeTabKey === "transactions" && <Transactions />}
           {activeTabKey === "Manage Destination" && <ManageDestination />}
@@ -120,6 +125,14 @@ const Index = () => {
           {activeTabKey === "Profile" && <Profile />}
         </div>
       </div>
+
+      {/* Sidebar Toggle Button for Mobile */}
+      <button
+        className="md:hidden fixed top-4 left-4 text-blue-600 p-3 rounded-full shadow-lg"
+        onClick={() => setSidebarVisible(!isSidebarVisible)}
+      >
+        {isSidebarVisible ? <FaTimes /> : <FaBars />}
+      </button>
     </section>
   );
 };

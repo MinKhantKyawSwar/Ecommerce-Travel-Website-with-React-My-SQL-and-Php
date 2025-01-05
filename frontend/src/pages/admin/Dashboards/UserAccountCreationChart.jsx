@@ -80,13 +80,22 @@ const UserAccountCreationChart = ({ userAccountsData }) => {
   // Chart options
   const options = {
     responsive: true,
+    maintainAspectRatio: false, // Allow the chart to scale with its container
     plugins: {
       legend: {
         position: "top",
+        labels: {
+          font: {
+            size: 12, // Adjust font size for smaller screens
+          },
+        },
       },
       title: {
         display: true,
         text: "User Accounts Created Per Day",
+        font: {
+          size: 16, // Adjust title size for smaller screens
+        },
       },
       tooltip: {
         callbacks: {
@@ -101,17 +110,23 @@ const UserAccountCreationChart = ({ userAccountsData }) => {
         title: {
           display: true,
           text: "Date",
+          font: {
+            size: 14, // Adjust font size for x-axis labels
+          },
         },
         ticks: {
           autoSkip: true, // Skip labels if they overlap
           maxRotation: 45, // Rotate labels for better readability
-          minRotation: 30,
+          minRotation: 30, // Prevent very small rotation on mobile
         },
       },
       y: {
         title: {
           display: true,
           text: "Accounts Created",
+          font: {
+            size: 14, // Adjust font size for y-axis labels
+          },
         },
         max: yAxisMax, // Set the y-axis max to rounded value
         ticks: {
@@ -121,10 +136,18 @@ const UserAccountCreationChart = ({ userAccountsData }) => {
         },
       },
     },
+    layout: {
+      padding: {
+        left: 10,
+        right: 10,
+        top: 20,
+        bottom: 20,
+      },
+    },
   };
 
   return (
-    <div className="w-full max-w-6xl h-full mx-auto p-4 bg-gray-50 rounded-lg shadow-lg">
+    <div className="w-full max-w-6xl h-96 mx-auto p-4 bg-gray-50 rounded-lg shadow-lg">
       <Bar data={data} options={options} />
     </div>
   );

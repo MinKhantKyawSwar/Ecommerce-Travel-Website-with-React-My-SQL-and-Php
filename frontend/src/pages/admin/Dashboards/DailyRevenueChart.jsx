@@ -29,7 +29,7 @@ const DailyRevenueChart = ({ dailyRevenue }) => {
     const dates = [];
     const today = new Date();
 
-    // Generate past 10 days
+    // Generate past 30 days
     for (let i = 30; i > 0; i--) {
       const pastDate = new Date();
       pastDate.setDate(today.getDate() - i);
@@ -39,7 +39,7 @@ const DailyRevenueChart = ({ dailyRevenue }) => {
     // Add today's date
     dates.push(today.toISOString().split("T")[0]);
 
-    // Generate next 10 days
+    // Generate next 30 days
     for (let i = 1; i <= 30; i++) {
       const futureDate = new Date();
       futureDate.setDate(today.getDate() + i);
@@ -72,6 +72,7 @@ const DailyRevenueChart = ({ dailyRevenue }) => {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false, // Allow the chart to scale with its container
     plugins: {
       legend: {
         position: "top",
@@ -79,6 +80,9 @@ const DailyRevenueChart = ({ dailyRevenue }) => {
       title: {
         display: true,
         text: "Daily Sales and Max Revenue Chart",
+        font: {
+          size: 18, // Larger title font size
+        },
       },
       tooltip: {
         callbacks: {
@@ -96,11 +100,26 @@ const DailyRevenueChart = ({ dailyRevenue }) => {
           },
         },
       },
+      x: {
+        ticks: {
+          autoSkip: true, // Automatically skip labels if there are too many
+          maxRotation: 0, // Avoid rotating labels on mobile
+          minRotation: 0, // Avoid rotating labels on mobile
+        },
+      },
+    },
+    layout: {
+      padding: {
+        left: 10,
+        right: 10,
+        top: 20,
+        bottom: 20,
+      },
     },
   };
 
   return (
-    <div className="w-full max-w-6xl h-full mx-auto p-4 bg-gray-50 rounded-lg shadow-lg">
+    <div className="w-full max-w-6xl h-80 mx-auto p-4 bg-gray-50 rounded-lg shadow-lg">
       <Bar data={data} options={options} />
     </div>
   );
