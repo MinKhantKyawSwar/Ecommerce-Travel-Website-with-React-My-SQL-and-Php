@@ -30,7 +30,7 @@ const Features = () => {
             className="w-full h-full object-cover rounded-2xl"
           />
           {
-            localStorage.getItem("token") ? (
+            !localStorage.getItem("token") ? (
               <Link
             to="/register"
             className="absolute bottom-4 right-2 w-52 h-12 bg-white rounded-full flex items-center justify-between shadow-lg hover:shadow-xl hover:bg-gray-50 transition duration-200"
