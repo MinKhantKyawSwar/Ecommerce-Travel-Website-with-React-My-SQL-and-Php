@@ -7,7 +7,7 @@ const Hero = ({customers}) => {
     <div>
       <div className="relative top-0 w-full mb-12">
         <video
-          className="w-full md:h-[30rem] object-cover rounded-2xl"
+          className="w-full md:h-[20rem] lg:h-[35rem] object-cover rounded-2xl"
           src={video}
           autoPlay
           loop
@@ -24,7 +24,7 @@ const Hero = ({customers}) => {
         </Link>
       </div>
       {/* right-[28%] */}
-      <div className="absolute bottom-80 md:bottom-20 left-16 md:left-20">
+      <div className="absolute bottom-80 lg:bottom-32 left-16 md:left-20">
         <div className="flex justify-center md:mt-4">
           {customers.map((customer, index) => (
             <div key={index} className="-mx-1 mt-2 md:mt-0">
