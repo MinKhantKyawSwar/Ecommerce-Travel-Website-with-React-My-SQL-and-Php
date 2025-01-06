@@ -100,10 +100,10 @@ const Nav = () => {
 
   return (
     <div className="navbar bg-white text-gray-900 rounded-2xl border border-gray-400 shadow-md fixed top-0 left-0 max-w-[97%] ml-[1.5%] pt-2 mt-2 z-50">
-      <div className="navbar-start px-4">
+      <div className="navbar-start px-4  ">
         <Link
           to="/Explore"
-          className="btn btn-ghost text-lg font-medium hover:bg-gray-100"
+          className="btn btn-ghost text-sm md:text-lg font-medium hover:bg-gray-100"
         >
           Explore
         </Link>
@@ -111,13 +111,13 @@ const Nav = () => {
       <div className="navbar-center">
         <Link
           to="/"
-          className="btn btn-ghost text-2xl font-semibold hover:text-gray-900"
+          className="btn btn-ghost text-lg md:text-2xl font-semibold hover:text-gray-900"
         >
           Trailblazers
         </Link>
       </div>
       {token ? (
-        <div className="navbar-end px-4 flex items-center space-x-3">
+        <div className="navbar-end px-2 md:px-4 flex items-center space-x-3">
           <div className="dropdown dropdown-end">
             <Link to="/saved-packages">
               <div
@@ -188,16 +188,16 @@ const Nav = () => {
           )}
         </div>
       ) : (
-        <div className="navbar-end px-4 flex space-x-3">
+        <div className="navbar-end px-1 md:px-4 flex space-x-3">
           <Link
             to="/register"
-            className="btn btn-outline border-gray-300 hover:border-blue-600 hover:text-white"
+            className=" text-xs border border-black px-2 py-2 rounded-md md:btn md:btn-outline  hover:border-blue-600 hover:text-white"
           >
             Register
           </Link>
           <Link
             to="/login"
-            className="btn bg-gray-900 hover:bg-gray-900 text-white rounded-xl"
+            className=" text-xs border border-black px-2 py-2  md:btn md:btn-outline bg-gray-900 md:bg-gray-900 text-white md:text-white rounded-lg"
           >
             Login
           </Link>

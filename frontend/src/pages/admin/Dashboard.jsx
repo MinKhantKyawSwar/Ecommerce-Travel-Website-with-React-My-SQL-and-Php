@@ -111,7 +111,6 @@ const Dashboard = () => {
     }
   };
 
-  // here
   const getTopRating = async () => {
     try {
       const response = await axios.get(

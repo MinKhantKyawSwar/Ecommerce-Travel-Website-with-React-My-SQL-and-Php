@@ -1,12 +1,15 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import {  useNavigate } from "react-router-dom";
-import TopLocations from "./TopLocations";
 import { TailSpin } from "react-loader-spinner";
 import Hero from "./Hero";
+import FunPlaces from "./FunPlaces";
+import TopRatedDestinations from "./TopRatedDestinations";
+import Features from "./Features";
 
 const Index = () => {
   const [destinations, setDestinations] = useState([]);
+  const [topDestinations, setTopDestinations] = useState([]);
   const [selectedDestination, setSelectedDestination] = useState(null);
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -74,6 +77,46 @@ const Index = () => {
     }
   };
 
+  const getTopDestinations = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        "http://localhost:3000/backend/getIndexInfo.php"
+      );
+
+      if (response.data.status === 1) {
+        const destinations = response.data.data;
+
+
+        // Filter to get unique destination IDs
+        const topDestinationsArr = [];
+        const destinationIds = new Set();
+
+        for (let destination of destinations) {
+          if (!destinationIds.has(destination.destination_id)) {
+            if (destination.rating > 3) {
+              topDestinationsArr.push(destination);
+              destinationIds.add(destination.destination_id);
+            }
+          }
+
+          // Stop once we have 4 unique destinations
+          if (topDestinationsArr.length === 4) break;
+        }
+        const topRating = topDestinationsArr.sort();
+        // Set the random destinations
+        setTopDestinations(topRating);
+        console.log(topRating)
+      } else {
+        setError("No data found");
+      }
+    } catch (err) {
+      setError("Failed to fetch data: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleDetails = async (id) => {
     try {
       setLoading(true);
@@ -98,6 +141,7 @@ const Index = () => {
   useEffect(() => {
     getDestinations();
     getAllCustomerInfo();
+    getTopDestinations();
   }, []);
 
   // if (loading) return <p className="text-center text-lg">Loading...</p>;
@@ -123,6 +167,9 @@ const Index = () => {
         <>
           <div className="bg-gray-50">
             <Hero customers={customers}/>
+            <div>
+                <TopRatedDestinations topDestinations={topDestinations} handleDetails={handleDetails}/>
+              </div>
             <div className="max-w-7xl mx-auto px-4 py-16">
               <header className="text-center mb-12">
                 <h1 className="text-5xl font-extrabold text-blue-600">
@@ -132,61 +179,15 @@ const Index = () => {
                   Find the best destinations and plan your next adventure.
                 </p>
               </header>
-
+              <div>
+                <Features/>
+              </div>
               <h2 className="text-3xl font-bold text-center mb-8">
                 Available Destinations
               </h2>
-
+              
               <div>
-                <TopLocations />
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                {destinations.map((destination, index) => (
-                  <div
-                    className="relative bg-white rounded-lg border overflow-hidden shadow-lg h-80"
-                    key={index}
-                  >
-                    <div className="relative h-full bg-cover bg-center bg-no-repeat">
-                      <img
-                        src={`http://localhost:3000/backend/${destination.destination_image}`}
-                        alt={destination.city}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-                      <div className="absolute bottom-4 left-4 right-4 text-white pb-2 rounded-lg shadow-lg">
-                        <div className="flex flex-row justify-between h-full">
-                          <div className="mb-2">
-                            <h3 className="text-lg font-bold">
-                              {destination.city}
-                            </h3>
-                            <p className="text-xs text-gray-300">
-                              {destination.country}
-                            </p>
-                          </div>
-                          <div className="mb-4">
-                            <span className="flex mt-4 gap-1 px-3 py-1 bg-yellow-500 text-white text-sm font-semibold rounded-lg">
-                              <p>from</p>${destination.price}
-                            </span>
-                          </div>
-                        </div>
-                        <button
-                          className="w-full px-4 py-2 hover:text-black hover:bg-gray-100 rounded-lg border-white border bg-transparent text-white transition duration-200"
-                          onClick={() =>
-                            handleDetails(destination.destination_id)
-                          }
-                        >
-                          View Details
-                        </button>
-                      </div>
-                      <span className="absolute top-4 left-4 bg-white/50 backdrop-blur-md backdrop-saturate-150 border border-gray-200 text-gray-900 text-sm font-semibold px-3 py-1 rounded-md shadow-sm">
-                        {destination.category_name}
-                      </span>
-                      <span className="absolute top-4 right-4 bg-white/50 backdrop-blur-md backdrop-saturate-150 border border-gray-200 text-black text-sm font-semibold px-2 py-1 rounded-md flex items-center">
-                        ⭐ {destination.rating}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                <FunPlaces destinations={destinations} handleDetails={handleDetails}/>
               </div>
             </div>
           </div>
