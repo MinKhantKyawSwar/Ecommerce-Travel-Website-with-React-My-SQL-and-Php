@@ -221,7 +221,7 @@ const Profile = () => {
                   <div className="flex justify-start">
                     <button
                       onClick={EditHandler}
-                      className=" border border-black hover:text-white hover:bg-black py-2 px-6 rounded-lg shadow-md transition duration-200"
+                      className="border border-black hover:text-white hover:bg-black py-2 px-6 rounded-lg shadow-md transition duration-200"
                     >
                       Go Back
                     </button>
