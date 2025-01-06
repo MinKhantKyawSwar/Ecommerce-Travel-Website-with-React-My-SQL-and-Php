@@ -4,9 +4,9 @@ import Footer from "../components/footer";
 
 const Main = () => {
   return (
-    <section className="max-w-[100%] mx-autopy-2 h-screen">
+    <section className="max-w-[100%] mx-auto py-2 h-screen">
       <Nav />
-      <div className="pt-12 px-10 ">
+      <div className="pt-20 px-10 ">
         <Outlet />
       </div>
       <div className="px-0">

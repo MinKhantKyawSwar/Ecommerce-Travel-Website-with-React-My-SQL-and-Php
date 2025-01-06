@@ -1,14 +1,37 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import TopLocations from "./TopLocations";
+import { TailSpin } from "react-loader-spinner";
+import Hero from "./Hero";
 
 const Index = () => {
   const [destinations, setDestinations] = useState([]);
   const [selectedDestination, setSelectedDestination] = useState(null);
+  const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  const getAllCustomerInfo = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/backend/getUserInfo.php"
+      );
+
+      if (response.data.status === 1) {
+        const customers = response.data.data.slice(0, 5); // Get only the first 5 customers
+        setCustomers(customers);
+        console.log(customers);
+      } else {
+        setError("No data found");
+      }
+    } catch (err) {
+      setError("Failed to fetch data: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getDestinations = async () => {
     try {
@@ -74,92 +97,101 @@ const Index = () => {
   // Trigger data fetching on component mount
   useEffect(() => {
     getDestinations();
+    getAllCustomerInfo();
   }, []);
 
-  if (loading) return <p className="text-center text-lg">Loading...</p>;
+  // if (loading) return <p className="text-center text-lg">Loading...</p>;
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
   return (
     <>
-      <div className="bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 py-16">
-          <header className="text-center mb-12">
-            <h1 className="text-5xl font-extrabold text-blue-600">
-              Explore the World
-            </h1>
-            <p className="text-lg text-gray-700 mt-4">
-              Find the best destinations and plan your next adventure.
-            </p>
-          </header>
-
-          <h2 className="text-3xl font-bold text-center mb-8">
-            Available Destinations
-          </h2>
-          
-          <div>
-            <TopLocations />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 carousel rounded-box">
-            {destinations.map((destination, index) => (
-              <div
-                className="relative bg-white rounded-lg border overflow-hidden shadow-lg md:h-80 h-72 w-full sm:w-80 lg:w-64"
-                key={index}
-              >
-                {/* Destination Image with Overlay Text */}
-                <div className="relative h-72 sm:h-80 bg-cover bg-center bg-no-repeat">
-                  <img
-                    src={`http://localhost:3000/backend/${destination.destination_image}`}
-                    alt={destination.city}
-                    className="w-full h-full object-cover"
-                  />
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-
-                  {/* Text Overlay */}
-                  <div className="absolute bottom-4 left-4 right-4 text-white pb-2 rounded-lg shadow-lg">
-                    <div className="flex flex-row justify-between h-full">
-                      {/* City and Country */}
-                      <div className="mb-2">
-                        <h3 className="text-lg font-bold">
-                          {destination.city}
-                        </h3>
-                        <p className="text-xs text-gray-300">
-                          {destination.country}
-                        </p>
-                      </div>
-
-                      {/* Price */}
-                      <div className="mb-4">
-                        <span className="flex mt-4 gap-1 px-3 py-1 bg-yellow-500 text-white text-sm font-semibold rounded-lg">
-                          <p>from</p>${destination.price}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* View Details Button */}
-                    <button
-                      className="w-full px-4 py-2 hover:text-black hover:bg-gray-100 rounded-lg border-white border bg-transparent text-white transition duration-200"
-                      onClick={() => handleDetails(destination.destination_id)}
-                    >
-                      View Details
-                    </button>
-                  </div>
-
-                  {/* Category Label */}
-                  <span className="absolute top-4 left-4 bg-white/50 backdrop-blur-md backdrop-saturate-150 border border-gray-200 text-gray-900 text-sm font-semibold px-3 py-1 rounded-md shadow-sm">
-                    {destination.category_name}
-                  </span>
-
-                  {/* Rating Badge */}
-                  <span className="absolute top-4 right-4 bg-white/50 backdrop-blur-md backdrop-saturate-150 border border-gray-200 text-black text-sm font-semibold px-2 py-1 rounded-md flex items-center">
-                    ⭐ {destination.rating}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+      <div className="absolute top-48 right-1/2 transform translate-x-1/2">
+        {loading && (
+          <TailSpin
+            visible={true}
+            height="80"
+            width="80"
+            color="#000000"
+            ariaLabel="tail-spin-loading"
+            radius="1"
+            wrapperStyle={{}}
+            wrapperClass=""
+          />
+        )}
       </div>
+      {!loading && (
+        <>
+          <div className="bg-gray-50">
+            <Hero customers={customers}/>
+            <div className="max-w-7xl mx-auto px-4 py-16">
+              <header className="text-center mb-12">
+                <h1 className="text-5xl font-extrabold text-blue-600">
+                  Explore the World
+                </h1>
+                <p className="text-lg text-gray-700 mt-4">
+                  Find the best destinations and plan your next adventure.
+                </p>
+              </header>
+
+              <h2 className="text-3xl font-bold text-center mb-8">
+                Available Destinations
+              </h2>
+
+              <div>
+                <TopLocations />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                {destinations.map((destination, index) => (
+                  <div
+                    className="relative bg-white rounded-lg border overflow-hidden shadow-lg h-80"
+                    key={index}
+                  >
+                    <div className="relative h-full bg-cover bg-center bg-no-repeat">
+                      <img
+                        src={`http://localhost:3000/backend/${destination.destination_image}`}
+                        alt={destination.city}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                      <div className="absolute bottom-4 left-4 right-4 text-white pb-2 rounded-lg shadow-lg">
+                        <div className="flex flex-row justify-between h-full">
+                          <div className="mb-2">
+                            <h3 className="text-lg font-bold">
+                              {destination.city}
+                            </h3>
+                            <p className="text-xs text-gray-300">
+                              {destination.country}
+                            </p>
+                          </div>
+                          <div className="mb-4">
+                            <span className="flex mt-4 gap-1 px-3 py-1 bg-yellow-500 text-white text-sm font-semibold rounded-lg">
+                              <p>from</p>${destination.price}
+                            </span>
+                          </div>
+                        </div>
+                        <button
+                          className="w-full px-4 py-2 hover:text-black hover:bg-gray-100 rounded-lg border-white border bg-transparent text-white transition duration-200"
+                          onClick={() =>
+                            handleDetails(destination.destination_id)
+                          }
+                        >
+                          View Details
+                        </button>
+                      </div>
+                      <span className="absolute top-4 left-4 bg-white/50 backdrop-blur-md backdrop-saturate-150 border border-gray-200 text-gray-900 text-sm font-semibold px-3 py-1 rounded-md shadow-sm">
+                        {destination.category_name}
+                      </span>
+                      <span className="absolute top-4 right-4 bg-white/50 backdrop-blur-md backdrop-saturate-150 border border-gray-200 text-black text-sm font-semibold px-2 py-1 rounded-md flex items-center">
+                        ⭐ {destination.rating}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 };

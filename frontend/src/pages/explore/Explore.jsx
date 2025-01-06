@@ -134,9 +134,9 @@ const Explore = () => {
   }, []);
 
   return (
-    <div className="p-4 m-6">
+    <div className="p-4">
       <div className="text-center mb-8 flx items-center justify-center">
-        Find your next destination
+    <p className="text-2xl font-semibold">Find your next destination</p>
         <div className="mt-2">
           <label className="input input-bordered flex items-center gap-2">
             <MdOutlineSearch className="mr-2" />
@@ -232,7 +232,7 @@ const Explore = () => {
 
         {/* Main Content */}
         <div className="flex w-full md:w-3/4  justify-start">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6">
+          <div className="grid h-fit grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6">
             {filteredDestinations.map((destination, index) => (
               <div
                 key={index}
@@ -241,7 +241,7 @@ const Explore = () => {
                 <img
                   src={`http://localhost:3000/backend/${destination.destination_image}`}
                   alt={destination.country}
-                  className="w-full h-40 object-cover rounded-md mb-4"
+                  className="w-full object-cover rounded-md mb-4"
                 />
                 <div className="text-center">
                   <h1 className="text-lg font-semibold text-gray-800 mb-2">
