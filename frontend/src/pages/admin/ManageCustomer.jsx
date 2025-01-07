@@ -1,10 +1,14 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // Assuming you're using react-router for navigation
 
 const ManageCustomer = () => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1); // Track the current page
+  const [customersPerPage] = useState(10); // Number of customers per page
+  const navigate = useNavigate();
 
   const getAllCustomerInfo = async () => {
     try {
@@ -33,6 +37,23 @@ const ManageCustomer = () => {
     getAllCustomerInfo();
   }, []);
 
+  // Calculate the index of the first and last customer for the current page
+  const indexOfLastCustomer = currentPage * customersPerPage;
+  const indexOfFirstCustomer = indexOfLastCustomer - customersPerPage;
+  const currentCustomers = customers.slice(
+    indexOfFirstCustomer,
+    indexOfLastCustomer
+  );
+
+  // Pagination controls with scroll-to-top
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo(0, 0); // Scroll to the top of the page
+  };
+
+  // Calculate total pages
+  const totalPages = Math.ceil(customers.length / customersPerPage);
+
   return (
     <>
       <div className="p-4 rounded-lg bg-white dark:bg-gray-800 shadow-md">
@@ -42,27 +63,15 @@ const ManageCustomer = () => {
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                  <th scope="col" className="px-6 py-3">
-                    Id
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Profile
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    UserName
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Email
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Role
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Action
-                  </th>
+                  <th scope="col" className="px-6 py-3">Customer Id</th>
+                  <th scope="col" className="px-6 py-3">Profile</th>
+                  <th scope="col" className="px-6 py-3">UserName</th>
+                  <th scope="col" className="px-6 py-3">Email</th>
+                  <th scope="col" className="px-6 py-3">Role</th>
+                  <th scope="col" className="px-6 py-3">Action</th>
                 </tr>
               </thead>
-              {customers.map((customer, index) => (
+              {currentCustomers.map((customer, index) => (
                 <tbody key={index}>
                   <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                     <th
@@ -87,7 +96,7 @@ const ManageCustomer = () => {
                     <td className="flex gap-4 px-6 py-6">
                       <button
                         onClick={() =>
-                          navigate(`/destination/${destination.destination_id}`)
+                          navigate(`/destination/${customer.destination_id}`)
                         } // Navigate to the destination details page
                         className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                       >
@@ -105,6 +114,43 @@ const ManageCustomer = () => {
               ))}
             </table>
           </div>
+        </div>
+
+        {/* Pagination Controls */}
+        <div className="flex justify-center mt-4">
+          <nav>
+            <ul className="inline-flex -space-x-px">
+              <li>
+                <button
+                  onClick={() => paginate(currentPage - 1)}
+                  className={`px-3 py-2 ml-0 leading-tight text-sm text-gray-900 font-semibold bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 ${currentPage === 1 ? "cursor-not-allowed opacity-50" : ""}`}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </button>
+              </li>
+              {/* Page Numbers */}
+              {[...Array(totalPages)].map((_, index) => (
+                <li key={index}>
+                  <button
+                    onClick={() => paginate(index + 1)}
+                    className={`px-3 py-2 leading-tight text-sm text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 ${currentPage === index + 1 ? "bg-gray-200 text-gray-900 font-semibold" : ""}`}
+                  >
+                    {index + 1}
+                  </button>
+                </li>
+              ))}
+              <li>
+                <button
+                  onClick={() => paginate(currentPage + 1)}
+                  className={`px-3 py-2 ml-0 leading-tight text-sm text-gray-900 font-semibold bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 ${currentPage === totalPages ? "cursor-not-allowed opacity-50" : ""}`}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </button>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
     </>

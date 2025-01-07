@@ -6,8 +6,11 @@ const ManageGuide = () => {
   const [guides, setGuides] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  
+  const [currentPage, setCurrentPage] = useState(1); // Track the current page
+  const [guidesPerPage,setGuidePerPage] = useState(10); // Number of guides per page
   const navigate = useNavigate();
+
   const getAllGuide = async () => {
     try {
       const response = await axios.get(
@@ -26,31 +29,45 @@ const ManageGuide = () => {
   };
 
   const deleteGuideById = async (id) => {
-      try {
-        const response = await axios.delete(
-          `http://localhost:3000/backend/getGuideInfo.php`,
-          {
-            headers: {
-              "Guide-Id": id,
-            },
-          }
-        );
-  
-        if (response.data.status === 1) {
-          window.location.reload();
-        } else {
-          setError("Cannot delete this Guide Infomation!");
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/backend/getGuideInfo.php`,
+        {
+          headers: {
+            "Guide-Id": id,
+          },
         }
-      } catch (err) {
-        setError("Failed to fetch details: " + err.message);
-      } finally {
-        setLoading(false);
+      );
+
+      if (response.data.status === 1) {
+        window.location.reload();
+      } else {
+        setError("Cannot delete this Guide Information!");
       }
-    };
+    } catch (err) {
+      setError("Failed to fetch details: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     getAllGuide();
   }, []);
+
+  // Calculate the index of the first and last guide for the current page
+  const indexOfLastGuide = currentPage * guidesPerPage;
+  const indexOfFirstGuide = indexOfLastGuide - guidesPerPage;
+  const currentGuides = guides.slice(indexOfFirstGuide, indexOfLastGuide);
+
+  // Pagination controls
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo(0, 0); // Scroll to the top when page changes
+  };
+
+  // Calculate total pages
+  const totalPages = Math.ceil(guides.length / guidesPerPage);
 
   return (
     <>
@@ -72,24 +89,14 @@ const ManageGuide = () => {
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                  <th scope="col" className="px-6 py-3">
-                    Id
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Profile
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Name
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Email
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Action
-                  </th>
+                  <th scope="col" className="px-6 py-3">Id</th>
+                  <th scope="col" className="px-6 py-3">Profile</th>
+                  <th scope="col" className="px-6 py-3">Name</th>
+                  <th scope="col" className="px-6 py-3">Email</th>
+                  <th scope="col" className="px-6 py-3">Action</th>
                 </tr>
               </thead>
-              {guides.map((guide, index) => (
+              {currentGuides.map((guide, index) => (
                 <tbody key={index}>
                   <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                     <th
@@ -114,7 +121,7 @@ const ManageGuide = () => {
                       <button
                         onClick={() =>
                           navigate(`/admin/manage-guide/${guide.guide_id}`)
-                        } // Navigate to the destination details page
+                        }
                         className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                       >
                         Edit
@@ -133,6 +140,43 @@ const ManageGuide = () => {
               ))}
             </table>
           </div>
+        </div>
+
+        {/* Pagination Controls */}
+        <div className="flex justify-center mt-4">
+          <nav>
+            <ul className="inline-flex -space-x-px">
+              <li>
+                <button
+                  onClick={() => paginate(currentPage - 1)}
+                  className={`px-3 py-2 ml-0 leading-tight text-sm  bg-white border text-gray-900 font-semibold border-gray-300 rounded-l-lg hover:bg-gray-100 ${currentPage === 1 ? "cursor-not-allowed opacity-50" : ""}`}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </button>
+              </li>
+              {/* Page Numbers */}
+              {[...Array(totalPages)].map((_, index) => (
+                <li key={index}>
+                  <button
+                    onClick={() => paginate(index + 1)}
+                    className={`px-3 py-2 leading-tight text-sm text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 ${currentPage === index + 1 ? "bg-gray-200 text-gray-900 font-bold" : ""}`}
+                  >
+                    {index + 1}
+                  </button>
+                </li>
+              ))}
+              <li>
+                <button
+                  onClick={() => paginate(currentPage + 1)}
+                  className={`px-3 py-2 ml-0 leading-tight text-sm text-gray-900 font-semibold bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 ${currentPage === totalPages ? "cursor-not-allowed opacity-50" : ""}`}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </button>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
     </>

@@ -370,7 +370,6 @@ const Booking = () => {
 
   const submitHandler = async (values) => {
     const { city, payment_method, number_of_people, travel_date } = values;
-    console.log(values.passports);
 
     // Prepare the data object
     const data = {
@@ -706,7 +705,7 @@ const Booking = () => {
                       </h4>
                       <div className="flex space-x-4">
                         <div className="flex-1">
-                          <label className="font-medium block mb-1">
+                          <label className="font-medium block mb-1 text-sm">
                             Full Name
                           </label>
                           <Field
@@ -719,7 +718,7 @@ const Booking = () => {
                           />{" "}
                         </div>
 
-                        <div className="flex-1">
+                        <div className="flex-1 text-sm">
                           <label className="font-medium block mb-1">
                             Passport Number
                           </label>
@@ -733,7 +732,7 @@ const Booking = () => {
                           />{" "}
                         </div>
                         <div className="flex-1">
-                          <label className="font-medium block mb-1">
+                          <label className="font-medium block mb-1 text-sm">
                             Expiration Date
                           </label>
                           <Field

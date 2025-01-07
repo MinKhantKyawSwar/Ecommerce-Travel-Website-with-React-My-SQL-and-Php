@@ -1,32 +1,61 @@
-import React from "react";
+import React, { useState } from "react";
 
-const FunPlaces = ({ destinations,handleDetails }) => {
+const FunPlaces = ({ destinations, handleDetails }) => {
+  // State to track the current page
+  const [currentPage, setCurrentPage] = useState(0);
+
+  // Number of items per page
+  const itemsPerPage = 4;
+
+  // Calculate the total number of pages
+  const totalPages = Math.ceil(destinations.length / itemsPerPage);
+
+  // Get destinations for the current page
+  const currentDestinations = destinations.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage
+  );
+
+  // Handlers for navigation buttons
+  const handlePrev = () => {
+    if (currentPage > 0) setCurrentPage((prev) => prev - 1);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages - 1) setCurrentPage((prev) => prev + 1);
+  };
+
   return (
     <>
-      <div className="mb-3">
-        <div className="text-5xl font-extrabold text-blue-600">
-          <h2 className="text-2xl font-extrabold text-black">
-            Great Destinations To try
+      <div className="mt-6 mb-6">
+        <div className="text-3xl md:text-5xl font-extrabold text-blue-600 leading-tight text-center">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 uppercase tracking-wide">
+            Great Destinations To Try
           </h2>
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        {destinations.map((destination, index) => (
-          <div
-            className="relative bg-white rounded-lg border overflow-hidden shadow-lg h-80"
-            key={index}
-          >
-            <div className="relative h-full bg-cover bg-center bg-no-repeat">
+
+      {/* Carousel Container */}
+      <div className="carousel carousel-center gap-4 rounded-box relative  p-4 sm:p-6 lg:p-8 shadow-lg">
+        {/* Grid for Destinations */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {currentDestinations.map((destination, index) => (
+            <div
+              className="relative bg-white rounded-lg border overflow-hidden shadow-lg h-80 sm:h-[20rem] md:h-[22rem] lg:h-[25rem] p-3"
+              key={index}
+            >
               <img
                 src={`http://localhost:3000/backend/${destination.destination_image}`}
                 alt={destination.city}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded-lg"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
               <div className="absolute bottom-4 left-4 right-4 text-white pb-2 rounded-lg shadow-lg">
-                <div className="flex flex-row justify-between h-full">
+                <div className="flex flex-col sm:flex-row justify-between h-full">
                   <div className="mb-2">
-                    <h3 className="text-lg font-bold">{destination.city}</h3>
+                    <h3 className="text-lg sm:text-xl font-bold">
+                      {destination.city}
+                    </h3>
                     <p className="text-xs text-gray-300">
                       {destination.country}
                     </p>
@@ -51,8 +80,30 @@ const FunPlaces = ({ destinations,handleDetails }) => {
                 ⭐ {destination.rating}
               </span>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+
+        {/* Navigation Buttons */}
+        <button
+          className={`absolute top-1/2 left-0 transform -translate-y-1/2 bg-gray-800 text-white rounded-full px-4 py-2 shadow-lg hover:bg-gray-700 ${
+            currentPage === 0 ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          onClick={handlePrev}
+          disabled={currentPage === 0}
+        >
+          ❮
+        </button>
+        <button
+          className={`absolute top-1/2 right-0 transform -translate-y-1/2 bg-gray-800 text-white rounded-full px-4 py-2 shadow-lg hover:bg-gray-700 ${
+            currentPage === totalPages - 1
+              ? "opacity-50 cursor-not-allowed"
+              : ""
+          }`}
+          onClick={handleNext}
+          disabled={currentPage === totalPages - 1}
+        >
+          ❯
+        </button>
       </div>
     </>
   );

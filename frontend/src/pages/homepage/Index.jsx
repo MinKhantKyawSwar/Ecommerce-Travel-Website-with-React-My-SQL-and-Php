@@ -1,19 +1,20 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { TailSpin } from "react-loader-spinner";
 import Hero from "./Hero";
 import FunPlaces from "./FunPlaces";
 import TopRatedDestinations from "./TopRatedDestinations";
 import Features from "./Features";
 import WebsiteInfo from "./WebsiteInfo";
+import TravelImage from "../../assets/pictures/explore_the_world.png";
 
 const Index = () => {
   const [destinations, setDestinations] = useState([]);
   const [topDestinations, setTopDestinations] = useState([]);
   const [travellers, setTravellers] = useState([]);
   const [selectedDestination, setSelectedDestination] = useState(null);
-  
+
   const [destinationCount, setDestinationCount] = useState([]);
   const [packagesCount, setPackagesCount] = useState(0);
   const [customers, setCustomers] = useState([]);
@@ -30,7 +31,6 @@ const Index = () => {
       if (response.data.status === 1) {
         const customers = response.data.data.slice(0, 5); // Get only the first 5 customers
         setCustomers(customers);
-        console.log(customers);
       } else {
         setError("No data found");
       }
@@ -69,7 +69,7 @@ const Index = () => {
         {
           headers: {
             "Content-Type": "application/json",
-            "Total_Destination": "",
+            Total_Destination: "",
           },
         }
       );
@@ -109,7 +109,7 @@ const Index = () => {
           }
 
           // Stop once we have 4 unique destinations
-          if (uniqueDestinations.length === 4) break;
+          if (uniqueDestinations.length === 8) break;
         }
 
         // Set the random destinations
@@ -134,26 +134,26 @@ const Index = () => {
       if (response.data.status === 1) {
         const destinations = response.data.data;
 
+        // Sort destinations by rating in descending order
+        const sortedDestinations = destinations // Filter destinations with rating greater than 3
+          .sort((a, b) => b.rating - a.rating); // Sort by rating, highest first
 
-        // Filter to get unique destination IDs
+        // Get the top 8 unique destinations
         const topDestinationsArr = [];
         const destinationIds = new Set();
 
-        for (let destination of destinations) {
+        for (let destination of sortedDestinations) {
           if (!destinationIds.has(destination.destination_id)) {
-            if (destination.rating > 3) {
-              topDestinationsArr.push(destination);
-              destinationIds.add(destination.destination_id);
-            }
+            topDestinationsArr.push(destination);
+            destinationIds.add(destination.destination_id);
           }
 
-          // Stop once we have 4 unique destinations
-          if (topDestinationsArr.length === 4) break;
+          // Stop once we have 8 unique destinations
+          if (topDestinationsArr.length === 8) break;
         }
-        const topRating = topDestinationsArr.sort();
-        // Set the random destinations
-        setTopDestinations(topRating);
-        console.log(topRating)
+
+        // Set the top destinations
+        setTopDestinations(topDestinationsArr);
       } else {
         setError("No data found");
       }
@@ -182,28 +182,28 @@ const Index = () => {
     } finally {
       setLoading(false);
     }
-  };  
-  
-    // Fetch Customer Count
-    const getCustomerCount = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/backend/getCustomerCount.php",
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        if (response.data.status === 1) {
-          setTravellers(response.data.data);
-        } else {
-          setError("No data found for customers");
+  };
+
+  // Fetch Customer Count
+  const getCustomerCount = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/backend/getCustomerCount.php",
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      } catch (err) {
-        setError("Failed to fetch data: " + err.message);
+      );
+      if (response.data.status === 1) {
+        setTravellers(response.data.data);
+      } else {
+        setError("No data found for customers");
       }
-    };
+    } catch (err) {
+      setError("Failed to fetch data: " + err.message);
+    }
+  };
 
   // Trigger data fetching on component mount
   useEffect(() => {
@@ -236,32 +236,55 @@ const Index = () => {
       </div>
       {!loading && (
         <>
-          <div className="bg-gray-50">
+          <div>
             <Hero customers={customers} />
 
-            <div className="max-w-7xl mx-auto px-4 py-16">
-              <header className="text-center mb-12">
-                <h1 className="text-5xl font-extrabold text-blue-600">
-                  Explore the World
-                </h1>
-                <p className="text-lg text-gray-700 mt-4">
-                  Find the best destinations and plan your next adventure.
-                </p>
-              </header>
-              <div>
-                <WebsiteInfo packagesCount={packagesCount} travellers={travellers} destinationCount={destinationCount}/>
+            <div className="max-w-7xl mx-auto px-4 py-12">
+              <div className="relative">
+                {/* Hero Section */}
+                <div
+                  className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 text-white text-center rounded-2xl py-20 px-6 sm:px-8 lg:px-12 bg-cover bg-center relative"
+                  style={{ backgroundImage: `url(${TravelImage})` }}
+                >
+
+                  {/* Content Section */}
+                  <div className="relative z-10">
+                    <div className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
+                     <p> Explore the World</p>
+                    </div>
+                    <p className="text-lg sm:text-xl mb-8 max-w-2xl mx-auto">
+                      Find the best destinations and plan your next adventure
+                      with us. Discover new cultures, cuisines, and landscapes
+                      all over the globe.
+                    </p>
+                    <Link to={'/register'} className="bg-transparent border-2 text-white font-semibold px-8 py-3 rounded-2xl shadow-lg hover:bg-blue-500 transition duration-200 transform hover:scale-105">
+                      Start Your Journey
+                    </Link>
+                  </div>
+                </div>
               </div>
-              <div>
+
+              <div className="mt-10">
+                <WebsiteInfo
+                  packagesCount={packagesCount}
+                  travellers={travellers}
+                  destinationCount={destinationCount}
+                />
+              </div>
+              <div className="mb-20">
                 <Features />
               </div>
-              <h2 className="text-3xl font-bold text-center mb-8">
-                Available Destinations
-              </h2>
               <div>
-                <TopRatedDestinations topDestinations={topDestinations} handleDetails={handleDetails} />
+                <TopRatedDestinations
+                  topDestinations={topDestinations}
+                  handleDetails={handleDetails}
+                />
               </div>
               <div>
-                <FunPlaces destinations={destinations} handleDetails={handleDetails} />
+                <FunPlaces
+                  destinations={destinations}
+                  handleDetails={handleDetails}
+                />
               </div>
             </div>
           </div>

@@ -12,6 +12,10 @@ const ManageDestination = () => {
   const [error, setError] = useState(null);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [openDetailsDropdown, setOpenDetailsDropdown] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1); // Current page state
+  const [destinationPerPage, setDestinationPerPage] = useState(5); // Number of items per page
+  const [currentDetailsPage, setCurrentDetailsPage] = useState(1); // Numbers of details per current page
+
   const { setDestinationId } = useContext(UserContext);
 
   const navigate = useNavigate(); // Initialize useNavigate
@@ -178,6 +182,41 @@ const ManageDestination = () => {
     getDestinations();
   }, []);
 
+  //pagination for the whole page
+  const indexOfLastDestination = currentPage * destinationPerPage;
+  const indexOfFirstCustomer = indexOfLastDestination - destinationPerPage;
+  const currentDestinations = destinations.slice(
+    indexOfFirstCustomer,
+    indexOfLastDestination
+  );
+
+  // Pagination controls with scroll-to-top
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo(0, 0); // Scroll to the top of the page
+  };
+
+  // Calculate total pages
+  const totalPages = Math.ceil(destinations.length / destinationPerPage);
+  //------------------------------------------------------------------
+
+  const ITEMS_PER_PAGE = 5;
+
+  // Calculate total pages
+  const totalDetailsPages = Math.ceil(packageDetails.length / ITEMS_PER_PAGE);
+
+  // Get the items to display based on the current page
+  const currentItems = packageDetails.slice(
+    (currentDetailsPage - 1) * ITEMS_PER_PAGE,
+    currentDetailsPage * ITEMS_PER_PAGE
+  );
+
+  // Handle page change
+  const goToPage = (page) => {
+    if (page < 1 || page > totalDetailsPages) return; // Prevent invalid page
+    setCurrentDetailsPage(page);
+  };
+
   return (
     <>
       <div className="p-4 rounded-lg bg-white dark:bg-gray-800 shadow-md">
@@ -215,7 +254,7 @@ const ManageDestination = () => {
               </tr>
             </thead>
 
-            {destinations.map((destination, index) => (
+            {currentDestinations.map((destination, index) => (
               <tbody key={index}>
                 <tr
                   className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-200"
@@ -273,7 +312,7 @@ const ManageDestination = () => {
                               setDestinationId(destination.destination_id);
                               navigate(`/admin/manage-destination/packages/`);
                             }}
-                            className="font-medium text-blue-600 hover:underline transition duration-200"
+                            className="font-medium text-blue-600 hover:underline transition duration-200 mb-4"
                           >
                             Add package
                           </button>
@@ -285,15 +324,17 @@ const ManageDestination = () => {
                                   <li
                                     key={packageIndex}
                                     className="py-4 border-b border-gray-300 transition duration-200 hover:bg-gray-200"
-                                    onClick={() =>
-                                      toggleDetailsDropdown(
-                                        packageIndex,
-                                        packageItem.package_id
-                                      )
-                                    }
                                   >
                                     <div className="flex justify-between items-center hover:underline transition duration-200">
-                                      <span className="font-medium text-gray-800">
+                                      <span
+                                        className="font-medium text-gray-800"
+                                        onClick={() =>
+                                          toggleDetailsDropdown(
+                                            packageIndex,
+                                            packageItem.package_id
+                                          )
+                                        }
+                                      >
                                         {packageItem.package_name}
                                       </span>
                                       <div className="flex gap-4">
@@ -307,7 +348,6 @@ const ManageDestination = () => {
                                         >
                                           Details
                                         </button>
-
                                         <button
                                           onClick={() =>
                                             navigate(
@@ -330,11 +370,11 @@ const ManageDestination = () => {
                                         </button>
                                       </div>
                                     </div>
-                                    {/* Toggleable package details */}
 
+                                    {/* Toggleable package details */}
                                     {openDetailsDropdown === packageIndex && (
                                       <div className="mt-4 bg-gray-100 p-4 rounded-lg shadow-md">
-                                        <h4 className="font-semibold text-lg">
+                                        <h4 className="font-semibold text-lg mb-4">
                                           Package Details
                                         </h4>
                                         <button
@@ -347,58 +387,106 @@ const ManageDestination = () => {
                                         >
                                           Add New Package Details
                                         </button>
-                                        <ul className="list-disc pl-5">
-                                          {packageDetails.map(
+                                        <ul className="list-none pl-0 mt-4">
+                                          {currentItems.map(
                                             (packageData, index) => (
-                                              <li key={index} className="py-2">
-                                                <div>
-                                                  <div className="font-medium text-gray-800">
-                                                    Packge {index + 1}
+                                              <li
+                                                key={index}
+                                                className="bg-white rounded-lg mb-4 p-6 transition duration-200 hover:bg-gray-50"
+                                              >
+                                                <div className="flex justify-between items-start">
+                                                  <div className="space-y-3">
+                                                    <div className="text-xl font-semibold text-gray-800">
+                                                      Package{" "}
+                                                      {(currentDetailsPage -
+                                                        1) *
+                                                        5 +
+                                                        index +
+                                                        1}
+                                                    </div>
+                                                    <div className="text-gray-600">
+                                                      <strong>
+                                                        Start Location:
+                                                      </strong>{" "}
+                                                      {packageData.city}
+                                                    </div>
+                                                    <div className="text-gray-600">
+                                                      <strong>Price:</strong> $
+                                                      {packageData.price}
+                                                    </div>
+                                                    <div className="text-gray-600">
+                                                      <strong>
+                                                        Travel Date:
+                                                      </strong>{" "}
+                                                      {packageData.travel_date}
+                                                    </div>
+                                                    <div className="text-gray-600">
+                                                      <strong>
+                                                        Available People:
+                                                      </strong>{" "}
+                                                      {
+                                                        packageData.number_of_available_people
+                                                      }
+                                                    </div>
                                                   </div>
-                                                  <div className="text-gray-600">
-                                                    Start Location:{" "}
-                                                    {packageData.city}
+
+                                                  {/* Action Buttons on the right */}
+                                                  <div className="flex flex-row justify-start gap-2">
+                                                    <button
+                                                      onClick={() =>
+                                                        navigate(
+                                                          `/admin/manage-destination/packages/manage-package-details/${packageData.package_info_id}`
+                                                        )
+                                                      }
+                                                      className="w-full sm:w-auto font-medium text-blue-600 hover:underline py-2 px-4 rounded-md border border-blue-600 transition duration-200 hover:bg-blue-600 hover:text-white"
+                                                    >
+                                                      Edit
+                                                    </button>
+                                                    <button
+                                                      onClick={() =>
+                                                        deletePackageDetailsById(
+                                                          packageData.package_info_id
+                                                        )
+                                                      }
+                                                      className="w-full sm:w-auto font-medium text-red-600 hover:underline py-2 px-4 rounded-md border border-red-600 transition duration-200 hover:bg-red-600 hover:text-white"
+                                                    >
+                                                      Delete
+                                                    </button>
                                                   </div>
-                                                  <div className="text-gray-600">
-                                                    Price: ${packageData.price}
-                                                  </div>
-                                                  <div className="text-gray-600">
-                                                    Travel Date:{" "}
-                                                    {packageData.travel_date}
-                                                  </div>
-                                                  <div className="text-gray-600">
-                                                    Available People:{" "}
-                                                    {
-                                                      packageData.number_of_available_people
-                                                    }
-                                                  </div>
-                                                </div>
-                                                <div className="flex gap-4">
-                                                  <button
-                                                    onClick={() =>
-                                                      navigate(
-                                                        `/admin/manage-destination/packages/manage-package-details/${packageData.package_info_id}`
-                                                      )
-                                                    }
-                                                    className="font-medium text-blue-600 hover:underline transition duration-200"
-                                                  >
-                                                    Edit
-                                                  </button>
-                                                  <button
-                                                    onClick={() =>
-                                                      deletePackageDetailsById(
-                                                        packageData.package_info_id
-                                                      )
-                                                    }
-                                                    className="font-medium text-red-600 hover:underline transition duration-200"
-                                                  >
-                                                    Delete
-                                                  </button>
                                                 </div>
                                               </li>
                                             )
                                           )}
                                         </ul>
+
+                                        {/* Pagination Controls */}
+                                        <div className="flex justify-center items-center space-x-2 mt-6">
+                                          <button
+                                            onClick={() =>
+                                              goToPage(currentDetailsPage - 1)
+                                            }
+                                            disabled={currentDetailsPage === 1}
+                                            className="px-4 py-2 bg-gray-300 text-gray-600 rounded-md disabled:opacity-50"
+                                          >
+                                            Previous
+                                          </button>
+                                          <span className="text-gray-800">
+                                            Page {currentDetailsPage} of{" "}
+                                            {totalDetailsPages}
+                                          </span>
+                                          <button
+                                            onClick={() =>
+                                              goToPage(currentDetailsPage + 1)
+                                            }
+                                            disabled={
+                                              currentDetailsPage ===
+                                              totalDetailsPages
+                                            }
+                                            className="px-4 py-2 bg-gray-300 text-gray-600 rounded-md disabled:opacity-50"
+                                          >
+                                            Next
+                                          </button>
+                                        </div>
                                       </div>
                                     )}
                                   </li>
@@ -418,6 +506,53 @@ const ManageDestination = () => {
               </tbody>
             ))}
           </table>
+
+          {/* Pagination Controls */}
+          <div className="flex justify-center mt-4 mb-4">
+            <nav>
+              <ul className="inline-flex -space-x-px">
+                <li>
+                  <button
+                    onClick={() => paginate(currentPage - 1)}
+                    className={`px-3 py-2 ml-0 leading-tight text-sm text-gray-900 font-semibold bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 ${
+                      currentPage === 1 ? "cursor-not-allowed opacity-50" : ""
+                    }`}
+                    disabled={currentPage === 1}
+                  >
+                    Previous
+                  </button>
+                </li>
+                {/* Page Numbers */}
+                {[...Array(totalPages)].map((_, index) => (
+                  <li key={index}>
+                    <button
+                      onClick={() => paginate(index + 1)}
+                      className={`px-3 py-2 leading-tight text-sm text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 ${
+                        currentPage === index + 1
+                          ? "bg-gray-200 text-gray-900 font-semibold"
+                          : ""
+                      }`}
+                    >
+                      {index + 1}
+                    </button>
+                  </li>
+                ))}
+                <li>
+                  <button
+                    onClick={() => paginate(currentPage + 1)}
+                    className={`px-3 py-2 ml-0 leading-tight text-sm text-gray-900 font-semibold bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 ${
+                      currentPage === totalPages
+                        ? "cursor-not-allowed opacity-50"
+                        : ""
+                    }`}
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          </div>
         </div>
       </div>
     </>

@@ -2,75 +2,74 @@ import React from "react";
 import { Link } from "react-router-dom";
 import travelImgPoster1 from "../../assets/pictures/feature_poster1.png";
 import travelImgPoster2 from "../../assets/pictures/feature_poster2.png";
+import travelImgPoster3 from "../../assets/pictures/discount.gif";
 import { MdOutlineArrowOutward, MdArrowForward } from "react-icons/md";
+import AboutIndex from "./AboutIndex";
 
 const Features = () => {
   return (
-    <div className="grid grid-cols-2 gap-5 mb-5">
-      <div className=" relative h-[32rem]">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:mb-5 h-full md:h-[36rem]">
+      {/* Left Side Image */}
+      <div className="relative h-[10rem] md:h-[36rem]">
         <img
           src={travelImgPoster1}
           alt="Travel Poster 1"
-          className="h-full object-cover rounded-badge shadow-lg"
+          className="h-[37rem] w-full object-cover rounded-lg shadow-lg"
         />
         <Link
           to="/explore"
-          className="absolute top-2 right-2 w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl hover:bg-gray-50"
+          className="absolute top-2 right-2 w-10 h-10 md:w-16 md:h-16 bg-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl hover:bg-gray-50"
         >
-          <span className="text-5xl">
+          <span className="text-2xl md:text-4xl">
             <MdOutlineArrowOutward />
           </span>
         </Link>
       </div>
-      <div className="rounded-2xl h-[32rem]">
-        <div className="relative rounded-2xl h-[17rem] mb-4">
-          <img
-            src={travelImgPoster2}
-            alt="Travel Poster 1"
-            className="w-full h-full object-cover rounded-2xl"
-          />
-          {
-            !localStorage.getItem("token") ? (
-              <Link
-            to="/register"
-            className="absolute bottom-4 right-2 w-52 h-12 bg-white rounded-full flex items-center justify-between shadow-lg hover:shadow-xl hover:bg-gray-50 transition duration-200"
-          >
-            <span className="text-xl font-medium pl-4 mb-1 ">
-              Register Now
-            </span>
-            <span className="text-4xl pr-6 ">
-              <MdArrowForward />
-            </span>
-          </Link>
-            ) :
-            (
-              <Link
-            to="/explore"
-            className="absolute bottom-4 right-2 w-52 h-12 bg-white rounded-full flex items-center justify-between shadow-lg hover:shadow-xl hover:bg-gray-50 transition duration-200"
-          >
-            <span className="text-xl font-medium pl-4 mb-1 ">
-              Explore Now
-            </span>
-            <span className="text-4xl pr-6 ">
-              <MdArrowForward />
-            </span>
-          </Link>
-            )
-          }
+
+      {/* Right Side Section */}
+      <div className="rounded-2xl h-[36rem]">
+        {/* About Section */}
+        <div className="relative rounded-2xl  mb-6">
+          <AboutIndex />
         </div>
-        <div className="rounded-2xl h-[14rem] grid grid-cols-2 gap-2">
-          <div className="h-full rounded-2xl">
+
+        {/* Image Grid and Buttons */}
+        <div className="rounded-2xl h-[14rem] grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {/* Left Image with Register/Explore Button */}
+          <div className="relative h-full rounded-2xl">
             <img
-              src={travelImgPoster1}
-              alt="Travel Poster 1"
-              className="h-full object-cover rounded-2xl"
+              src={travelImgPoster2}
+              alt="Travel Poster 2"
+              className="w-full h-full object-cover rounded-2xl"
             />
+            {/* Conditional Button: Register/Explore */}
+            <div className="absolute bottom-4 left-36 w-full flex justify-between">
+              {!localStorage.getItem("token") ? (
+                <Link
+                  to="/register"
+                  className="w-1/2 bg-white rounded-full flex items-center justify-between shadow-lg hover:shadow-xl hover:bg-gray-50 transition duration-200 px-4 py-2"
+                >
+                  <span className="text-sm font-medium">Register</span>
+                  <MdArrowForward className="text-3xl" />
+                </Link>
+              ) : (
+                <Link
+                  to="/explore"
+                  className="w-full sm:w-1/2 bg-white rounded-full flex items-center justify-between shadow-lg hover:shadow-xl hover:bg-gray-50 transition duration-200 px-4 py-2"
+                >
+                  <span className="text-sm font-medium">Explore</span>
+                  <MdArrowForward className="text-3xl" />
+                </Link>
+              )}
+            </div>
           </div>
+
+          {/* Right Image */}
           <div className="h-full rounded-2xl">
             <img
-              src={travelImgPoster1}
+              src={travelImgPoster3}
               alt="Travel Poster 1"
-              className="h-full object-cover rounded-2xl"
+              className="w-full h-full object-cover rounded-2xl"
             />
           </div>
         </div>
