@@ -19,7 +19,6 @@ const Dashboard = () => {
   const [topCustomers, setTopCustomers] = useState([]);
   const [topRating, setTopRating] = useState([]);
   
-  
   const [packagesData, setPackagesData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

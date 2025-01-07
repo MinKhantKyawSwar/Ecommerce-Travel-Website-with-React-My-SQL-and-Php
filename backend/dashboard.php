@@ -113,6 +113,26 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "No booking found."];
                 }
+            } else if (isset($headers['Total_Destination'])) {
+                // Connection to database
+                $conn = $db->connect();
+
+                // SQL query to calculate total revenue for each day
+                $getTotalCount = " SELECT
+                        COUNT(*) AS destination_count
+                    FROM
+                        destination";
+
+                $stmt = $conn->prepare($getTotalCount);
+                $stmt->execute();
+
+                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                if ($result) {
+                    $response = ['status' => 1, 'message' => "Data found", 'data' => $result];
+                } else {
+                    $response = ['status' => 0, 'message' => "No data found."];
+                }
             } else if (isset($headers['Total_Spent_Customers'])) {
                 // Connection to database
                 $conn = $db->connect();
@@ -148,7 +168,7 @@ switch ($method) {
                 $conn = $db->connect();
 
                 // SQL query to calculate total revenue for each day
-                $getTotalCount ="SELECT
+                $getTotalCount = "SELECT
                                     location.city,
                                     location.country,
                                     ROUND(AVG(review.rating)) AS average_rating

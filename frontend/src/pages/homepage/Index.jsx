@@ -1,16 +1,21 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { TailSpin } from "react-loader-spinner";
 import Hero from "./Hero";
 import FunPlaces from "./FunPlaces";
 import TopRatedDestinations from "./TopRatedDestinations";
 import Features from "./Features";
+import WebsiteInfo from "./WebsiteInfo";
 
 const Index = () => {
   const [destinations, setDestinations] = useState([]);
   const [topDestinations, setTopDestinations] = useState([]);
+  const [travellers, setTravellers] = useState([]);
   const [selectedDestination, setSelectedDestination] = useState(null);
+  
+  const [destinationCount, setDestinationCount] = useState([]);
+  const [packagesCount, setPackagesCount] = useState(0);
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -33,6 +38,48 @@ const Index = () => {
       setError("Failed to fetch data: " + err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getPackageCount = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/backend/dashboard.php",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Packages-Id": "",
+          },
+        }
+      );
+      if (response.data.status === 1) {
+        setPackagesCount(response.data.total_packages);
+      } else {
+        setError("No data found for packages");
+      }
+    } catch (err) {
+      setError("Failed to fetch data: " + err.message);
+    }
+  };
+
+  const getDestinationCount = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/backend/dashboard.php",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Total_Destination": "",
+          },
+        }
+      );
+      if (response.data.status === 1) {
+        setDestinationCount(response.data.data[0]);
+      } else {
+        setError("No data found for packages");
+      }
+    } catch (err) {
+      setError("Failed to fetch data: " + err.message);
     }
   };
 
@@ -135,13 +182,37 @@ const Index = () => {
     } finally {
       setLoading(false);
     }
-  };
+  };  
+  
+    // Fetch Customer Count
+    const getCustomerCount = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/backend/getCustomerCount.php",
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (response.data.status === 1) {
+          setTravellers(response.data.data);
+        } else {
+          setError("No data found for customers");
+        }
+      } catch (err) {
+        setError("Failed to fetch data: " + err.message);
+      }
+    };
 
   // Trigger data fetching on component mount
   useEffect(() => {
     getDestinations();
     getAllCustomerInfo();
     getTopDestinations();
+    getPackageCount();
+    getCustomerCount();
+    getDestinationCount();
   }, []);
 
   // if (loading) return <p className="text-center text-lg">Loading...</p>;
@@ -166,10 +237,8 @@ const Index = () => {
       {!loading && (
         <>
           <div className="bg-gray-50">
-            <Hero customers={customers}/>
-            <div>
-                <TopRatedDestinations topDestinations={topDestinations} handleDetails={handleDetails}/>
-              </div>
+            <Hero customers={customers} />
+
             <div className="max-w-7xl mx-auto px-4 py-16">
               <header className="text-center mb-12">
                 <h1 className="text-5xl font-extrabold text-blue-600">
@@ -180,14 +249,19 @@ const Index = () => {
                 </p>
               </header>
               <div>
-                <Features/>
+                <WebsiteInfo packagesCount={packagesCount} travellers={travellers} destinationCount={destinationCount}/>
+              </div>
+              <div>
+                <Features />
               </div>
               <h2 className="text-3xl font-bold text-center mb-8">
                 Available Destinations
               </h2>
-              
               <div>
-                <FunPlaces destinations={destinations} handleDetails={handleDetails}/>
+                <TopRatedDestinations topDestinations={topDestinations} handleDetails={handleDetails} />
+              </div>
+              <div>
+                <FunPlaces destinations={destinations} handleDetails={handleDetails} />
               </div>
             </div>
           </div>
