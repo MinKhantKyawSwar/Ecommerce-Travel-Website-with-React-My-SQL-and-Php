@@ -376,8 +376,20 @@ const Booking = () => {
 
       setLoading(true);
       setOrder(true);
-
-      setTimeout(() => document.getElementById("my_modal_4").close(), 4000);
+      
+      setTimeout(() => {
+        toast.success("Payment Successful", {
+          position: "top-center",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+        document.getElementById("my_modal_4").close()}, 2000);
     
   };
 
@@ -844,46 +856,46 @@ const Booking = () => {
                 Pay
               </button>
             )}
-            <dialog id="my_modal_4" class="modal">
-              <div class="modal-box w-1/2 max-w-5xl flex justify-center items-center overflow-hidden">
-                <div class="modal-action flex-col items-center">
-                  <section class="bg-white py-8 dark:bg-gray-900 ">
-                    <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
-                      <div class="mx-auto max-w-5xl ">
-                        <div class="bg-white rounded-lg shadow-sm dark:bg-gray-800 sm:p-6 lg:max-w-xl">
-                          <h2 class="text-xl font-bold text-gray-900 text-center mb-10 dark:text-white sm:text-2xl">
+            <dialog id="my_modal_4" className="modal">
+              <div className="modal-box w-1/2 max-w-5xl flex justify-center items-center overflow-hidden">
+                <div className="modal-action flex-col items-center">
+                  <section className="bg-white py-8 dark:bg-gray-900 ">
+                    <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
+                      <div className="mx-auto max-w-5xl ">
+                        <div className="bg-white rounded-lg shadow-sm dark:bg-gray-800 sm:p-6 lg:max-w-xl">
+                          <h2 className="text-xl font-bold text-gray-900 text-center mb-10 dark:text-white sm:text-2xl">
                             Complete Your Order
                           </h2>
 
-                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 mb-6">
-                              <div class="col-span-2 sm:col-span-1">
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 mb-6">
+                              <div className="col-span-2 sm:col-span-1">
                                 <label
                                   for="full_name"
-                                  class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                                  className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
                                 >
                                   Full Name
                                 </label>
                                 <input
                                   type="text"
                                   id="full_name"
-                                  class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 dark:focus:ring-primary-500"
                                   placeholder="Bonnie Green"
                                   onChange={validateForm}
                                   required
                                 />
                               </div>
 
-                              <div class="col-span-2 sm:col-span-1">
+                              <div className="col-span-2 sm:col-span-1">
                                 <label
                                   for="card-number-input"
-                                  class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                                  className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
                                 >
                                   Card Number
                                 </label>
                                 <input
                                   type="text"
                                   id="card-number-input"
-                                  class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pe-10 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pe-10 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 dark:focus:ring-primary-500"
                                   placeholder="xxxxxxxxxxxxxxxx"
                                   pattern="^4[0-9]{12}(?:[0-9]{3})?$"
                                   onChange={validateForm}
@@ -892,34 +904,34 @@ const Booking = () => {
                                 />
                               </div>
 
-                              <div class="col-span-2 sm:col-span-1">
+                              <div className="col-span-2 sm:col-span-1">
                                 <label
                                   for="card-expiration-input"
-                                  class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                                  className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
                                 >
                                   Card Expiration
                                 </label>
                                 <input
                                   type="text"
                                   id="card-expiration-input"
-                                  class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 dark:focus:ring-primary-500"
                                   placeholder="MM/YY"
                                   onChange={validateForm}
                                   required
                                 />
                               </div>
 
-                              <div class="col-span-2 sm:col-span-1">
+                              <div className="col-span-2 sm:col-span-1">
                                 <label
                                   for="cvv-input"
-                                  class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                                  className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
                                 >
                                   CVV
                                 </label>
                                 <input
                                   type="number"
                                   id="cvv-input"
-                                  class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 dark:focus:ring-primary-500"
                                   placeholder="•••"
                                   minLength={3}
                                   onChange={validateForm}
@@ -927,34 +939,34 @@ const Booking = () => {
                                 />
                               </div>
                             </div>
-                            <div class="flex items-center justify-center gap-8">
+                            <div className="flex items-center justify-center gap-8">
                               <img
-                                class="h-8 w-auto dark:hidden"
+                                className="h-8 w-auto dark:hidden"
                                 src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/paypal.svg"
                                 alt=""
                               />
                               <img
-                                class="hidden h-8 w-auto dark:flex"
+                                className="hidden h-8 w-auto dark:flex"
                                 src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/paypal-dark.svg"
                                 alt=""
                               />
                               <img
-                                class="h-8 w-auto dark:hidden"
+                                className="h-8 w-auto dark:hidden"
                                 src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/visa.svg"
                                 alt=""
                               />
                               <img
-                                class="hidden h-8 w-auto dark:flex"
+                                className="hidden h-8 w-auto dark:flex"
                                 src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/visa-dark.svg"
                                 alt=""
                               />
                               <img
-                                class="h-8 w-auto dark:hidden"
+                                className="h-8 w-auto dark:hidden"
                                 src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/mastercard.svg"
                                 alt=""
                               />
                               <img
-                                class="hidden h-8 w-auto dark:flex"
+                                className="hidden h-8 w-auto dark:flex"
                                 src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/mastercard-dark.svg"
                                 alt=""
                               />

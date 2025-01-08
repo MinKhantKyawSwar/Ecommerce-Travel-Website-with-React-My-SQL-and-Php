@@ -19,14 +19,18 @@ switch ($method) {
             if (isset($headers['Recipt'])) {
                 $booking_id = $headers['Recipt'];
                 $conn = $db->connect();
-                $getTransactionInfo = "SELECT 
+                $getTransactionInfo = "SELECT
                                             booking.*,
                                             users.*,
                                             package.*,
+                                            package_info.price as unit_price,
                                             location.*,
                                             region.*,
                                             payment.*,
-                                            add_on.add_on as add_ons
+                                            add_on.price as add_ons,
+                                            booking.total_price as final_price,
+                                            GROUP_CONCAT(passport_info.full_name) AS full_names,
+                                            GROUP_CONCAT(passport_info.passport_number) AS passport_numbers
                                         FROM 
                                             booking
                                         JOIN
@@ -40,7 +44,11 @@ switch ($method) {
                                         JOIN 
                                             payment ON booking.payment_method = payment.payment_id
                                         JOIN 
+                                            package_info ON package_info.package = package.package_id
+                                        JOIN 
                                             add_on ON booking.add_on = add_on.add_on_id
+                                        JOIN 
+                                            passport_info ON booking.booking_id = passport_info.booking_id
                                     where 
                                         booking.booking_id = :booking_id;";
                 $stmt = $conn->prepare($getTransactionInfo);

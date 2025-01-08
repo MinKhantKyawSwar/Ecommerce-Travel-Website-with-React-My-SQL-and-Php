@@ -4,234 +4,303 @@ import { useNavigate, useParams } from "react-router-dom";
 import { jsPDF } from "jspdf";
 
 const Recipts = () => {
-  const [transactions, setTransactions] = useState([]);
+  const [transactions, setTransactions] = useState(null); // Default state as null\
   const { id } = useParams();
-
   const navigate = useNavigate();
 
+  // Fetch transaction data
   const getTransactionData = async () => {
     try {
       const response = await axios.get(
         `http://localhost:3000/backend/getTransactions.php`,
         {
-          headers: {
-            Recipt: id,
-          },
+          headers: { Recipt: id },
         }
       );
+
       if (response.data.status === 1) {
-        setTransactions(response.data.data[0]);
+        const transactionData = response.data.data[0];
+
+        if (transactionData.role !== "admin") {
+          if (localStorage.getItem("user_id") == transactionData.user_id) {
+            setTransactions(transactionData);
+            console.log(transactionData);
+          } else {
+            navigate("/");
+          }
+        } else {
+          setTransactions(transactionData);
+        }
+      } else {
+        console.error("Invalid transaction status.");
+        navigate("/");
       }
     } catch (error) {
       console.error(
-        "Error:",
+        "Error fetching transaction data:",
         error.response ? error.response.data : error.message
       );
+      navigate("/");
     }
   };
 
   const downloadReceipt = () => {
-    const doc = new jsPDF("p", "mm", "a4"); // portrait, millimeters, and A4 size (210 x 297 mm)
+    const doc = new jsPDF("p", "mm", "a4");
 
-    // Header design with a larger, centered title
-    doc.setFillColor(50, 50, 150); // Blue background
-    doc.rect(0, 0, 210, 40, "F"); // Full-width rectangle at the top
+    // Header with background color and logo
+    doc.setFillColor(0, 0, 0); // Black color
+    doc.rect(0, 0, 210, 35, "F");
     doc.setFont("Helvetica", "bold");
-    doc.setFontSize(28);
+    doc.setFontSize(20); // Larger font size
     doc.setTextColor(255, 255, 255); // White text color
-    doc.text("Trailblazers Receipt", 105, 25, { align: "center" });
+    doc.text("Trailblazers Travel Agency", 105, 14, { align: "center" }); // Centered text
+  
+    // Smaller subheader: "Payment Receipt"
+    doc.setFontSize(14); // Smaller font size
+    doc.setTextColor(255, 255, 255); // Black text color
+    doc.text("Payment Receipt", 105, 28, { align: "center" });
 
-    // Add a subheader with italicized font
-    doc.setFont("Helvetica", "italic");
+    // Booking Date at the top right corner
     doc.setFontSize(12);
-    doc.text("Your journey begins here!", 105, 35, { align: "center" });
-
-    // Reset text color for the rest of the document
-    doc.setTextColor(0, 0, 0);
-
-    // Receipt details section
-    const details = [
-      { label: "Booking ID:", value: String(id) },
-      { label: "User Name:", value: String(transactions.username || "") },
-      {
-        label: "Package Name:",
-        value: String(transactions.package_name || ""),
-      },
-      { label: "Travel Date:", value: String(transactions.travel_date || "") },
-      {
-        label: "Booking Date:",
-        value: String(transactions.booking_date || ""),
-      },
-      { label: "City:", value: String(transactions.city || "") },
-      { label: "Country:", value: String(transactions.country || "") },
-      { label: "Region:", value: String(transactions.region_name || "") },
-      {
-        label: "Payment Method:",
-        value: String(transactions.payment_name || ""),
-      },
-      {
-        label: "Number of People:",
-        value: String(transactions.number_of_people || ""),
-      },
-      { label: "Add-ons:", value: String(transactions.add_ons || "") },
-      { label: "Discount:", value: `${String(transactions.discount || 0)}%` },
-    ];
-
-    // Table layout with a border
-    let yPosition = 50; // Start below the header
-    const marginLeft = 20;
-    const marginRight = 190;
-    const rowHeight = 12;
-
-    // Draw table header with a darker background and larger font
-    doc.setFont("Helvetica", "bold");
-    doc.setFontSize(16);
-    doc.setFillColor(230, 230, 230); // Light gray header background
-    doc.rect(marginLeft, yPosition, marginRight - marginLeft, rowHeight, "F");
-    doc.text("Booking Details", 105, yPosition + 8, { align: "center" });
-
-    yPosition += rowHeight;
-
-    // Draw table rows with alternating colors and improved readability
-    details.forEach((detail, index) => {
-      // Alternating row background color for better readability
-      if (index % 2 === 0) {
-        doc.setFillColor(245, 245, 245); // Light gray
-        doc.rect(
-          marginLeft,
-          yPosition,
-          marginRight - marginLeft,
-          rowHeight,
-          "F"
-        );
-      }
-
-      // Add label and value
-      doc.setFont("Helvetica", "bold");
-      doc.text(`${detail.label}`, marginLeft, yPosition + 8);
-      doc.setFont("Helvetica", "normal");
-      doc.text(`${detail.value}`, 120, yPosition + 8);
-
-      yPosition += rowHeight;
-    });
-
-    // Summary section with bold font and distinct background
-    yPosition += 15;
-    doc.setFont("Helvetica", "bold");
-    doc.setFontSize(16);
-    doc.setFillColor(230, 230, 230); // Light gray background for summary
-    doc.rect(marginLeft, yPosition, marginRight - marginLeft, rowHeight, "F");
-    doc.text("Summary", 105, yPosition + 8, { align: "center" });
-
-    yPosition += rowHeight;
-
-    const summary = [
-      { label: "Total (tax included):", value: `$${transactions.total_price}` },
-    ];
-
-    summary.forEach((item) => {
-      doc.setFont("Helvetica", "bold");
-      doc.text(`${item.label}`, marginLeft, yPosition + 8);
-      doc.setFont("Helvetica", "normal");
-      doc.text(`${item.value}`, 160, yPosition + 8, { align: "right" });
-      yPosition += rowHeight;
-    });
-
-    // Footer design with a more refined look
-    yPosition = 280; // Move to the bottom of the A4 page
-    doc.setFont("Helvetica", "normal");
-    doc.setFontSize(10);
-
-    // Footer background box with rounded corners
-    doc.setFillColor(50, 50, 150); // Blue background
-    doc.rect(0, yPosition - 10, 210, 30, "F");
-
-    // Footer text with refined styling
     doc.setTextColor(255, 255, 255); // White text color
-    const footerText = "Thank you for traveling with Trailblazers!";
-    const contactInfo =
-      "Contact us: support@trailblazers.com | +1-234-567-8900";
+    doc.setFont("Helvetica", "normal");
+    doc.text(
+      `Date: ${String(transactions.booking_date || "")}`,
+      200,
+      28,
+      { align: "right" }
+    );
 
-    doc.text(footerText, 105, yPosition, { align: "center" });
-    doc.text(contactInfo, 105, yPosition + 10, { align: "center" });
+    // Invoice Details Section
+    let yPosition = 50;
+    const marginLeft = 20;
 
-    // Save the PDF with a more user-friendly filename
-    doc.save(`Booking_Invoice_${String(id)}.pdf`);
+    doc.setFontSize(12);
+    doc.setFont("Helvetica", "bold");
+    doc.setTextColor(0, 0, 0); // Black text color
+    doc.text("Invoice To:", marginLeft, yPosition);
+
+    yPosition += 10;
+    const customerDetails = [
+      { label: "User Name", value: String(transactions.username || "") },
+      { label: "Travel Date", value: String(transactions.travel_date || "") },
+      { label: "City", value: String(transactions.city || "") },
+      { label: "Country", value: String(transactions.country || "") },
+      { label: "Region", value: String(transactions.region_name || "") },
+    ];
+
+    customerDetails.forEach((detail) => {
+      doc.setFont("Helvetica", "bold");
+      doc.text(`${detail.label}:`, marginLeft, yPosition);
+      doc.setFont("Helvetica", "normal");
+      doc.text(detail.value, marginLeft + 50, yPosition); // Moved to the right side
+      yPosition += 8;
+    });
+    doc.line(marginLeft, yPosition, 190, yPosition);
+
+    yPosition += 10;
+    
+    doc.setFontSize(12);
+    doc.setFont("Helvetica", "bold");
+    doc.setTextColor(0, 0, 0); // Black text color
+    doc.text("Travellers Information", marginLeft, yPosition);
+    yPosition += 10;
+     
+    const travellersDetails = [...new Set(transactions.full_names.split(","))].map((name, index) => ({
+      label: (index + 1),
+      value: name.trim(),
+    }));
+
+    const travellersPassportDetails = [...new Set(transactions.passport_numbers.split(","))].map((name, index) => ({
+      value: name.trim(),
+    }));
+
+    travellersDetails.forEach((detail, index) => {
+      doc.setFont("Helvetica", "bold");
+      doc.text(`${detail.label}.`, marginLeft+ 10, yPosition);
+      doc.setFont("Helvetica", "normal");
+      doc.text(detail.value, marginLeft + 20, yPosition); // Adjusted position
+      doc.setFont("Helvetica", "normal");
+      doc.text(travellersPassportDetails[index].value, marginLeft + 70, yPosition); // Adjusted position
+      yPosition += 8;
+    });
+    doc.line(marginLeft, yPosition, 190, yPosition);
+
+
+    yPosition += 25;
+    doc.setFont("Helvetica", "bold");
+    doc.text("Purchase Information", marginLeft, yPosition);
+
+    yPosition += 10;
+    doc.setFont("Helvetica", "bold");
+    doc.text("Package Name", marginLeft, yPosition);
+    doc.text("Qty", 100, yPosition, { align: "center" });
+    doc.text("Unit Price", 120, yPosition, { align: "center" });
+    doc.text("Discount", 150, yPosition, { align: "center" });
+    doc.text("Amount", 180, yPosition, { align: "right" });
+
+    yPosition += 5;
+    doc.setLineWidth(0.5);
+    doc.line(marginLeft, yPosition, 190, yPosition);
+
+    const items = [
+      {
+        description: String(transactions.package_name || ""),
+        qty: String(transactions.number_of_people || ""),
+        unitPrice: String(transactions.unit_price || ""),
+        discount: `${String(transactions.discount || 0)}%`,
+        amount: `$${transactions.final_price}`,
+      },
+    ];
+
+    yPosition += 10;
+    items.forEach((item, index) => {
+      if (index % 2 === 0) {
+        // Alternate row shading
+        doc.setFillColor(240, 240, 240); // Light gray
+        doc.rect(marginLeft, yPosition - 5, 170, 8, "F");
+      }
+      doc.setFont("Helvetica", "normal");
+      doc.text(item.description, marginLeft, yPosition);
+      doc.text(item.qty, 100, yPosition, { align: "center" });
+      doc.text(item.unitPrice, 120, yPosition, { align: "center" });
+      doc.text(item.discount, 150, yPosition, { align: "center" });
+      doc.text(item.amount, 180, yPosition, { align: "right" });
+      yPosition += 8;
+    });
+
+    // Total Section
+    yPosition += 10;
+    doc.setFillColor(0, 0, 0); // Black color
+    doc.rect(marginLeft, yPosition, 170, 10, "F");
+
+    doc.setFont("Helvetica", "bold");
+    doc.setTextColor(255, 255, 255); // White text color
+    doc.text("Total", marginLeft + 120, yPosition + 7, { align: "center" });
+    doc.text(`$${transactions.total_price}`, 180, yPosition + 7, {
+      align: "right",
+    });
+
+    // Footer Section
+    yPosition += 20;
+   
+
+    // Add footer background
+    doc.setFillColor(0, 0, 0); // Black
+    doc.rect(0, 265, 210, 40, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(10);
+    doc.setTextColor(255, 255,255);
+    doc.text(
+      "Thank you for choosing Trailblazers Travel Agency. Have a safe journey!",
+      105,
+      275,
+      { align: "center" }
+    );
+    doc.text("Contact: info@trailblazers.com | Phone: +123456789", 105, 283, {
+      align: "center",
+    });
+
+    doc.save("Payment_Receipt.pdf");
   };
 
   useEffect(() => {
     getTransactionData();
   }, []);
+
   return (
-    <>
-      <div className="max-w-lg mx-auto p-6 border border-gray-300 rounded-lg shadow-lg bg-white">
-        <h1 className="text-2xl font-bold text-center text-gray-800 mb-4">
-          Booking Receipt
-        </h1>
+    <div className="max-w-lg mx-auto p-6 border border-gray-300 rounded-lg shadow-lg bg-white">
+      <h1 className="text-2xl font-bold text-center text-gray-800 mb-4">
+        Booking Receipt
+      </h1>
+      {transactions ? (
         <div className="space-y-2">
-          <div className="flex justify-between">
-            <span className="font-semibold">Booking ID:</span>
-            <span>{id}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-semibold">User Name:</span>
-            <span>{transactions.username}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-semibold">Package Name:</span>
-            <span>{transactions.package_name}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-semibold">City:</span>
-            <span>{transactions.city}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-semibold">Country:</span>
-            <span>{transactions.country}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-semibold">Region:</span>
-            <span>{transactions.region_name}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-semibold">Booking Date:</span>
-            <span>{transactions.booking_date}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-semibold">Travel Date:</span>
-            <span>{transactions.travel_date}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-semibold">Number of People:</span>
-            <span>{transactions.number_of_people}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-semibold">Payment Method:</span>
-            <span>{transactions.payment_name}</span>
-          </div>
-
-          <div className="flex justify-between">
-            <span className="font-semibold">Add-ons:</span>
-            <span>{transactions.add_ons}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-semibold">Discount:</span>
-            <span>{transactions.discount}%</span>
-          </div>
-
-          <div className="flex justify-between">
-            <span className="font-semibold">Total Price(tax included):</span>
-            <span>${transactions.total_price}</span>
+          <table className="w-full text-left border-collapse">
+            <tbody>
+              {[
+                { label: "Booking ID", value: id },
+                { label: "User Name", value: transactions.username },
+                { label: "Package Name", value: transactions.package_name },
+                { label: "City", value: transactions.city },
+                { label: "Country", value: transactions.country },
+                { label: "Region", value: transactions.region_name },
+                { label: "Booking Date", value: transactions.booking_date },
+                { label: "Travel Date", value: transactions.travel_date },
+                {
+                  label: "Number of People",
+                  value: transactions.number_of_people,
+                },
+                { label: "Payment Method", value: transactions.payment_name },
+                { label: "Add-ons", value: transactions.add_ons },
+                { label: "Discount", value: `${transactions.discount}%` },
+                {
+                  label: "Total Price (tax included)",
+                  value: `$${transactions.total_price}`,
+                },
+              ].map(({ label, value }, index) => (
+                <tr
+                  key={index}
+                  className={index % 2 === 0 ? "bg-gray-100" : ""}
+                >
+                  <td className="border-b border-gray-300 py-2 px-4 font-semibold">
+                    {label}:
+                  </td>
+                  <td className="border-b border-gray-300 py-2 px-4">
+                    {value || "N/A"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {/* Passport Info */}
+          <div>
+            <p className="mt-5 font-bold text-2xl text-center">
+              Travellers Information
+            </p>
+            <table className="w-full text-left border-collapse mt-4">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="border-b border-gray-300 py-2 px-4 font-semibold">
+                    Traveler
+                  </th>
+                  <th className="border-b border-gray-300 py-2 px-4 font-semibold">
+                    Passport Number
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {[...new Set(transactions.full_names.split(","))].map(
+                  (name, index) => (
+                    <tr
+                      key={index}
+                      className={index % 2 === 0 ? "bg-gray-100" : ""}
+                    >
+                      <td className="border-b border-gray-300 py-2 px-4">
+                        {name.trim()}
+                      </td>
+                      <td className="border-b border-gray-300 py-2 px-4">
+                        {transactions.passport_numbers
+                          .split(",")
+                          [index]?.trim() || "N/A"}
+                      </td>
+                    </tr>
+                  )
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
-        <button
-          className="mt-6 w-full py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition duration-200"
-          onClick={downloadReceipt}
-        >
-          Download PDF Receipt
-        </button>
-      </div>
-    </>
+      ) : (
+        <p>Loading transaction details...</p>
+      )}
+      <button
+        className="mt-6 w-full py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition duration-200"
+        onClick={downloadReceipt}
+        disabled={!transactions}
+      >
+        Download PDF Receipt
+      </button>
+    </div>
   );
 };
 

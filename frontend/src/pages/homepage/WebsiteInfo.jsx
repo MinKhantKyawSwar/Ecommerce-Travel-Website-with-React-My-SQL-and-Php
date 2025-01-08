@@ -8,7 +8,7 @@ const WebsiteInfo = ({ packagesCount, travellers, destinationCount }) => {
         <div className="flex flex-col items-center text-center">
           <h1 className="my-4 font-medium text-4xl "
           >
-            {packagesCount}
+            {packagesCount}+
           </h1>
           <h1 className="font-medium text-lg text-gray-700">
             Available Packages
@@ -21,7 +21,7 @@ const WebsiteInfo = ({ packagesCount, travellers, destinationCount }) => {
            
             className="my-4 font-medium text-4xl "
           >
-            {destinationCount.destination_count}
+            {destinationCount.destination_count}+
           </h1>
           <p className="font-medium text-lg text-gray-700">
             Total Destinations
@@ -33,7 +33,7 @@ const WebsiteInfo = ({ packagesCount, travellers, destinationCount }) => {
           <h1 className="my-4 font-medium text-4xl"
           >
             {Number(travellers.current_month_count) +
-              Number(travellers.previous_month_count)}
+              Number(travellers.previous_month_count)}+
           </h1>
           <p className="font-medium text-lg text-gray-700">
             Monthly Travellers
