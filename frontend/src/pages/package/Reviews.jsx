@@ -422,8 +422,7 @@ const Reviews = ({ id }) => {
                                 {review ? review.description : "No Description"}
                               </p>
                               {review &&
-                                review.user ===
-                                Number(localStorage.getItem("user_id")) ? (
+                                review.user == localStorage.getItem("user_id") ? (
                                 <div className="mt-4 flex space-x-2">
                                   <form method="dialog">
                                     <button
