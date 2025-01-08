@@ -8,10 +8,13 @@ import { format } from "date-fns";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import StyledErrorMessage from "../../utils/StyledErrorMessage";
+import { TailSpin } from "react-loader-spinner";
 
 const Booking = () => {
   const [redirect, setRedirect] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
   const [payment, setPayment] = useState([]);
+  const [order, setOrder] = useState(false);
   const [locationInfo, setLocationInfo] = useState([]);
 
   const [countryData, setCountryData] = useState([]);
@@ -38,6 +41,7 @@ const Booking = () => {
     useState(0);
   const [addOnId, setAddOnId] = useState(0);
   const [discountId, setDiscountId] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const { id } = useParams(); // package id from url
@@ -366,6 +370,29 @@ const Booking = () => {
       );
       setTotalPrice(totalPriceCalculation);
     }
+  };
+
+  const paymentHandler = () => {
+
+      setLoading(true);
+      setOrder(true);
+
+      setTimeout(() => document.getElementById("my_modal_4").close(), 4000);
+    
+  };
+
+  const validateForm = () => {
+    const fullName = document.getElementById("full_name").value;
+    const cardNumber = document.getElementById("card-number-input").value;
+    const cardExpiration = document.getElementById(
+      "card-expiration-input"
+    ).value;
+    const cvv = document.getElementById("cvv-input").value;
+
+    // Check if all required fields are filled and valid
+    const isValid = fullName && cardNumber && cardExpiration && cvv;
+
+    setIsFormValid(isValid);
   };
 
   const submitHandler = async (values) => {
@@ -807,12 +834,171 @@ const Booking = () => {
                 <p className="font-medium text-2xl mt-6">${totalPrice}</p>
               )}
             </div>
-            <button
-              className="text-white bg-orange-400 py-4 font-medium w-full text-center mt-4 rounded-lg hover:bg-sky-700 transition duration-200"
-              type="submit"
-            >
-              Order
-            </button>
+            {!order && (
+              <button
+                className="w-full flex items-center justify-center rounded-lg  px-5 py-2.5 text-sm font-medium  bg-black text-white mt-6"
+                onClick={() =>
+                  document.getElementById("my_modal_4").showModal()
+                }
+              >
+                Pay
+              </button>
+            )}
+            <dialog id="my_modal_4" class="modal">
+              <div class="modal-box w-1/2 max-w-5xl flex justify-center items-center overflow-hidden">
+                <div class="modal-action flex-col items-center">
+                  <section class="bg-white py-8 dark:bg-gray-900 ">
+                    <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+                      <div class="mx-auto max-w-5xl ">
+                        <div class="bg-white rounded-lg shadow-sm dark:bg-gray-800 sm:p-6 lg:max-w-xl">
+                          <h2 class="text-xl font-bold text-gray-900 text-center mb-10 dark:text-white sm:text-2xl">
+                            Complete Your Order
+                          </h2>
+
+                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 mb-6">
+                              <div class="col-span-2 sm:col-span-1">
+                                <label
+                                  for="full_name"
+                                  class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                                >
+                                  Full Name
+                                </label>
+                                <input
+                                  type="text"
+                                  id="full_name"
+                                  class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                                  placeholder="Bonnie Green"
+                                  onChange={validateForm}
+                                  required
+                                />
+                              </div>
+
+                              <div class="col-span-2 sm:col-span-1">
+                                <label
+                                  for="card-number-input"
+                                  class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                                >
+                                  Card Number
+                                </label>
+                                <input
+                                  type="text"
+                                  id="card-number-input"
+                                  class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pe-10 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                                  placeholder="xxxxxxxxxxxxxxxx"
+                                  pattern="^4[0-9]{12}(?:[0-9]{3})?$"
+                                  onChange={validateForm}
+                                  required
+                                  maxLength="16"
+                                />
+                              </div>
+
+                              <div class="col-span-2 sm:col-span-1">
+                                <label
+                                  for="card-expiration-input"
+                                  class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                                >
+                                  Card Expiration
+                                </label>
+                                <input
+                                  type="text"
+                                  id="card-expiration-input"
+                                  class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                                  placeholder="MM/YY"
+                                  onChange={validateForm}
+                                  required
+                                />
+                              </div>
+
+                              <div class="col-span-2 sm:col-span-1">
+                                <label
+                                  for="cvv-input"
+                                  class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                                >
+                                  CVV
+                                </label>
+                                <input
+                                  type="number"
+                                  id="cvv-input"
+                                  class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                                  placeholder="•••"
+                                  minLength={3}
+                                  onChange={validateForm}
+                                  required
+                                />
+                              </div>
+                            </div>
+                            <div class="flex items-center justify-center gap-8">
+                              <img
+                                class="h-8 w-auto dark:hidden"
+                                src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/paypal.svg"
+                                alt=""
+                              />
+                              <img
+                                class="hidden h-8 w-auto dark:flex"
+                                src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/paypal-dark.svg"
+                                alt=""
+                              />
+                              <img
+                                class="h-8 w-auto dark:hidden"
+                                src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/visa.svg"
+                                alt=""
+                              />
+                              <img
+                                class="hidden h-8 w-auto dark:flex"
+                                src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/visa-dark.svg"
+                                alt=""
+                              />
+                              <img
+                                class="h-8 w-auto dark:hidden"
+                                src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/mastercard.svg"
+                                alt=""
+                              />
+                              <img
+                                class="hidden h-8 w-auto dark:flex"
+                                src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/mastercard-dark.svg"
+                                alt=""
+                              />
+                            </div>
+
+                            <div className="modal-action">
+                              <a
+                                className={`w-full flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-medium ${
+                                  isFormValid
+                                    ? "bg-black text-white"
+                                    : "bg-gray-400 text-gray-600 cursor-not-allowed"
+                                } mt-6`}
+                                disabled={!isFormValid}
+                                onClick={paymentHandler}
+                              >
+                                {loading ? (
+                                  <TailSpin
+                                    visible={true}
+                                    height="20"
+                                    width="20"
+                                    color="#FFFFFF"
+                                    ariaLabel="loading-spinner"
+                                  />
+                                ) : (
+                                  <span>Pay Now</span>
+                                )}
+                              </a>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </dialog>
+
+            {order && (
+              <button
+                className="w-full flex items-center justify-center rounded-lg  px-5 py-2.5 text-sm font-medium  bg-black text-white mt-6"
+                type="submit"
+              >
+                Order
+              </button>
+            )}
           </Form>
         )}
       </Formik>
