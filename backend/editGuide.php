@@ -37,7 +37,7 @@ switch ($method) {
             $guideSaveLocation = 'pictures/guide/'; // Directory to save the image
 
             // Process each image upload
-            $guideImageFilePath = !empty($_FILES['guide_image']['name']) ? $packageSaveLocation . uniqid() . '_' . basename($_FILES['guide_image']['name']) : $currentImages['guide_image'];
+            $guideImageFilePath = !empty($_FILES['guide_image']['name']) ? $guideSaveLocation . uniqid() . '_' . basename($_FILES['guide_image']['name']) : $currentImages['guide_image'];
 
             // Move the uploaded files to the target directory if they are uploaded
             if (!empty($_FILES['guide_image']['name'])) {

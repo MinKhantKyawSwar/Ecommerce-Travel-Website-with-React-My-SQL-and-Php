@@ -257,7 +257,7 @@ const Index = () => {
                       with us. Discover new cultures, cuisines, and landscapes
                       all over the globe.
                     </p>
-                    <Link to={'/register'} className="bg-transparent border-2 text-white font-semibold px-8 py-3 rounded-2xl shadow-lg hover:bg-blue-500 transition duration-200 transform hover:scale-105">
+                    <Link to={'/register'} className="bg-transparent border-2 text-white font-semibold px-8 py-3 rounded-2xl shadow-lg hover:bg-neutral-800 transition duration-200 transform hover:scale-105">
                       Start Your Journey
                     </Link>
                   </div>

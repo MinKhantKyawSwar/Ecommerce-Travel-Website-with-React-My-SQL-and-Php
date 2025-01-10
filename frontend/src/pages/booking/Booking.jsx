@@ -300,12 +300,12 @@ const Booking = () => {
         if (Array.isArray(locationInfo)) {
           // Find the location that matches the selected location ID
           const selectedLocation = locationInfo.find(
-            (location) => location.location_id === selectedLocationId
+            (location) => location.location_id == selectedLocationId
           );
 
           // If a matching location is found, set the base price
           if (selectedLocation) {
-            setBasePrice(selectedLocation.price);
+            setBasePrice(Number(selectedLocation.price));
           }
           setTotalPrice(basePrice);
         }
@@ -315,7 +315,7 @@ const Booking = () => {
       if (name === "add_on" && value) {
         const selectedAddOnData = addOn.find((add) => add.add_on === value);
         if (selectedAddOnData) {
-          addOnPrice = selectedAddOnData.price;
+          addOnPrice = Number(selectedAddOnData.price);
           setAddOnId(selectedAddOnData.add_on_id);
           setSelectedAddOnPrice(addOnPrice);
         }
@@ -356,7 +356,7 @@ const Booking = () => {
 
     if (discountAdded) {
       totalPriceCalculation = Math.round(
-        (basePrice + selectedAddOnPrice) * totalPeople
+        (Number(basePrice) + Number(selectedAddOnPrice)) * totalPeople
       );
       priceAfterDiscountCalculation = Math.round(
         totalPriceCalculation * (selectedDiscountPercentage / 100)
