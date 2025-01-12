@@ -138,7 +138,11 @@ const Packages = ({ destination_id, packages, setPackages }) => {
   };
 
   const handleBooking = (id) => {
-    navigate(`/booking/${id}`);
+    if(localStorage.getItem("user_id")){
+      navigate(`/booking/${id}`);
+    }else{
+      navigate(`/register`)
+    }
   };
 
   return (
@@ -168,27 +172,29 @@ const Packages = ({ destination_id, packages, setPackages }) => {
                   key={pkg.package_id}
                   className="border rounded-lg p-4 shadow-md w-full md:w-1/3"
                 >
-                  <button
-                    onClick={() =>
-                      toggleSavedItem(pkg.package_id, pkg.least_price)
-                    }
-                    className="mb-2 px-2 py-2 rounded float-right text-lg"
-                  >
-                    {savedPackages.includes(pkg.package_id) ? (
-                      <FaBookmark />
-                    ) : (
-                      <FaRegBookmark />
-                    )}
-                  </button>
+                  {localStorage.getItem("user_id") && (
+                    <button
+                      onClick={() =>
+                        toggleSavedItem(pkg.package_id, pkg.least_price)
+                      }
+                      className="mb-2 px-2 py-2 rounded float-right text-lg"
+                    >
+                      {savedPackages.includes(pkg.package_id) ? (
+                        <FaBookmark />
+                      ) : (
+                        <FaRegBookmark />
+                      )}
+                    </button>
+                  )}
                   <p className="font-medium text-xl mb-2">{pkg.package_name}</p>
                   <p className="text-sm mb-4">
                     Starting from <b>${pkg.least_price}</b>/per person
                     <br />
                     <b>Facilities:</b> {pkg.facilities}
                     <br />
-                    <b>Meals:</b> {pkg.meals}
+                    <b>Meals:</b> {pkg.meals.length > 30 ? (<>{pkg.meals.substring(0, 30)}...</>) : pkg.meals}
                     <br />
-                    <b>Activities:</b> {pkg.activities.substring(0, 30)}...
+                    <b>Activities:</b> {pkg.activities.length > 30 ? (<>{pkg.activities.substring(0, 30)}...</>) : pkg.activities}
                     <br />
                     <b>Duration:</b> {pkg.duration}
                   </p>
