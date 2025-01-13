@@ -20,11 +20,11 @@ const Recipts = () => {
 
       if (response.data.status === 1) {
         const transactionData = response.data.data[0];
+        console.log(response.data.data[0]);
 
-        if (transactionData.role !== "admin") {
+        if (localStorage.getItem("username") !== "admin") {
           if (localStorage.getItem("user_id") == transactionData.user_id) {
             setTransactions(transactionData);
-            console.log(transactionData);
           } else {
             navigate("/");
           }

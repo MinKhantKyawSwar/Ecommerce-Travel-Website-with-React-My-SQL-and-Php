@@ -156,15 +156,17 @@ const Nav = () => {
                 tabIndex={0}
                 className="menu menu-sm dropdown-content bg-white rounded-lg shadow-md z-10 mt-2 w-52 p-2"
               >
-                <li>
-                  <Link
-                    to="/profile"
-                    className="flex justify-between items-center hover:bg-gray-100"
-                  >
-                    Profile
-                    <span className="badge text-pink-600">New</span>
-                  </Link>
-                </li>
+                { userInfo.role === "customer" &&
+                  (<li>
+                    <Link
+                      to="/profile"
+                      className="flex justify-between items-center hover:bg-gray-100"
+                    >
+                      Profile
+                      <span className="badge text-pink-600">New</span>
+                    </Link>
+                  </li>)
+                }
                 {userInfo.role === "admin" && (
                   <li>
                     <Link
