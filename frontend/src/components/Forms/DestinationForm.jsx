@@ -24,20 +24,20 @@ const DestinationForm = () => {
 
   const { id } = useParams();
 
-    // initial values either from database or ""
-    const initialValues = {
-      city: previousDestination.city || "",
-      country: previousDestination.country || "",
-      region: previousDestination.region || "",
-      description: previousDestination.description || "",
-      category: previousDestination.category || "",
-      accommodation: previousDestination.accommodation || "",
-      destination_image: previousDestination.destination_image || "",
-      destination_second_image:
-        previousDestination.destination_second_image || "",
-      destination_third_image: previousDestination.destination_third_image || "",
-      accommodation_image: previousDestination.accommodation_image || "",
-    };
+  // initial values either from database or ""
+  const initialValues = {
+    city: previousDestination.city || "",
+    country: previousDestination.country || "",
+    region: previousDestination.region || "",
+    description: previousDestination.description || "",
+    category: previousDestination.category || "",
+    accommodation: previousDestination.accommodation || "",
+    destination_image: previousDestination.destination_image || "",
+    destination_second_image:
+      previousDestination.destination_second_image || "",
+    destination_third_image: previousDestination.destination_third_image || "",
+    accommodation_image: previousDestination.accommodation_image || "",
+  };
 
   // getting region info
   const getAllRegion = async () => {
@@ -336,7 +336,7 @@ const DestinationForm = () => {
       );
     }
   };
-  
+
   const goBackHandler = () => {
     navigate(-1);
   };
@@ -421,9 +421,9 @@ const DestinationForm = () => {
         theme="light"
         transition={Slide}
       />
-      <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+      <div className="max-w-lg mx-auto p-10 bg-white rounded-lg shadow-md">
         <button
-          className="text-blue-600 font-medium py-2 px-10 mt-4 rounded-lg border border-blue-600 hover:bg-blue-600 hover:text-white transition duration-200"
+          className="text-neutral-bg-neutral-900 font-medium py-2 px-10 mt-4 rounded-lg border hover:bg-neutral-900 hover:text-white transition duration-200"
           onClick={goBackHandler}
         >
           Go Back
@@ -440,7 +440,7 @@ const DestinationForm = () => {
               method="post"
               encType="multipart/form-data"
             >
-              <h1 className="text-center font-semibold text-3xl my-4 text-blue-600">
+              <h1 className="text-center font-semibold text-3xl my-4 text-neutral-bg-neutral-900">
                 Destination Form
               </h1>
               <div className="mb-4">
@@ -451,7 +451,7 @@ const DestinationForm = () => {
                   type="text"
                   name="city"
                   id="city"
-                  className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="text-lg border-2 py-2 px-3 w-full rounded-lg"
                 />
                 <StyledErrorMessage name="city" />
               </div>
@@ -467,13 +467,16 @@ const DestinationForm = () => {
               />
               <label
                 htmlFor="upload"
-                className="inline-flex items-center justify-center px-4 py-2 mt-2 text-white bg-blue-500 border border-transparent rounded-md shadow-sm cursor-pointer hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+                className="w-full inline-flex items-center justify-center px-4 py-2 mt-2 text-white bg-neutral-900 border border-transparent rounded-md shadow-sm cursor-pointer hover:bg-neutral-900 focus:outline-none"
               >
                 Upload Destination Images
+
+              </label>
+              <span >
                 {3 - selectedImagesCount === 0
                   ? ""
                   : ` (* add ${3 - selectedImagesCount} more images *)`}
-              </label>
+              </span>
               <div className="flex flex-wrap gap-2 mt-4">
                 {previewImages.map((img, index) => (
                   <div
@@ -504,7 +507,7 @@ const DestinationForm = () => {
                   type="text"
                   name="country"
                   id="country"
-                  className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="text-lg border-2 py-2 px-3 w-full rounded-lg"
                 />
                 <StyledErrorMessage name="country" />
               </div>
@@ -517,7 +520,7 @@ const DestinationForm = () => {
                   as="select"
                   name="region"
                   id="region"
-                  className="text-lg border border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="text-lg border py-2 px-3 w-full rounded-lg focus:outline-none focus:border-2 focus:border-black"
                 >
                   <option value="" label="Select one option" />
                   {region.map((region) => (
@@ -539,7 +542,7 @@ const DestinationForm = () => {
                   as="textarea"
                   name="description"
                   id="description"
-                  className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="text-lg border-2 py-2 px-3 w-full rounded-lg"
                   rows="4"
                 />
                 <StyledErrorMessage name="description" />
@@ -553,7 +556,7 @@ const DestinationForm = () => {
                   as="select"
                   name="category"
                   id="category"
-                  className="text-lg border border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="text-lg border py-2 px-3 w-full rounded-lg focus:outline-none  focus:border-2    focus:border-black  "
                 >
                   <option value="" label="Select one option" required />
                   {category.map((category) => (
@@ -575,7 +578,7 @@ const DestinationForm = () => {
                   type="text"
                   name="accommodation"
                   id="accommodation"
-                  className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="text-lg border-2 py-2 px-3 w-full rounded-lg"
                 />
                 <StyledErrorMessage name="accommodation" />
               </div>
@@ -591,7 +594,7 @@ const DestinationForm = () => {
                 />
                 <label
                   htmlFor="accommodation_image"
-                  className="inline-flex items-center justify-center px-4 py-2 mt-2 text-white bg-blue-500 border border-transparent rounded-md shadow-sm cursor-pointer hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+                  className="w-full inline-flex items-center justify-center px-4 py-2 mt-2 text-white bg-neutral-900 border border-transparent rounded-md shadow-sm cursor-pointer hover:bg-neutral-900 focus:outline-none"
                 >
                   Upload Accommodation Image
                 </label>
@@ -621,7 +624,7 @@ const DestinationForm = () => {
               </div>
 
               <button
-                className="text-white bg-blue-600 py-3 font-medium w-full text-center rounded-lg hover:bg-teal-700 transition duration-200"
+                className="text-white bg-neutral-900 py-3 font-medium w-full text-center rounded-lg hover:bg-black transition duration-200"
                 type="submit"
                 disabled={isSubmitting}
               >

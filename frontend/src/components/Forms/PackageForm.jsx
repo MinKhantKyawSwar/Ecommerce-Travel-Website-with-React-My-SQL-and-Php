@@ -361,7 +361,7 @@ const PackageForm = () => {
       />
       <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
         <button
-          className="text-blue-600 font-medium py-2 px-10 mt-4 rounded-lg border border-blue-600 hover:bg-blue-600 hover:text-white transition duration-200"
+          className=" font-medium py-2 px-10 mt-4 rounded-lg border border-neutral-900  hover:bg-neutral-800 hover:text-white transition duration-200"
           onClick={goBackHandler}
         >
           Go Back
@@ -378,7 +378,7 @@ const PackageForm = () => {
               method="post"
               encType="multipart/form-data"
             >
-              <h1 className="text-center font-semibold text-3xl my-4 text-blue-600">
+              <h1 className="text-center font-semibold text-3xl my-4 ">
                 Package Form
               </h1>
               <div className="mb-4">
@@ -389,7 +389,7 @@ const PackageForm = () => {
                   type="text"
                   name="package_name"
                   id="package_name"
-                  className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="text-lg border-2 border-neutral-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-black"
                 />
                 <StyledErrorMessage name="package_name" />
               </div>
@@ -402,7 +402,7 @@ const PackageForm = () => {
                   type="text"
                   name="description"
                   id="description"
-                  className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="text-lg border-2 border-neutral-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-black"
                 />
                 <StyledErrorMessage name="description" />
               </div>
@@ -418,7 +418,7 @@ const PackageForm = () => {
                   type="text"
                   name="flight_description"
                   id="flight_description"
-                  className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="text-lg border-2 border-neutral-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-black"
                 />
                 <StyledErrorMessage name="flight_description" />
               </div>
@@ -434,7 +434,7 @@ const PackageForm = () => {
                 />
                 <label
                   htmlFor="flight_image"
-                  className="inline-flex items-center justify-center px-4 py-2 mt-2 text-white bg-blue-500 border border-transparent rounded-md shadow-sm cursor-pointer hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+                  className="w-full inline-flex items-center justify-center px-4 py-2 mt-2  bg-neutral-800 text-white border border-transparent rounded-md shadow-sm cursor-pointer hover:bg-black focus:outline-none focus:ring-neutral-800 focus:ring-offset-2"
                 >
                   Upload Flight Image
                 </label>
@@ -471,7 +471,7 @@ const PackageForm = () => {
                   type="text"
                   name="facilities"
                   id="facilities"
-                  className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="text-lg border-2 border-neutral-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-black"
                 />
                 <StyledErrorMessage name="facilities" />
               </div>
@@ -487,7 +487,7 @@ const PackageForm = () => {
                 />
                 <label
                   htmlFor="facilities_image"
-                  className="inline-flex items-center justify-center px-4 py-2 mt-2 text-white bg-blue-500 border border-transparent rounded-md shadow-sm cursor-pointer hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+                  className="w-full inline-flex items-center justify-center px-4 py-2 mt-2 bg-neutral-800 text-white border border-transparent rounded-md shadow-sm cursor-pointer hover:bg-black focus:outline-none focus:ring-neutral-800 focus:ring-offset-2"
                 >
                   Upload Facilities Image
                 </label>
@@ -524,7 +524,7 @@ const PackageForm = () => {
                   type="text"
                   name="meals"
                   id="meals"
-                  className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="text-lg border-2 border-neutral-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-black"
                 />
                 <StyledErrorMessage name="meals" />
               </div>
@@ -540,7 +540,7 @@ const PackageForm = () => {
                 />
                 <label
                   htmlFor="meals_image"
-                  className="inline-flex items-center justify-center px-4 py-2 mt-2 text-white bg-blue-500 border border-transparent rounded-md shadow-sm cursor-pointer hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+                  className="w-full inline-flex items-center justify-center px-4 py-2 mt-2 bg-neutral-800 text-white border border-transparent rounded-md shadow-sm cursor-pointer hover:bg-black focus:outline-none focus:ring-neutral-800 focus:ring-offset-2"
                 >
                   Upload Meals Image
                 </label>
@@ -577,7 +577,7 @@ const PackageForm = () => {
                   type="text"
                   name="activities"
                   id="activities"
-                  className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="text-lg border-2 border-neutral-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-black"
                 />
                 <StyledErrorMessage name="activities" />
               </div>
@@ -593,7 +593,7 @@ const PackageForm = () => {
                 />
                 <label
                   htmlFor="activities_image"
-                  className="inline-flex items-center justify-center px-4 py-2 mt-2 text-white bg-blue-500 border border-transparent rounded-md shadow-sm cursor-pointer hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+                  className="w-full inline-flex items-center justify-center px-4 py-2 mt-2 bg-neutral-800 text-white border border-transparent rounded-md shadow-sm cursor-pointer hover:bg-black focus:outline-none focus:ring-neutral-800 focus:ring-offset-2"
                 >
                   Upload activities Image
                 </label>
@@ -630,7 +630,7 @@ const PackageForm = () => {
                   type="number"
                   name="duration"
                   id="duration"
-                  className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="text-lg border-2 border-neutral-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-black"
                 />
                 <StyledErrorMessage name="duration" />
               </div>
@@ -643,7 +643,7 @@ const PackageForm = () => {
                   as="select"
                   name="guide_id"
                   id="guide_id"
-                  className="text-lg border border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="text-lg border border-neutral-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-neutral-800"
                 >
                   <option value="" label="Select one option" required />
                   {guideInfo.map((guide) => (
@@ -657,7 +657,7 @@ const PackageForm = () => {
                 <StyledErrorMessage name="guide" />
               </div>
               <button
-                className="text-white bg-blue-600 py-3 font-medium w-full text-center rounded-lg hover:bg-teal-700 transition duration-200"
+                className="bg-neutral-800 text-white py-3 font-medium w-full text-center rounded-lgtransition duration-200"
                 type="submit"
                 disabled={isSubmitting}
               >

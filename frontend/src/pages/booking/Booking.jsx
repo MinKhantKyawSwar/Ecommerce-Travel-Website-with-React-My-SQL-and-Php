@@ -925,6 +925,7 @@ const Booking = () => {
                                 <label
                                   for="cvv-input"
                                   className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                                  maxLength="3"
                                 >
                                   CVV
                                 </label>

@@ -257,7 +257,7 @@ const ManageDestination = () => {
             {currentDestinations.map((destination, index) => (
               <tbody key={index}>
                 <tr
-                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-200"
+                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-200 cursor-pointer"
                   onClick={() =>
                     toggleDropdown(index, destination.destination_id)
                   }
@@ -327,7 +327,7 @@ const ManageDestination = () => {
                                   >
                                     <div className="flex justify-between items-center hover:underline transition duration-200">
                                       <span
-                                        className="font-medium text-gray-800"
+                                        className="font-medium text-gray-800 cursor-pointer"
                                         onClick={() =>
                                           toggleDetailsDropdown(
                                             packageIndex,

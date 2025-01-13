@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { IoMdArrowBack } from "react-icons/io";
+import { IoArrowBackCircle } from "react-icons/io5";
 
 const PackageDetails = () => {
   const [loading, setLoading] = useState(true);
@@ -60,10 +60,11 @@ const PackageDetails = () => {
         <div className="absolute top-30 z-40 font-semibold flex items-center justify-between">
           <div className="flex items-center justify-center">
             <button
-              className="text-white py-2 px-4 rounded-md transition-all duration-200 hover:underline hover:text-gray-800"
+              className="flex py-2 mt-2 px-6 rounded-lg bg-transparent text-neutral-800 font-medium"
               onClick={goBackHandler}
             >
-              Does not Like it? Check Other Packages
+
+              <IoArrowBackCircle className="text-2xl mr-2"/>Go Back
             </button>
           </div>
         </div>

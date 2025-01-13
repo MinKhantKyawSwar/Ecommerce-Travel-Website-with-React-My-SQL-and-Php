@@ -385,7 +385,7 @@ const Reviews = ({ id }) => {
                                     <img
                                       src={`http://localhost:3000/backend/${review.profile_image}`}
                                       alt="Profile"
-                                      className="w-12 h-12 rounded-full border-2 border-gray-600 mr-4"
+                                      className="w-12 h-12 rounded-full object-cover border-2 border-gray-600 mr-4"
                                     />
                                   ) : (
                                     <p className="text-gray-400">
