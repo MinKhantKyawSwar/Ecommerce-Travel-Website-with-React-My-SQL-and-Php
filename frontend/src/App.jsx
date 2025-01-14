@@ -22,6 +22,7 @@ import PackageDetailsForm from "./components/Forms/PackageDetailsForm";
 import EditPackageDetailsForm from "./components/Forms/EditPackageDetailsForm";
 import ScrollToTopOnNavigation from "./providers/ScrollToTopOnNavigation";
 import ResetPassword from "./components/Auth/ResetPassword";
+import CustomerDetailsPage from "./pages/admin/CustomerDetailsPage";
 
 function App() {
   const router = createBrowserRouter([
@@ -117,6 +118,10 @@ function App() {
         {
           path: "/recipts/:id",
           element: <Recipts />,
+        },
+        {
+          path: "/customerDetails/:userId",
+          element: <CustomerDetailsPage/>,
         },
       ],
     },

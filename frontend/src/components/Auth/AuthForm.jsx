@@ -27,6 +27,7 @@ const AuthForm = ({ isLogin }) => {
     confirmPassword: isLogin ? "" : "",
     profile_image: "/pictures/profile/defaultProfile.png",
     created_at: null,
+    status: "approved"
   };
 
   const passwordRules = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}$/;
@@ -36,9 +37,9 @@ const AuthForm = ({ isLogin }) => {
     username: isLogin
       ? null
       : Yup.string()
-          .min(3, "Username is too short.")
-          .max(20, "Username is too long.")
-          .required("Username is required."),
+        .min(3, "Username is too short.")
+        .max(20, "Username is too long.")
+        .required("Username is required."),
     email: Yup.string()
       .required("Email is required.")
       .email("Please enter a valid email."),
@@ -52,8 +53,8 @@ const AuthForm = ({ isLogin }) => {
     confirmPassword: isLogin
       ? Yup.string().notRequired()
       : Yup.string()
-          .oneOf([Yup.ref("password"), null], "Passwords do not match.")
-          .required("Confirm Password is required."),
+        .oneOf([Yup.ref("password"), null], "Passwords do not match.")
+        .required("Confirm Password is required."),
   });
 
   const resetPasswordHandler = async (values) => {
@@ -107,6 +108,7 @@ const AuthForm = ({ isLogin }) => {
       password,
       profile_image: "/pictures/profile/defaultProfile.png",
       created_at: new Date().toLocaleString(),
+      status: "approved", // Default status for new users
     };
 
     try {
@@ -133,7 +135,7 @@ const AuthForm = ({ isLogin }) => {
       const toastError = (message) => {
         toast.error(message, {
           position: "top-center",
-          autoClose: 500,
+          autoClose: 2000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -144,26 +146,38 @@ const AuthForm = ({ isLogin }) => {
         });
       };
 
+      // Handle different response statuses
       if (response.data.status === 0) {
+        // General error
         toastError(response.data.message);
       } else if (response.data.status === 1) {
+        // Successful login/registration
         updateToken(response.data.token);
         toastFire(response.data.message);
         setTimeout(() => setRedirect(true), 1000);
-      } else if (response.data.status == 6) {
+      } else if (response.data.status === 6) {
+        // Specific error (e.g., validation error)
         toastError(response.data.message);
+      } else if (response.data.status === 2) {
+        // Handle banned users
+        toastError(
+          "Your account has been suspended. Please contact customer support for more information."
+        );
       }
     } catch (error) {
       console.error(
         "Error:",
         error.response ? error.response.data : error.message
       );
+      toastError("An unexpected error occurred. Please try again.");
     }
   };
 
+  // Redirect user on successful login/registration
   if (redirect) {
     return <Navigate to={isLogin ? "/" : "/login"} />;
   }
+
 
   return (
     <>
@@ -324,11 +338,10 @@ const AuthForm = ({ isLogin }) => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`py-3 w-full font-medium text-center rounded-lg text-white ${
-                  isSubmitting
+                className={`py-3 w-full font-medium text-center rounded-lg text-white ${isSubmitting
                     ? "bg-gray-600 cursor-not-allowed"
                     : "bg-gray-800 hover:bg-gray-700"
-                } transition duration-200`}
+                  } transition duration-200`}
               >
                 {isLogin
                   ? `${isSubmitting ? "Submitting..." : "Login"}`

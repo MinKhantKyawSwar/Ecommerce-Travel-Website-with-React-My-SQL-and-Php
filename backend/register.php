@@ -23,6 +23,7 @@ switch ($method) {
             $hashedpassword = password_hash($password, PASSWORD_DEFAULT);
             $created_at = $data->created_at;
             $profile_image = $data->profile_image;
+            $status = $data->status;
 
             // connection to database
             $conn = $db->connect();
@@ -41,7 +42,7 @@ switch ($method) {
                 $response = ['status' => 6, 'message' => "User or email already exists"];
             } else {
                 // adding data into database
-                $sql = "INSERT INTO users (username, email, phone,role,profile_image, password, created_at) VALUES (:username, :email, :phone, :role, :profile_image, :password, :created_at)";
+                $sql = "INSERT INTO users (username, email, phone,role,profile_image, password, created_at, status) VALUES (:username, :email, :phone, :role, :profile_image, :password, :created_at, :status)";
                 $stmt = $conn->prepare($sql);
                 $stmt->bindParam(':username', $username);
                 $stmt->bindParam(':email', $email);
@@ -50,6 +51,7 @@ switch ($method) {
                 $stmt->bindParam(':profile_image', $profile_image);
                 $stmt->bindParam(':password', $hashedpassword);
                 $stmt->bindParam(':created_at', $created_at);
+                $stmt->bindParam(":status", $status);
                 $status = $stmt->execute();
 
                 if ($status) {

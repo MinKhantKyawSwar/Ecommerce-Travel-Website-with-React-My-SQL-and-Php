@@ -35,19 +35,25 @@ switch ($method) {
             if (!password_verify($password, $hashedPassword)) {
                 $response = ['status' => 0, 'message' => "Invalid password"];
             } else {
-                $tokenData = [
-                    'id' => $user['user_id'],
-                    'username' => $user['username'],
-                    'email' => $user['email'],
-                    'exp' => time() + (86400)
-                ];
-
-                $token = base64_encode(json_encode($tokenData));
-                $response = ['status' => 1, 'message' => "Login successful", 'token' => $token, 'id' => $user['user_id'], 'email' => $user['email']];
+                if (strtolower($user['status']) === "approved") { // Case-insensitive check for 'ban'
+                    $tokenData = [
+                        'id' => $user['user_id'],
+                        'username' => $user['username'],
+                        'email' => $user['email'],
+                        'exp' => time() + (86400)
+                    ];
+    
+                    $token = base64_encode(json_encode($tokenData));
+                    $response = ['status' => 1, 'message' => "Login successful", 'token' => $token, 'id' => $user['user_id'], 'email' => $user['email']];
+                } else {
+                    $response = [
+                        'status' => 2,
+                        'message' => "Your account has been suspended for some reason! Please contact our customer service for more information."
+                    ];
+                }
             }
 
             if (!$user) {
-                header("Status: 404");
                 $response = ['status' => 0, 'message' => "User not found"];
             }
         } catch (PDOException $e) {

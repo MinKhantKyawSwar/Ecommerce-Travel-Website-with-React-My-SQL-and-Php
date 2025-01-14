@@ -33,6 +33,49 @@ const ManageCustomer = () => {
     }
   };
 
+  const banHandler = async (userId, currentStatus) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/backend/toggleStatus.php",
+        { user_id: userId },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.data.status === 1) {
+        // Update the customer status in the local state
+        setCustomers((prevCustomers) =>
+          prevCustomers.map((customer) =>
+            customer.user_id === userId
+              ? { ...customer, status: currentStatus === "approved" ? "ban" : "approved" }
+              : customer
+          )
+        );
+        toast.success(response.data.message, {
+          position: "top-center",
+          autoClose: 3000,
+          theme: "light",
+        });
+      } else {
+        toast.error(response.data.message, {
+          position: "top-center",
+          autoClose: 3000,
+          theme: "light",
+        });
+      }
+    } catch (error) {
+      toast.error("An error occurred while updating the status.", {
+        position: "top-center",
+        autoClose: 3000,
+        theme: "light",
+      });
+    }
+  };
+
+
   useEffect(() => {
     getAllCustomerInfo();
   }, []);
@@ -57,61 +100,81 @@ const ManageCustomer = () => {
   return (
     <>
       <div className="p-4 rounded-lg bg-white dark:bg-gray-800 shadow-md">
-        <h2 className="text-lg font-semibold mb-2">Manage Customers</h2>
+        <h2 className="text-lg font-semibold mb-2">All Customers</h2>
         <div>
           <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <table className="w-full text-sm text-left rtl:text-center text-gray-500 dark:text-gray-400 border-collapse">
+              <thead className="text-xs text-gray-500 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                  <th scope="col" className="px-6 py-3">Customer Id</th>
-                  <th scope="col" className="px-6 py-3">Profile</th>
-                  <th scope="col" className="px-6 py-3">UserName</th>
-                  <th scope="col" className="px-6 py-3">Email</th>
+                  <th scope="col" className="w-20 px-3 py-3 text-center">Id</th>
+                  <th scope="col" className="px-6 py-3 text-center">Profile</th>
+                  <th scope="col" className="px-6 py-3">User</th>
                   <th scope="col" className="px-6 py-3">Role</th>
-                  <th scope="col" className="px-6 py-3">Action</th>
+                  <th scope="col" className="px-7 py-3">Action</th>
                 </tr>
               </thead>
-              {currentCustomers.map((customer, index) => (
-                <tbody key={index}>
-                  <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+              <tbody>
+                {currentCustomers.map((customer, index) => (
+                  <tr
+                    key={index}
+                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900"
+                  >
+                    {/* Customer ID */}
                     <th
                       scope="row"
-                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                      className="w-20 px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center"
                     >
                       {customer.user_id}
                     </th>
-                    <th
-                      scope="row"
-                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                    >
-                      <img
-                        src={`http://localhost:3000/backend/${customer.profile_image}`}
-                        alt="profile_image"
-                        className="rounded-full w-10 h-10 border-2 object-cover"
-                      />
-                    </th>
-                    <td className="px-6 py-4">{customer.username}</td>
-                    <td className="px-6 py-4">{customer.email}</td>
-                    <td className="px-6 py-4">{customer.role}</td>
-                    <td className="flex gap-4 px-6 py-6">
-                      <button
-                        onClick={() =>
-                          navigate(`/destination/${customer.destination_id}`)
-                        } // Navigate to the destination details page
-                        className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                      >
-                        Details
-                      </button>
-                      <a
-                        href="#"
-                        className="font-medium text-red-600 dark:text-red-500 hover:underline"
-                      >
-                        Ban
-                      </a>
+
+                    {/* Profile Image */}
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-center">
+                        <img
+                          src={`http://localhost:3000/backend/${customer.profile_image}`}
+                          alt="profile_image"
+                          className="rounded-full w-10 h-10 border-2 object-cover"
+                        />
+                      </div>
+                    </td>
+
+                    {/* Username and Email */}
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col">
+                        <span className="font-medium text-gray-900 dark:text-white">
+                          {customer.username}
+                        </span>
+                        <span className="text-sm text-gray-500">{customer.email}</span>
+                      </div>
+                    </td>
+
+                    {/* Role */}
+                    <td className="py-4">
+                      <span className="inline-block px-2 py-1 text-xs font-medium text-neutral-900 bg-neutral-100 rounded-full dark:bg-neutral-700 dark:text-blue-100">
+                        {customer.role}
+                      </span>
+                    </td>
+
+                    {/* Action Buttons */}
+                    <td className="text-center py-3">
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => navigate(`/customerDetails/${customer.user_id}`)}
+                          className="px-3 py-2 text-xs font-medium text-white bg-neutral-900 rounded-md hover:bg-black"
+                        >
+                          Details
+                        </button>
+                        <button
+                          onClick={() => banHandler(customer.user_id, customer.status)}
+                          className={`px-3 py-2 text-xs font-medium text-white ${customer.status === "ban" ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"} rounded-md`}
+                        >
+                          {customer.status === "ban" ? "Unban" : "Ban"}
+                        </button>
+                      </div>
                     </td>
                   </tr>
-                </tbody>
-              ))}
+                ))}
+              </tbody>
             </table>
           </div>
         </div>
