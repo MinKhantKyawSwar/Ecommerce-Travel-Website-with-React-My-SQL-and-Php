@@ -8,7 +8,9 @@ header("Access-Control-Allow-Methods: *");
 header("Access-Control-Allow-Headers: *");
 
 $eData = file_get_contents('php://input');
+include 'dbconnect.php';
 $db = new dbconnect;
+
 $conn = $db->connect();
 
 $data = json_decode($eData);
@@ -32,11 +34,11 @@ $faq = [
     "Do I need a visa for the tour destination?" => "Visa requirements vary depending on your nationality and the destination. It's best to check with the embassy or consulate before your trip.",
     "How long does the tour last?" => "Tour durations vary, but most tours last between 3 to 14 days, depending on the package you choose.",
     "Can I make changes to my booking after confirmation?" => "Yes, you can make changes to your booking, but please note that changes may incur additional fees depending on the timing and nature of the changes.",
-    "Do I need a passport for the tour destination?" => "Yes, you definately need to take passport along with you.",
+    "Do I need a passport for the tour destination?" => "Yes, you definitely need to take your passport with you.",
     "Is travel insurance included?" => "Travel insurance is not included by default but can be added as an option during the booking process.",
     "Are there any age restrictions for tours?" => "Age restrictions may apply depending on the destination and tour type. Please check the specific tour details for age requirements.",
     "Do you offer tours for solo travelers?" => "Yes, we offer tours for solo travelers. Many of our group tours are suitable for solo adventurers.",
-    "Can I bring my pet on the tour?" => "Pets are generally not allowed on most tours. However, you can call them by choosing add on when booking."
+    "Can I bring my pet on the tour?" => "Pets are generally not allowed on most tours. However, you can call them by choosing the add-on when booking."
 ];
 
 $faq_keywords = [
@@ -60,8 +62,8 @@ $faq_keywords = [
     'pet' => 'Can I bring my pet on the tour?'
 ];
 
-// Function to check keywords in the input message
-function checkKeywords($input_message, $faq_keywords, $faq)
+// Function to check keywords in the input message and provide recommendations
+function checkKeywords($input_message, $faq_keywords, $faq, $destination)
 {
     // Define an array of greetings
     $greetings = [
@@ -87,12 +89,18 @@ function checkKeywords($input_message, $faq_keywords, $faq)
         }
     }
 
+    // If destination-related keywords are found, recommend a related destination
+    foreach ($destination as $dest) {
+        if (strpos(strtolower($input_message), strtolower($dest['destination_image'])) !== false) {
+            return "We recommend visiting " . $dest['destination_image'] . ". It’s a beautiful destination! Would you like more details about it?";
+        }
+    }
+
     return $response_message; // Default response if no match is found
 }
 
 // Get the response based on the input message
-$response_message = checkKeywords($input_message, $faq_keywords, $faq);
-
+$response_message = checkKeywords($input_message, $faq_keywords, $faq, $destination);
 
 // Return the response as JSON
 echo json_encode(['response' => $response_message]);
