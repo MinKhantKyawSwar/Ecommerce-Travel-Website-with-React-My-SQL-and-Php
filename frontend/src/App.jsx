@@ -23,6 +23,7 @@ import EditPackageDetailsForm from "./components/Forms/EditPackageDetailsForm";
 import ScrollToTopOnNavigation from "./providers/ScrollToTopOnNavigation";
 import ResetPassword from "./components/Auth/ResetPassword";
 import CustomerDetailsPage from "./pages/admin/CustomerDetailsPage";
+import Chatbot from "./components/Chatbot";
 
 function App() {
   const router = createBrowserRouter([
@@ -122,6 +123,10 @@ function App() {
         {
           path: "/customerDetails/:userId",
           element: <CustomerDetailsPage/>,
+        },
+        {
+          path: "/chatbot",
+          element: <Chatbot/>,
         },
       ],
     },

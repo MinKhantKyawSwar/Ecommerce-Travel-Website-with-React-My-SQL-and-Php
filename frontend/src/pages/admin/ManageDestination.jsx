@@ -276,7 +276,7 @@ const ManageDestination = () => {
                       onClick={() =>
                         navigate(`/destination/${destination.destination_id}`)
                       }
-                      className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                      className="px-3 py-2 text-xs font-medium text-white bg-neutral-900 rounded-md hover:bg-black"
                     >
                       Details
                     </button>
@@ -287,13 +287,13 @@ const ManageDestination = () => {
                           `/admin/manage-destination/${destination.destination_id}`
                         )
                       }
-                      className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                      className="px-5 py-2 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => deleteById(destination.destination_id)}
-                      className="font-medium text-red-600 dark:text-blue-500 hover:underline"
+                      className="px-3 py-2 text-xs font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
                     >
                       Delete{" "}
                     </button>
@@ -304,21 +304,23 @@ const ManageDestination = () => {
                     <td colSpan="5" className="bg-gray-100 rounded">
                       {openDropdown === index && (
                         <div className="bg-gray-100 rounded-lg shadow-md p-6">
-                          <h3 className="font-semibold text-lg mb-4">
-                            Packages
-                          </h3>
-                          <button
-                            onClick={() => {
-                              setDestinationId(destination.destination_id);
-                              navigate(`/admin/manage-destination/packages/`);
-                            }}
-                            className="font-medium text-blue-600 hover:underline transition duration-200 mb-4"
-                          >
-                            Add package
-                          </button>
+                          <div className="flex gap-10">
+                            <h3 className="font-semibold text-lg mb-4">
+                              Packages
+                            </h3>
+                            <button
+                              onClick={() => {
+                                setDestinationId(destination.destination_id);
+                                navigate(`/admin/manage-destination/packages/`);
+                              }}
+                              className="font-medium text-blue-600 hover:underline transition duration-200 mb-4"
+                            >
+                              Add package
+                            </button>
+                          </div>
                           <ul className="list-disc pl-5">
                             {packages[destination.destination_id]?.length >
-                            0 ? (
+                              0 ? (
                               packages[destination.destination_id].map(
                                 (packageItem, packageIndex) => (
                                   <li
@@ -337,14 +339,14 @@ const ManageDestination = () => {
                                       >
                                         {packageItem.package_name}
                                       </span>
-                                      <div className="flex gap-4">
+                                      <div className="flex gap-4 mr-28">
                                         <button
                                           onClick={() =>
                                             navigate(
                                               `/destination/${packageItem.destination}/package/${packageItem.package_id}`
                                             )
                                           }
-                                          className="font-medium text-blue-600 hover:underline transition duration-200"
+                                          className="px-3 py-2 text-xs font-medium text-white bg-neutral-900 rounded-md hover:bg-black"
                                         >
                                           Details
                                         </button>
@@ -354,7 +356,7 @@ const ManageDestination = () => {
                                               `/admin/manage-destination/packages/${packageItem.package_id}`
                                             )
                                           }
-                                          className="font-medium text-blue-600 hover:underline transition duration-200"
+                                          className="px-5 py-2 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
                                         >
                                           Edit
                                         </button>
@@ -364,7 +366,7 @@ const ManageDestination = () => {
                                               packageItem.package_id
                                             )
                                           }
-                                          className="font-medium text-red-600 hover:underline transition duration-200"
+                                          className="px-3 py-2 text-xs font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
                                         >
                                           Delete
                                         </button>
@@ -438,7 +440,7 @@ const ManageDestination = () => {
                                                           `/admin/manage-destination/packages/manage-package-details/${packageData.package_info_id}`
                                                         )
                                                       }
-                                                      className="w-full sm:w-auto font-medium text-blue-600 hover:underline py-2 px-4 rounded-md border border-blue-600 transition duration-200 hover:bg-blue-600 hover:text-white"
+                                                      className="px-5 py-2 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
                                                     >
                                                       Edit
                                                     </button>
@@ -448,7 +450,7 @@ const ManageDestination = () => {
                                                           packageData.package_info_id
                                                         )
                                                       }
-                                                      className="w-full sm:w-auto font-medium text-red-600 hover:underline py-2 px-4 rounded-md border border-red-600 transition duration-200 hover:bg-red-600 hover:text-white"
+                                                      className="px-3 py-2 text-xs font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
                                                     >
                                                       Delete
                                                     </button>
@@ -514,9 +516,8 @@ const ManageDestination = () => {
                 <li>
                   <button
                     onClick={() => paginate(currentPage - 1)}
-                    className={`px-3 py-2 ml-0 leading-tight text-sm text-gray-900 font-semibold bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 ${
-                      currentPage === 1 ? "cursor-not-allowed opacity-50" : ""
-                    }`}
+                    className={`px-3 py-2 ml-0 leading-tight text-sm text-gray-900 font-semibold bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 ${currentPage === 1 ? "cursor-not-allowed opacity-50" : ""
+                      }`}
                     disabled={currentPage === 1}
                   >
                     Previous
@@ -527,11 +528,10 @@ const ManageDestination = () => {
                   <li key={index}>
                     <button
                       onClick={() => paginate(index + 1)}
-                      className={`px-3 py-2 leading-tight text-sm text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 ${
-                        currentPage === index + 1
+                      className={`px-3 py-2 leading-tight text-sm text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 ${currentPage === index + 1
                           ? "bg-gray-200 text-gray-900 font-semibold"
                           : ""
-                      }`}
+                        }`}
                     >
                       {index + 1}
                     </button>
@@ -540,11 +540,10 @@ const ManageDestination = () => {
                 <li>
                   <button
                     onClick={() => paginate(currentPage + 1)}
-                    className={`px-3 py-2 ml-0 leading-tight text-sm text-gray-900 font-semibold bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 ${
-                      currentPage === totalPages
+                    className={`px-3 py-2 ml-0 leading-tight text-sm text-gray-900 font-semibold bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 ${currentPage === totalPages
                         ? "cursor-not-allowed opacity-50"
                         : ""
-                    }`}
+                      }`}
                     disabled={currentPage === totalPages}
                   >
                     Next

@@ -6,9 +6,9 @@ const ManageGuide = () => {
   const [guides, setGuides] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
-  const [guidesPerPage,setGuidePerPage] = useState(10); // Number of guides per page
+  const [guidesPerPage, setGuidePerPage] = useState(10); // Number of guides per page
   const navigate = useNavigate();
 
   const getAllGuide = async () => {
@@ -89,11 +89,10 @@ const ManageGuide = () => {
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                  <th scope="col" className="px-6 py-3">Id</th>
-                  <th scope="col" className="px-6 py-3">Profile</th>
-                  <th scope="col" className="px-6 py-3">Name</th>
-                  <th scope="col" className="px-6 py-3">Email</th>
-                  <th scope="col" className="px-6 py-3">Action</th>
+                  <th scope="col" className="px-8 py-3">Id</th>
+                  <th scope="col" className="px-8 py-3">Profile</th>
+                  <th scope="col" className="px-8 py-3">Name</th>
+                  <th scope="col" className="px-28 py-3">Action</th>
                 </tr>
               </thead>
               {currentGuides.map((guide, index) => (
@@ -101,28 +100,34 @@ const ManageGuide = () => {
                   <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                     <th
                       scope="row"
-                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                      className="px-8 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                     >
                       {guide.guide_id}
                     </th>
                     <th
                       scope="row"
-                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                      className="px-8 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                     >
                       <img
                         src={`http://localhost:3000/backend/${guide.guide_image}`}
                         alt="guide profile image"
-                        className="rounded-full w-10 h-10 border-2 object-cover"
+                        className="rounded-full w-14 h-14 border-2 object-cover"
                       />
                     </th>
-                    <td className="px-6 py-4">{guide.guide_name}</td>
-                    <td className="px-6 py-4">{guide.email}</td>
-                    <td className="flex gap-4 px-6 py-6">
+                    <td className="px-8 py-4">
+                      <div className="flex flex-col">
+                        <span className="font-medium text-gray-900 dark:text-white">
+                          {guide.guide_name}
+                        </span>
+                        <span className="text-sm text-gray-500">{guide.email}</span>
+                      </div>
+                    </td>
+                    <td className="flex gap-6 px-8 py-4">
                       <button
                         onClick={() =>
                           navigate(`/admin/manage-guide/${guide.guide_id}`)
                         }
-                        className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                        className="px-6 py-3 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
                       >
                         Edit
                       </button>
@@ -130,7 +135,7 @@ const ManageGuide = () => {
                         onClick={() =>
                           deleteGuideById(guide.guide_id)
                         }
-                        className="font-medium text-red-600 hover:underline transition duration-200"
+                        className="px-6 py-3 text-xs font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
                       >
                         Delete
                       </button>
@@ -139,6 +144,7 @@ const ManageGuide = () => {
                 </tbody>
               ))}
             </table>
+
           </div>
         </div>
 

@@ -49,6 +49,50 @@ const CustomerDetailsPage = () => {
         }
     };
 
+    const banHandler = async (userId, currentStatus) => {
+        try {
+            const response = await axios.post(
+                "http://localhost:3000/backend/toggleStatus.php",
+                { user_id: userId },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            if (response.data.status === 1) {
+                // Update the customer status in the local state
+                setCustomers((prevCustomers) =>
+                    prevCustomers.map((customer) =>
+                        customer.user_id === userId
+                            ? { ...customer, status: currentStatus === "approved" ? "ban" : "approved" }
+                            : customer
+                    )
+                );
+
+                toast.success(response.data.message, {
+                    position: "top-center",
+                    autoClose: 3000,
+                    theme: "light",
+                });
+            } else {
+                toast.error(response.data.message, {
+                    position: "top-center",
+                    autoClose: 3000,
+                    theme: "light",
+                });
+            }
+        } catch (error) {
+            toast.error("An error occurred while updating the status.", {
+                position: "top-center",
+                autoClose: 3000,
+                theme: "light",
+            });
+        }
+    };
+
+
     useEffect(() => {
         fetchBookingData();
     }, []);
@@ -62,7 +106,6 @@ const CustomerDetailsPage = () => {
     return (
         <>
             <div className="p-6 rounded-lg bg-white dark:bg-neutral-900 shadow-xl">
-                <h2 className="text-3xl font-semibold text-center text-gray-900 dark:text-white mb-6">Customer Details</h2>
 
                 {/* Customer Info Section */}
                 <div className="flex gap-8 mb-6">
@@ -80,38 +123,35 @@ const CustomerDetailsPage = () => {
                         <h3 className="text-2xl font-semibold text-gray-900 dark:text-white">{customer.username}</h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">{customer.email}</p>
                         <span className="text-sm text-gray-600 dark:text-gray-400">Role: {customer.role}</span>
-
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Joined on: {customer.created_at}</p>
                         {/* Status Badge */}
                         <span
-                            className={`mt-4 px-4 py-2 text-xs font-medium rounded-full ${customer.status === "ban" ? "bg-red-600 text-white" : "bg-green-500 text-white"
+                            className={`mt-4 py-2 text-xs font-medium rounded-full ${customer.status === "ban" ? "bg-red-600 text-white" : "bg-green-500 text-white"
                                 }`}
                         >
-                            {customer.status === "ban" ? "Banned" : "Active"}
+
                         </span>
                     </div>
                 </div>
 
                 {/* Other Details */}
                 <div className="mt-6 space-y-4">
-                    <h4 className="text-xl font-semibold text-gray-900 dark:text-white">Other Details</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Joined on: {customer.created_at}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Last login: {customer.last_login}</p>
                 </div>
 
                 {/* Action Buttons */}
                 <div className="mt-8 flex justify-center gap-6">
                     <button
-                        className="px-6 py-3 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-300 ease-in-out"
+                        className="px-6 py-3 text-sm font-medium text-white bg-neutral-900 rounded-md hover:bg-neutral-900 transition duration-300 ease-in-out"
                         onClick={() => alert("Edit functionality goes here")}
                     >
                         Edit
                     </button>
                     <button
                         className={`px-6 py-3 text-sm font-medium text-white rounded-md transition duration-300 ease-in-out ${customer.status === "ban"
-                                ? "bg-green-600 hover:bg-green-700"
-                                : "bg-red-600 hover:bg-red-700"
+                            ? "bg-green-600 hover:bg-green-700"
+                            : "bg-red-600 hover:bg-red-700"
                             }`}
-                        onClick={() => alert("Toggle ban functionality goes here")}
+                        onClick={() => banHandler(customer.user_id, customer.status)}
                     >
                         {customer.status === "ban" ? "Unban" : "Ban"}
                     </button>
