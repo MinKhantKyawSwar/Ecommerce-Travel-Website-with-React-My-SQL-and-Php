@@ -101,7 +101,11 @@ const Chatbot = () => {
 
   return (
     <div className="flex  justify-center">
-      <div className="flex h-full flex-col w-3/4 h-[500px] p-6 rounded-xl shadow-lg border border-gray-300">
+      <div className="flex h-full flex-col w-3/4 p-6 rounded-xl shadow-lg border border-gray-300">
+      
+     <div className="flex items-center justify-center mb-20">
+      <p className="font-bold text-3xl">Trailblazers Chat Bot</p>
+     </div>
         {/* Random Questions */}
         {showQuestions && (
           <div className="mb-6 space-y-4">
@@ -193,14 +197,16 @@ const Chatbot = () => {
 
           ))}
           {loading && (
-            <DNA
-              visible={true}
-              height="80"
-              width="80"
-              ariaLabel="dna-loading"
-              wrapperStyle={{}}
-              wrapperClass="dna-wrapper"
-            />
+            <div className="flex items-center justify-center">
+              <DNA
+                visible={true}
+                height="80"
+                width="80"
+                ariaLabel="dna-loading"
+                wrapperStyle={{}}
+                wrapperClass="dna-wrapper"
+              />
+            </div>
           )}
         </div>
 
