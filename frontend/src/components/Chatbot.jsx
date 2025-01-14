@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { DNA } from 'react-loader-spinner';
+import botIcon from "../assets/pictures/bot.png"
 
 const faq = [
   "What is the booking process?",
@@ -99,86 +100,127 @@ const Chatbot = () => {
   }, []);
 
   return (
-    <div className="flex flex-col w-full h-[500px] bg-white p-6 rounded-xl shadow-lg border border-gray-300">
-      {/* Random Questions */}
-      {showQuestions && (
-        <div className="mb-6 space-y-4">
-          <h3 className="font-semibold text-xl text-black">Suggested Questions:</h3>
-          <ul className="space-y-3">
-            {questions.map((question, index) => (
-              <li
-                key={index}
-                className="p-3 bg-gray-200 rounded-lg cursor-pointer hover:bg-gray-300 transition-colors"
-                onClick={() => handleQuestionClick(question)}
-              >
-                {question}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto mb-6 space-y-4">
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`p-4 rounded-lg max-w-3/4 ${msg.sender === "user"
-              ? "bg-gray-800 text-white self-end"
-              : "bg-gray-100 text-black self-start"}`}
-          >
-            {
-              !msg.destination ? (
-                <div>{msg.text}</div>
-              ) : (
-                <div className="space-y-4">
-                  <div>{msg.text}</div>
-                  <img
-                    src={`http://localhost:3000/backend/${msg.destination.image}`}
-                    alt="Destination"
-                    className="w-full h-48 object-cover rounded-lg shadow-md"
-                  />
-                  <a
-                    href={msg.destination.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline"
-                  >
-                    More Details
-                  </a>
-                </div>
-              )
-            }
+    <div className="flex  justify-center">
+      <div className="flex h-full flex-col w-3/4 h-[500px] p-6 rounded-xl shadow-lg border border-gray-300">
+        {/* Random Questions */}
+        {showQuestions && (
+          <div className="mb-6 space-y-4">
+            <h3 className="font-semibold text-xl text-black">Suggested Questions:</h3>
+            <ul className="space-y-3">
+              {questions.map((question, index) => (
+                <li
+                  key={index}
+                  className="p-3 bg-gray-200 rounded-lg cursor-pointer hover:bg-gray-300 transition-colors"
+                  onClick={() => handleQuestionClick(question)}
+                >
+                  {question}
+                </li>
+              ))}
+            </ul>
           </div>
-        ))}
-        {loading && (
-          <DNA
-            visible={true}
-            height="80"
-            width="80"
-            ariaLabel="dna-loading"
-            wrapperStyle={{}}
-            wrapperClass="dna-wrapper"
-          />
         )}
-      </div>
 
-      {/* User Input */}
-      <div className="flex items-center space-x-4 mt-4">
-        <input
-          type="text"
-          value={userInput}
-          onChange={(e) => setUserInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          className="flex-1 p-4 border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
-          placeholder="Type a message..."
-        />
-        <button
-          onClick={() => handleSendMessage(userInput)}
-          className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          Send
-        </button>
+        {/* Chat Messages */}
+        <div className="flex-1 mb-6 space-y-4 ">
+          {messages.map((msg, index) => (
+            <div
+              key={index}
+              className="p-4 rounded-lg flex flex-col space-y-2"
+            >
+              {
+                !msg.destination ? (
+                  <div className="flex items-start space-x-2">
+                    {
+                      msg.sender === "user" ? (
+                        <div className="absolute right-60 pr-4">
+                          <div className="flex items-end space-x-2">
+                            <p className="bg-neutral-700 text-white p-2 rounded-lg max-w-xs break-words shadow-lg">
+                              {msg.text}
+                            </p>
+                            <img
+                              src={botIcon}
+                              alt="User Logo"
+                              className="w-8 h-8 rounded-full border-2 border-white"
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-start space-x-2">
+                          <img
+                            src={botIcon}
+                            alt="Bot Logo"
+                            className="w-8 h-8 rounded-full border-2 border-white"
+                          />
+                          <p className="bg-gray-100 text-black p-2 rounded-lg max-w-xs break-words shadow-lg">
+                            {msg.text}
+                          </p>
+                        </div>
+                      )
+                    }
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="flex items-start space-x-2">
+                      <img
+                        src={botIcon}
+                        alt="Bot Logo"
+                        className="w-8 h-8 rounded-full border-2 border-white"
+                      />
+                      <p className="bg-gray-100 text-black p-2 rounded-lg max-w-xs break-words shadow-lg">
+                        {msg.text}
+                      </p>
+                    </div>
+                    <div className="ml-11">
+                      <img
+                        src={`http://localhost:3000/backend/${msg.destination.image}`}
+                        alt="Destination"
+                        className="w-80 h-52 object-cover rounded-lg rounded-b-none shadow-md"
+                      />
+                      <a
+                        href={msg.destination.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn rounded-t-none pt-4 w-80 text-neutral-700 hover:underline block"
+                      >
+                        click here to view details
+                      </a>
+                    </div>
+
+                  </div>
+                )
+              }
+            </div>
+
+          ))}
+          {loading && (
+            <DNA
+              visible={true}
+              height="80"
+              width="80"
+              ariaLabel="dna-loading"
+              wrapperStyle={{}}
+              wrapperClass="dna-wrapper"
+            />
+          )}
+        </div>
+
+        {/* User Input */}
+        <div className="flex items-center space-x-4 mt-4">
+          <input
+            type="text"
+            value={userInput}
+            onChange={(e) => setUserInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="flex-1 p-4 border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
+            placeholder="Type a message..."
+          />
+          <button
+            onClick={() => handleSendMessage(userInput)}
+            className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Send
+          </button>
+        </div>
       </div>
     </div>
 
