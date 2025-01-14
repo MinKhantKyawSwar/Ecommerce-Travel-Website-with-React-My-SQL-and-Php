@@ -6,7 +6,7 @@ import ContactModal from "./Footer Components/ContactModal";
 const Footer = () => {
   return (
     <>
-      <footer className=" p-10 bg-gray-800 text-white py-7">
+      <footer className=" p-10 bg-neutral-900 text-white py-7">
         <div className="footer">
           <nav>
             <h6 className="footer-title">Services</h6>
@@ -26,7 +26,7 @@ const Footer = () => {
             <h6 className="footer-title">Newsletter</h6>
             <fieldset className="form-control w-80">
               <label className="label">
-                <span className="label-text">Enter your email address</span>
+                <span className="label-text text-white">Enter your email address</span>
               </label>
               <div className="join">
                 <input

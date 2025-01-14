@@ -279,7 +279,7 @@ const AuthForm = ({ isLogin }) => {
                     type={showPassword ? "text" : "password"}
                     name="password"
                     id="password"
-                    placeholder="Enter your confirm password"
+                    placeholder="Enter your password"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-gray-200 focus:outline-none"
                   />
                   <button
@@ -341,7 +341,7 @@ const AuthForm = ({ isLogin }) => {
                     <a className="font-semibold underline" href="/login">
                       click here
                     </a>{" "}
-                    to register.
+                    to login.
                   </p>
                 ) : (
                   <p>
@@ -349,7 +349,7 @@ const AuthForm = ({ isLogin }) => {
                     <a className="font-semibold underline" href="/register">
                       click here
                     </a>{" "}
-                    to login.
+                    to register.
                   </p>
                 )}
               </div>

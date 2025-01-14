@@ -294,7 +294,7 @@ const Recipts = () => {
         <p>Loading transaction details...</p>
       )}
       <button
-        className="mt-6 w-full py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition duration-200"
+        className="mt-6 w-full py-2 bg-neutral-800 text-white font-semibold rounded hover:bg-black transition duration-200"
         onClick={downloadReceipt}
         disabled={!transactions}
       >

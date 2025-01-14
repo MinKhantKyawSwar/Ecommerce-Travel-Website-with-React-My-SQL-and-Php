@@ -4,6 +4,8 @@ import { Bounce, Slide, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { PencilSquareIcon } from '@heroicons/react/24/solid'
+
 
 const Profile = () => {
   const { userInfo, setUserInfo, setIsEmail } = useContext(UserContext);
@@ -191,29 +193,33 @@ const Profile = () => {
           {userInfo ? (
             <>
               {!editMode ? (
-                <div className="w-full">
-                  <div className="flex flex-col lg:flex-row items-center lg:items-start">
+                <div className="w-full ">
+                  <div className="flex flex-col lg:flex-row items-center lg:items-start space-x-5 mb-10">
                     <img
                       src={`http://localhost:3000/backend/${userInfo.profile_image}`}
                       alt="profile"
-                      className="w-24 h-24 lg:w-36 lg:h-36 rounded-badge border-4 object-cover mx-auto lg:mx-10 mb-4 lg:mb-0"
+                      className="w-24 h-24 lg:w-48 lg:h-48 rounded-badge border-4 object-cover mx-auto lg:mx-10 mb-4 lg:mb-0"
                     />
-                    <div className="text-center lg:text-left">
-                      <h2 className="text-2xl lg:text-3xl font-bold text-gray-800">
+                    <div className="text-center lg:text-left flex flex-col gap-2 mt-2">
+                      <h2 className="text-2xl lg:text-4xl font-bold text-gray-800 tracking-wide ">
                         {userInfo.username}
                       </h2>
-                      <p className="text-gray-600">{userInfo.email}</p>
+                      <p className="text-gray-600 tracking-wide">{userInfo.email}</p>
                       <p className="text-gray-600">{userInfo.phone}</p>
+                      <div className="flex justify-center lg:justify-start mt-4">
+                        <button
+                          onClick={EditHandler}
+                          className="py-2 px-6 rounded-lg bg-gray-800 text-white hover:bg-gray-700 transition duration-200 flex items-center"
+                        >
+                          <PencilSquareIcon className="w-6 h-6 mr-2" />
+                          Edit Profile
+                        </button>
+                      </div>
                     </div>
+
+
                   </div>
-                  <div className="flex justify-center lg:justify-end mt-6 lg:absolute lg:right-20 lg:top-32">
-                    <button
-                      onClick={EditHandler}
-                      className="py-2 px-6 rounded-lg border border-gray-800 hover:bg-gray-900 hover:text-white transition duration-200"
-                    >
-                      Edit
-                    </button>
-                  </div>
+
                 </div>
               ) : (
                 <div className="w-full">
