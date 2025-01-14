@@ -16,7 +16,7 @@ $conn = $db->connect();
 $data = json_decode($eData);
 $input_message = $data->message;
 
-$destinationSql = "Select * From Destination";
+$destinationSql = "Select destination.*, location.* From destination Join location on destination.location = location.location_id";
 $stmt = $conn->prepare($destinationSql);
 $stmt->execute();
 $destination = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -35,17 +35,16 @@ $faq = [
     "How long does the tour last?" => "Tour durations vary, but most tours last between 3 to 14 days, depending on the package you choose.",
     "Can I make changes to my booking after confirmation?" => "Yes, you can make changes to your booking, but please note that changes may incur additional fees depending on the timing and nature of the changes.",
     "Do I need a passport for the tour destination?" => "Yes, you definitely need to take your passport with you.",
-    "Is travel insurance included?" => "Travel insurance is not included by default but can be added as an option during the booking process.",
+    "Is travel insurance included?" => "Travel insurance is included by default. You do not need to worry about that.",
     "Are there any age restrictions for tours?" => "Age restrictions may apply depending on the destination and tour type. Please check the specific tour details for age requirements.",
     "Do you offer tours for solo travelers?" => "Yes, we offer tours for solo travelers. Many of our group tours are suitable for solo adventurers.",
     "Can I bring my pet on the tour?" => "Pets are generally not allowed on most tours. However, you can call them by choosing the add-on when booking."
 ];
 
 $faq_keywords = [
-    'booking' => 'What is the booking process?',
     'pay' => 'How can I pay for the tours?',
-    'package' => 'What is included in the tour package?',
     'customize' => 'Can I customize my tour?',
+    'package' => 'What is included in the tour package?',
     'cancel' => 'What if I need to cancel my booking?',
     'discount' => 'Are there group discounts available?',
     'pack' => 'What should I pack for the tour?',
@@ -59,12 +58,15 @@ $faq_keywords = [
     'age' => 'Are there any age restrictions for tours?',
     'solo' => 'Do you offer tours for solo travelers?',
     'single' => 'Do you offer tours for solo travelers?',
-    'pet' => 'Can I bring my pet on the tour?'
+    'pet' => 'Can I bring my pet on the tour?',
+    'booking' => 'What is the booking process?'
 ];
+
 
 // Function to check keywords in the input message and provide recommendations
 function checkKeywords($input_message, $faq_keywords, $faq, $destination)
 {
+
     // Define an array of greetings
     $greetings = [
         "Hello! I am Trailblazer. How can I assist you today?",
@@ -74,33 +76,56 @@ function checkKeywords($input_message, $faq_keywords, $faq, $destination)
         "Welcome aboard! I’m Trailblazer. How can I help you with your tour today?",
         "Hello, traveler! I’m here to assist. What do you need help with today?"
     ];
+    
 
     // Randomly select a greeting from the array
     $response_message = $greetings[array_rand($greetings)];
 
-    // Convert the input message to lowercase and check for keywords
+    // Convert the input message to lowercase
     $input_message = strtolower($input_message);
 
     // Check each keyword to see if it exists in the input message
     foreach ($faq_keywords as $keyword => $question) {
         if (strpos($input_message, $keyword) !== false) {
             // If a keyword is found, return the corresponding FAQ answer
-            return $faq[$question];
+            return json_encode([
+                'message' =>  $faq[$question]
+            ]);
         }
     }
 
-    // If destination-related keywords are found, recommend a related destination
-    foreach ($destination as $dest) {
-        if (strpos(strtolower($input_message), strtolower($dest['destination_image'])) !== false) {
-            return "We recommend visiting " . $dest['destination_image'] . ". It’s a beautiful destination! Would you like more details about it?";
-        }
+    // If the user asks for recommendations, select a random destination
+    if (strpos($input_message, 'recommend') !== false || strpos($input_message, 'another') !== false || strpos($input_message, 'suggest') !== false) {
+        $randomDestination = $destination[array_rand($destination)];
+        $city = $randomDestination['city'];
+        $country = $randomDestination['country'];
+        $description = $randomDestination['description'];
+        $destination_img = $randomDestination['destination_image'];
+        $destination_id = $randomDestination['destination_id'];
+
+        // Return the recommendation with image and id for the frontend
+        return json_encode([
+            'message' => "We recommend visiting $city, $country, $description.",
+            'destination_image' => $destination_img,
+            'destination_id' => $destination_id,
+            'destination_link' => "http://localhost:5173/destination/{$destination_id}"
+        ]);
     }
 
-    return $response_message; // Default response if no match is found
+    if (strpos($input_message, 'thanks')!==false) {
+        return json_encode([
+            'message' =>  "You're Welcome. Feel Free to ask me anything you want!"
+        ]);
+    }
+
+    // Default response if no match is found
+    return json_encode(['message' => $response_message]);
 }
+
+sleep(1);
 
 // Get the response based on the input message
 $response_message = checkKeywords($input_message, $faq_keywords, $faq, $destination);
 
 // Return the response as JSON
-echo json_encode(['response' => $response_message]);
+echo $response_message;
