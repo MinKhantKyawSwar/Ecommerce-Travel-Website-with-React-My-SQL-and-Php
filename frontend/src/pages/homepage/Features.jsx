@@ -4,20 +4,30 @@ import travelImgPoster1 from "../../assets/pictures/feature_poster1.png";
 import travelImgPoster2 from "../../assets/pictures/feature_poster2.png";
 import travelImgPoster3 from "../../assets/pictures/discount.gif";
 import { MdOutlineArrowOutward, MdArrowForward } from "react-icons/md";
+import AIvideo from "../../assets/pictures/future.mp4";
 import AboutIndex from "./AboutIndex";
 
 const Features = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:mb-5 h-full md:h-[36rem]">
       {/* Left Side Image */}
-      <div className="relative h-[10rem] md:h-[36rem]">
-        <img
+      <div className="relative h-[10rem] md:h-[30rem]">
+        {/* <img
           src={travelImgPoster1}
           alt="Travel Poster 1"
           className="h-[37rem] w-full object-cover rounded-lg shadow-lg"
+        /> */}
+        <video
+          className="w-full object-cover rounded-2xl"
+          src={AIvideo}
+          autoPlay
+          loop
+          muted
+          playsInline
         />
+
         <Link
-          to="/explore"
+          to="/chatbot"
           className="absolute top-2 right-2 w-10 h-10 md:w-16 md:h-16 bg-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl hover:bg-gray-50"
         >
           <span className="text-2xl md:text-4xl">
@@ -34,7 +44,7 @@ const Features = () => {
         </div>
 
         {/* Image Grid and Buttons */}
-        <div className="rounded-2xl h-[14rem] grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div className="rounded-2xl h-[15rem] grid grid-cols-1 sm:grid-cols-2 gap-4 mt-7">
           {/* Left Image with Register/Explore Button */}
           <div className="relative h-full rounded-2xl">
             <img

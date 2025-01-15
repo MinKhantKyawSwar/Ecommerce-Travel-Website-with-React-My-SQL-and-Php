@@ -2,8 +2,14 @@ import React from "react";
 import TermsOfUseModal from "./Footer Components/TermsOfUseModal";
 import AboutUsModal from "./Footer Components/AboutUsModal";
 import ContactModal from "./Footer Components/ContactModal";
+import botIcon from "../assets/pictures/bot.png"
+import {useNavigate} from "react-router-dom";
 
 const Footer = () => {
+  const navigate = useNavigate();
+  const chatBotHandler = () => {
+    navigate('/chatbot')
+  }
   return (
     <>
       <footer className=" p-10 bg-neutral-900 text-white py-7">
@@ -15,12 +21,12 @@ const Footer = () => {
           </nav>
           <nav>
             <h6 className="footer-title">Company</h6>
-            <AboutUsModal/>
-            <ContactModal/>
+            <AboutUsModal />
+            <ContactModal />
           </nav>
           <nav>
             <h6 className="footer-title">Legal</h6>
-           <TermsOfUseModal/>
+            <TermsOfUseModal />
           </nav>
           <form>
             <h6 className="footer-title">Newsletter</h6>
@@ -38,6 +44,15 @@ const Footer = () => {
               </div>
             </fieldset>
           </form>
+          <div className="absolute right-16">
+            <img
+              src={botIcon}
+              alt="chatbot"
+              className="w-16 hover:scale-110 hover:cursor-pointer transition-transform duration-200 ease-in-out"
+              onClick={() => chatBotHandler()}
+            />
+          </div>
+
         </div>
         <div className="w-full px-4 text-center mt-10">
           <p className="text-sm">

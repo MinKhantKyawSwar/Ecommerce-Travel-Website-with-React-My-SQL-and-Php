@@ -38,7 +38,22 @@ $faq = [
     "Is travel insurance included?" => "Travel insurance is included by default. You do not need to worry about that.",
     "Are there any age restrictions for tours?" => "Age restrictions may apply depending on the destination and tour type. Please check the specific tour details for age requirements.",
     "Do you offer tours for solo travelers?" => "Yes, we offer tours for solo travelers. Many of our group tours are suitable for solo adventurers.",
-    "Can I bring my pet on the tour?" => "Pets are generally not allowed on most tours. However, you can call them by choosing the add-on when booking."
+    "Can I bring my pet on the tour?" => "Pets are generally not allowed on most tours. However, you can call them by choosing the add-on when booking.",
+    "What happens if the tour is canceled by the company?" => "If we cancel the tour, you will receive a full refund or an option to reschedule the tour to another date.",
+    "Are meals included in the package?" => "Most packages include meals, but specific details about meal inclusions are mentioned in the tour itinerary.",
+    "Do you provide airport pickup and drop services?" => "Yes, airport transfers can be included in your package or booked as an add-on during checkout.",
+    "Can I get a detailed itinerary before booking?" => "Yes, we provide a detailed itinerary for all tours on our website. You can also request a personalized itinerary.",
+    "Is it safe to travel to the destination?" => "Safety is our priority. We only organize tours to destinations that are deemed safe for travelers.",
+    "What languages do your guides speak?" => "Our guides are multilingual and typically speak English and the local language of the destination.",
+    "Do you offer special accommodations for disabled travelers?" => "Yes, we strive to accommodate all travelers. Please contact us in advance to discuss your specific needs.",
+    "Can I join a tour if I am traveling from a different city or country?" => "Yes, travelers from different locations can join our tours. You’ll just need to arrange your transportation to the tour's starting point.",
+    "How can I stay updated on upcoming tours and offers?" => "You can subscribe to our newsletter or follow us on social media for updates on tours and exclusive offers.",
+    "What if my flight gets delayed or canceled?" => "If your flight is delayed or canceled, contact us immediately. We’ll do our best to adjust your itinerary accordingly.",
+    "Are there special discounts for students or seniors?" => "Yes, we offer discounts for students and seniors. Please provide valid ID to avail of the discounts.",
+    "Can I extend my stay after the tour?" => "Yes, you can extend your stay after the tour. Contact us to help you arrange accommodations and other services.",
+    "Do you offer adventure tours?" => "Yes, we offer a variety of adventure tours, including hiking, rafting, and safaris. Check the Adventure Tours section on our website.",
+    "Do you provide child-friendly tours?" => "Yes, we have tours designed specifically for families with children. Look for the Family Tours category.",
+    "Can I pay in installments?" => "Yes, we offer installment payment options for selected packages. Contact us for details.",
 ];
 
 $faq_keywords = [
@@ -59,7 +74,22 @@ $faq_keywords = [
     'solo' => 'Do you offer tours for solo travelers?',
     'single' => 'Do you offer tours for solo travelers?',
     'pet' => 'Can I bring my pet on the tour?',
-    'booking' => 'What is the booking process?'
+    'booking' => 'What is the booking process?',
+    'cancel company' => 'What happens if the tour is canceled by the company?',
+    'meals' => 'Are meals included in the package?',
+    'airport' => 'Do you provide airport pickup and drop services?',
+    'itinerary' => 'Can I get a detailed itinerary before booking?',
+    'safe' => 'Is it safe to travel to the destination?',
+    'guide languages' => 'What languages do your guides speak?',
+    'disabled' => 'Do you offer special accommodations for disabled travelers?',
+    'different city' => 'Can I join a tour if I am traveling from a different city or country?',
+    'updates' => 'How can I stay updated on upcoming tours and offers?',
+    'flight delay' => 'What if my flight gets delayed or canceled?',
+    'student discount' => 'Are there special discounts for students or seniors?',
+    'extend stay' => 'Can I extend my stay after the tour?',
+    'adventure' => 'Do you offer adventure tours?',
+    'family' => 'Do you provide child-friendly tours?',
+    'installments' => 'Can I pay in installments?',
 ];
 
 
@@ -76,7 +106,7 @@ function checkKeywords($input_message, $faq_keywords, $faq, $destination)
         "Welcome aboard! I’m Trailblazer. How can I help you with your tour today?",
         "Hello, traveler! I’m here to assist. What do you need help with today?"
     ];
-    
+
 
     // Randomly select a greeting from the array
     $response_message = $greetings[array_rand($greetings)];
@@ -86,7 +116,7 @@ function checkKeywords($input_message, $faq_keywords, $faq, $destination)
 
     // Check each keyword to see if it exists in the input message
     foreach ($faq_keywords as $keyword => $question) {
-        if (strpos($input_message, $keyword) !== false) {
+        if (strpos($input_message, needle: $keyword) !== false) {
             // If a keyword is found, return the corresponding FAQ answer
             return json_encode([
                 'message' =>  $faq[$question]
@@ -111,8 +141,9 @@ function checkKeywords($input_message, $faq_keywords, $faq, $destination)
             'destination_link' => "http://localhost:5173/destination/{$destination_id}"
         ]);
     }
+    
 
-    if (strpos($input_message, 'thanks')!==false) {
+    if (strpos($input_message, 'thanks') !== false) {
         return json_encode([
             'message' =>  "You're Welcome. Feel Free to ask me anything you want!"
         ]);
@@ -121,8 +152,8 @@ function checkKeywords($input_message, $faq_keywords, $faq, $destination)
     // Default response if no match is found
     return json_encode(['message' => $response_message]);
 }
-
-sleep(1);
+usleep(400000);
+// sleep(1);
 
 // Get the response based on the input message
 $response_message = checkKeywords($input_message, $faq_keywords, $faq, $destination);

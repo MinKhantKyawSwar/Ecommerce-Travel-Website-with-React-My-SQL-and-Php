@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { DNA } from 'react-loader-spinner';
+import { DNA,TailSpin } from 'react-loader-spinner';
 import botIcon from "../assets/pictures/bot.png"
 
 const faq = [
@@ -22,6 +22,21 @@ const faq = [
   "Do you offer tours for solo travelers?",
   "Can I bring my pet on the tour?",
   "Can you recommend me a trip?",
+  "What happens if the tour is canceled by the company?",
+  "Are meals included in the package?",
+  "Do you provide airport pickup and drop services?",
+  "Can I get a detailed itinerary before booking?",
+  "Is it safe to travel to the destination?",
+  "What languages do your guides speak?",
+  "Do you offer special accommodations for disabled travelers?",
+  "Can I join a tour if I am traveling from a different city or country?",
+  "How can I stay updated on upcoming tours and offers?",
+  "What if my flight gets delayed or canceled?",
+  "Are there special discounts for students or seniors?",
+  "Can I extend my stay after the tour?",
+  "Do you offer adventure tours?",
+  "Do you provide child-friendly tours?",
+  "Can I pay in installments?"
 ];
 
 const Chatbot = () => {
@@ -125,7 +140,7 @@ const Chatbot = () => {
         )}
 
         {/* Chat Messages */}
-        <div className="flex-1 mb-6 space-y-4 ">
+        <div className="flex-1 mb-5 space-y-4 ">
           {messages.map((msg, index) => (
             <div
               key={index}
@@ -136,7 +151,7 @@ const Chatbot = () => {
                   <div className="flex items-start space-x-2">
                     {
                       msg.sender === "user" ? (
-                        <div className="absolute right-60 pr-4">
+                        <div className="absolute right-20 md:right-60 pr-10 md:pr-4">
                           <div className="flex items-end space-x-2">
                             <p className="bg-neutral-700 text-white p-2 rounded-lg max-w-xs break-words shadow-lg">
                               {msg.text}
@@ -217,14 +232,29 @@ const Chatbot = () => {
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="flex-1 p-4 border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
+            className="flex-1 p-2 border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black bg-gray-50"
             placeholder="Type a message..."
           />
           <button
             onClick={() => handleSendMessage(userInput)}
-            className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-black"
           >
-            Send
+            
+            {
+              loading ? 
+                (<TailSpin
+                  visible={true}
+                  height="24"
+                  width="24"
+                  color="#ffffff"
+                  ariaLabel="tail-spin-loading"
+                  radius="1"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                  />) :
+                ("Send")
+              
+            }
           </button>
         </div>
       </div>
