@@ -215,14 +215,15 @@ const Chatbot = () => {
           ))}
           {loading && (
             <div className="flex items-center justify-center">
-              <DNA
+              {/* <DNA
                 visible={true}
                 height="80"
                 width="80"
                 ariaLabel="dna-loading"
                 wrapperStyle={{}}
                 wrapperClass="dna-wrapper"
-              />
+              /> */}
+              <span className="loading loading-dots loading-lg"></span>
             </div>
           )}
         </div>

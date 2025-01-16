@@ -7,7 +7,9 @@ import FunPlaces from "./FunPlaces";
 import TopRatedDestinations from "./TopRatedDestinations";
 import Features from "./Features";
 import WebsiteInfo from "./WebsiteInfo";
-import TravelImage from "../../assets/pictures/explore_the_world.png";
+import TravelImage1 from "../../assets/pictures/1.png";
+import { motion, useAnimation } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 
 const Home = () => {
     const [destinations, setDestinations] = useState([]);
@@ -218,6 +220,21 @@ const Home = () => {
     // if (loading) return <p className="text-center text-lg">Loading...</p>;
     if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
+
+    const controls = useAnimation();
+    const [ref, inView] = useInView({ threshold: 0.1 }); // Adjust threshold as needed
+
+    useEffect(() => {
+        if (inView) {
+            controls.start("visible");
+        } else {
+            controls.start("hidden");
+        }
+    }, [controls, inView]);
+    const variants = {
+        hidden: { opacity: 0, y: 50 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
+    };
     return (
         <>
             <div className="absolute top-48 right-1/2 transform translate-x-1/2">
@@ -238,10 +255,40 @@ const Home = () => {
                 <>
                     <div>
                         <Hero customers={customers} />
+                        <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+                            {/* Image Section */}
+                            <div className="relative">
+                                <img
+                                    src={TravelImage1}
+                                    alt="Travel"
+                                    className=" h-[35rem] object-cover"
+                                />
+                            </div>
 
-                        <div className="max-w-7xl  mx-auto px-4 py-12">
+                            {/* Text Section */}
+                            <div className="flex flex-col space-y-6 text-center md:text-left">
+                                <motion.h1
+                                    ref={ref}
+                                    className="font-sans text-5xl md:text-6xl font-extrabold leading-tight text-gray-900"
+                                    initial="hidden"
+                                    animate={controls}
+                                    variants={variants}
+                                >
+                                    Discover the world's wonders
+                                    <br /> with us
+                                </motion.h1>
+                                <p className="text-lg text-gray-600">
+                                    Embark on a journey like no other. Explore breathtaking landscapes, rich cultures, and unforgettable experiences with our travel packages.
+                                </p>
+                                <div>
+                                    <button className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 transition">
+                                        Start Your Journey
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
 
-
+                        <div className="max-w-7xl mx-auto px-4 py-12">
                             <div className="mt-10">
                                 <WebsiteInfo
                                     packagesCount={packagesCount}

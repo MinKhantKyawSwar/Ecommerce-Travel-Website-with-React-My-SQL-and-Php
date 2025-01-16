@@ -5,9 +5,9 @@ import {Link} from "react-router-dom"
 const Hero = ({customers}) => {
   return (
     <div>
-      <div className="relative top-0 md:mt-4 w-full mb-12">
+      <div className="relative top-0 md:mt-4 w-full mb-5">
         <video
-          className="w-full md:h-[40rem] object-cover rounded-2xl"
+          className="w-full md:h-[35rem] object-cover rounded-2xl"
           src={video}
           autoPlay
           loop
