@@ -2,44 +2,60 @@ import React from "react";
 import { FaMapLocationDot } from "react-icons/fa6";
 import { LuPackage } from "react-icons/lu";
 import { HiMiniUsers } from "react-icons/hi2";
+import { motion } from 'framer-motion';
+import ScrollNumberAnimation from "./animation/ScrollNumberAnimation";
+
 const WebsiteInfo = ({ packagesCount, travellers, destinationCount }) => {
   return (
     <>
-      <div className="flex flex-wrap justify-evenly items-center gap-6 px-10 py-4 mb-10 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg shadow-inner">
-        {/* Available Packages */}
-        <div className="flex flex-col items-center text-center bg-white shadow-lg rounded-2xl p-6 border-2 border-transparent hover:border-blue-500 hover:shadow-xl transition duration-300 transform hover:scale-105">
-          <div className="text-blue-600 text-5xl mb-4">
-            <LuPackage />
-          </div>
-          <h1 className="text-6xl font-semibold text-blue-600 my-4">
-            {packagesCount}+
-          </h1>
-          <p className="text-lg font-medium text-gray-700">Available Packages</p>
-        </div>
+      <div className="px-10 py-4 rounded-2xl border border-gray-600 mb-10">
+        <p className="text-gray-600 text-3xl font-bold py-5">Track Your Journey: </p>
+        <span >
+          Explore Available Packages, Destinations, Total Travelers, and Active Adventures of our site.
 
-        {/* Total Destinations */}
-        <div className="flex flex-col items-center text-center bg-white shadow-lg rounded-2xl p-6 border-2 border-transparent hover:border-green-500 hover:shadow-xl transition duration-300 transform hover:scale-105">
-          <div className="text-green-600 text-5xl mb-4">
-            <FaMapLocationDot />
-          </div>
-          <h1 className="text-6xl font-semibold text-green-600 my-4">
-            {destinationCount.destination_count}+
-          </h1>
-          <p className="text-lg font-medium text-gray-700">Total Destinations</p>
-        </div>
+        </span>
+        <div className="flex flex-warp items-center justify-between py-10 w-[80%]">
 
-        {/* Monthly Travellers */}
-        <div className="flex flex-col items-center text-center bg-white shadow-lg rounded-2xl p-6 border-2 border-transparent hover:border-purple-500 hover:shadow-xl transition duration-300 transform hover:scale-105">
-          <div className="text-purple-600 text-5xl mb-4">
-            <HiMiniUsers />
+          {/* Available Packages */}
+          <div className="w-[15%] flex flex-col items-center text-center">
+            <div className="flex flex-row">
+              <LuPackage className="text-gray-600 text-5xl mt-6" />
+              <ScrollNumberAnimation targetNumber={80} />
+            </div>
+            <p className="text-sm font-medium text-gray-700">Available Packages</p>
           </div>
-          <h1 className="text-6xl font-semibold text-purple-600 my-4">
-            {Number(travellers.current_month_count) +
-              Number(travellers.previous_month_count)}+
-          </h1>
-          <p className="text-md font-medium text-gray-700">Monthly Travellers</p>
+
+          {/* Total Destinations */}
+          <div className="w-[15%] flex flex-col items-center text-center">
+            <div className="flex flex-row gap-2">
+              <FaMapLocationDot className="text-gray-600 text-5xl mt-5" />
+              <ScrollNumberAnimation targetNumber={27} />
+            </div>
+
+            <p className="text-sm font-medium text-gray-700">Total Destinations</p>
+          </div>
+
+          {/* Monthly Travellers */}
+          <div className="w-[15%] flex flex-col items-center text-center ">
+            <div className="flex  flex-row gap-2">
+              <HiMiniUsers className="text-gray-600 text-5xl mt-6" />
+              {/* {Number(travellers.current_month_count) +
+             Number(travellers.previous_month_count)}+ */}
+              <ScrollNumberAnimation targetNumber={210} />
+            </div>
+            <p className="text-sm font-medium text-gray-700">Monthly Travellers</p>
+          </div>
+          <div className="w-[15%] flex flex-col items-center text-center ">
+            <div className="flex flex-row gap-2">
+              <HiMiniUsers className="text-gray-600 text-5xl mt-6" />
+              <ScrollNumberAnimation targetNumber={100} />
+
+            </div>
+            <p className="text-sm font-medium text-gray-700">Active Users</p>
+          </div>
         </div>
       </div>
+
     </>
   );
 };

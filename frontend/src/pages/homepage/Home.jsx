@@ -253,7 +253,10 @@ const Home = () => {
             </div>
             {!loading && (
                 <>
+
+<div className="relative h-full w-full bg-neutral-900"><div className="absolute inset-0 bg-fuchsia-400 bg-[size:20px_20px] opacity-20 blur-[100px]"></div></div>
                     <div>
+
                         <Hero customers={customers} />
                         <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
                             {/* Image Section */}

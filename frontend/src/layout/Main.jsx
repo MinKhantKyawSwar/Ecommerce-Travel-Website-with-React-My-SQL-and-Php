@@ -4,7 +4,7 @@ import Footer from "../components/Footer";
 
 const Main = () => {
   return (
-    <section className="max-w-[100%] mx-auto py-2 h-screen">
+    <section className="max-w-[100%] mx-auto py-2">
       <Nav />
       <div className="pt-24 px-10 ">
         <Outlet />
