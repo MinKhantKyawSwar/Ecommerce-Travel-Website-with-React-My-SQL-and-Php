@@ -24,6 +24,7 @@ import ScrollToTopOnNavigation from "./providers/ScrollToTopOnNavigation";
 import ResetPassword from "./components/Auth/ResetPassword";
 import CustomerDetailsPage from "./pages/admin/CustomerDetailsPage";
 import Chatbot from "./components/Chatbot";
+import Home from "./pages/homepage/Home";
 
 function App() {
   const router = createBrowserRouter([
@@ -127,6 +128,10 @@ function App() {
         {
           path: "/chatbot",
           element: <Chatbot/>,
+        },
+        {
+          path: "/home",
+          element: <Home/>,
         },
       ],
     },

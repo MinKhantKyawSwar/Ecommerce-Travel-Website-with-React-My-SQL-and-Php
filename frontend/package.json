@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@butterfail/tailwindcss-inverted-radius": "^0.1.2",
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
     "@heroicons/react": "^2.2.0",

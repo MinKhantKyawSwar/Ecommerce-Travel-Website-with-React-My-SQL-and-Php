@@ -7,5 +7,5 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [require('daisyui')],
+  plugins: [require('daisyui'), require('@butterfail/tailwindcss-inverted-radius')]
 }

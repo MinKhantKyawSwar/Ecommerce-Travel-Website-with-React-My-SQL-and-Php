@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
-import { DNA,TailSpin } from 'react-loader-spinner';
-import botIcon from "../assets/pictures/bot.png"
+import { DNA, TailSpin } from 'react-loader-spinner';
+import botIcon from "../assets/pictures/bot.png";
+import { UserContext } from "../providers/UserContext";
 
 const faq = [
   "What is the booking process?",
@@ -40,6 +41,7 @@ const faq = [
 ];
 
 const Chatbot = () => {
+  const { userInfo } = useContext(UserContext);
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState("");
   const [questions, setQuestions] = useState([]);
@@ -117,10 +119,10 @@ const Chatbot = () => {
   return (
     <div className="flex  justify-center">
       <div className="flex h-full flex-col w-3/4 p-6 rounded-xl shadow-lg border border-gray-300">
-      
-     <div className="flex items-center justify-center mb-20">
-      <p className="font-bold text-3xl">Trailblazers Chat Bot</p>
-     </div>
+
+        <div className="flex items-center justify-center mb-20">
+          <p className="font-bold text-3xl">Trailblazers ChatBot</p>
+        </div>
         {/* Random Questions */}
         {showQuestions && (
           <div className="mb-6 space-y-4">
@@ -157,7 +159,7 @@ const Chatbot = () => {
                               {msg.text}
                             </p>
                             <img
-                              src={botIcon}
+                              src={`http://localhost:3000/backend/${userInfo.profile_image}`}
                               alt="User Logo"
                               className="w-8 h-8 rounded-full border-2 border-white"
                             />
@@ -239,9 +241,9 @@ const Chatbot = () => {
             onClick={() => handleSendMessage(userInput)}
             className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-black"
           >
-            
+
             {
-              loading ? 
+              loading ?
                 (<TailSpin
                   visible={true}
                   height="24"
@@ -251,9 +253,9 @@ const Chatbot = () => {
                   radius="1"
                   wrapperStyle={{}}
                   wrapperClass=""
-                  />) :
+                />) :
                 ("Send")
-              
+
             }
           </button>
         </div>
