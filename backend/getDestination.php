@@ -54,18 +54,26 @@ switch ($method) {
             } else {
                 // Query to fetch all destinations
                 $getAllDestinations = "SELECT 
-              destination.*,
-              category.*,
-              location.*,
-              region.*
-        FROM 
-              destination
-        JOIN 
-              category ON destination.category = category.category_id
-        JOIN 
-              location ON destination.location = location.location_id
-        JOIN
-              region ON location.region = region.region_id";
+                    destination.*,
+                    category.*,
+                    location.*,
+                    region.*,
+                    package.*,
+                    MIN(package_info.price) AS least_price
+                FROM 
+                    destination
+                JOIN 
+                    category ON destination.category = category.category_id
+                JOIN 
+                    package ON package.destination = destination.destination_id
+                JOIN 
+                    location ON destination.location = location.location_id
+                JOIN
+                    region ON location.region = region.region_id
+                JOIN 
+                    package_info ON package_info.package = package.package_id
+                GROUP BY 
+                    destination.destination_id";
                 $stmt = $conn->prepare($getAllDestinations);
                 $stmt->execute();
                 $allDestinations = $stmt->fetchAll(PDO::FETCH_ASSOC); // Fetch all rows

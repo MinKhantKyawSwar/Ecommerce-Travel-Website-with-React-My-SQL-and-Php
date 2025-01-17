@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { debounce } from "lodash"; // Import lodash for debouncing
 import { MdOutlineSearch } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 
 const Explore = () => {
   const [destinations, setDestinations] = useState([]);
@@ -14,18 +14,19 @@ const Explore = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredDestinations, setFilteredDestinations] = useState([]);
+  const [priceRange, setPriceRange] = useState([0, 1200]); // Default price range
+  const [maxPrice, setMaxPrice] = useState(1200); // Maximum price available
+  const [currentPage, setCurrentPage] = useState(1); // Track the current page
+  const [destinationPerPage] = useState(9); // Number of destinations per page
 
   const navigate = useNavigate();
 
   // Fetch all destinations
   const getDestinations = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3000/backend/getDestination.php"
-      );
+      const response = await axios.get("http://localhost:3000/backend/getDestination.php");
       if (response.data.status === 1) {
         setDestinations(response.data.data);
-        console.log(response.data.data);
       } else {
         setError("No data found");
       }
@@ -40,10 +41,7 @@ const Explore = () => {
   const handleDetails = async (id) => {
     try {
       setLoading(true); // Show loading for details
-      const response = await axios.get(
-        `http://localhost:3000/backend/getDestination.php?id=${id}`
-      );
-
+      const response = await axios.get(`http://localhost:3000/backend/getDestination.php?id=${id}`);
       if (response.data.status === 1) {
         setSelectedDestination(response.data.data); // Save details of the selected destination
         navigate(`/destination/${id}`);
@@ -58,15 +56,9 @@ const Explore = () => {
   };
 
   // Unique countries and cities for filtering
-  const uniqueCountries = Array.from(
-    new Set(destinations.map((destination) => destination.country))
-  ).sort();
-  const uniqueCities = Array.from(
-    new Set(destinations.map((destination) => destination.city))
-  ).sort();
-  const uniqueCategories = Array.from(
-    new Set(destinations.map((destination) => destination.category_name))
-  ).sort();
+  const uniqueCountries = Array.from(new Set(destinations.map((destination) => destination.country))).sort();
+  const uniqueCities = Array.from(new Set(destinations.map((destination) => destination.city))).sort();
+  const uniqueCategories = Array.from(new Set(destinations.map((destination) => destination.category_name))).sort();
 
   // Handle country checkbox change
   const handleCountryCheckboxChange = (event) => {
@@ -105,38 +97,51 @@ const Explore = () => {
         destination.category_name.toLowerCase().includes(searchQuery);
 
       const matchesCountry =
-        selectedCountries.length === 0 ||
-        selectedCountries.includes(destination.country);
+        selectedCountries.length === 0 || selectedCountries.includes(destination.country);
       const matchesCategory =
-        selectedCategories.length === 0 ||
-        selectedCategories.includes(destination.category_name);
+        selectedCategories.length === 0 || selectedCategories.includes(destination.category_name);
       const matchesCity =
-        selectedCities.length === 0 ||
-        selectedCities.includes(destination.city);
+        selectedCities.length === 0 || selectedCities.includes(destination.city);
+      const matchesPrice =
+        destination.least_price >= priceRange[0] && destination.least_price <= priceRange[1];
 
-      return (
-        matchesSearchQuery && matchesCountry && matchesCity && matchesCategory
-      );
+      return matchesSearchQuery && matchesCountry && matchesCity && matchesCategory && matchesPrice;
     });
 
     setFilteredDestinations(filtered);
-  }, [
-    destinations,
-    searchQuery,
-    selectedCountries,
-    selectedCities,
-    selectedCategories,
-  ]);
+  }, [destinations, searchQuery, selectedCountries, selectedCities, selectedCategories, priceRange]);
 
   // Fetch destinations on initial load
   useEffect(() => {
     getDestinations();
   }, []);
 
+  // Calculate the index of the first and last destination for the current page
+  const indexOfLastDestination = currentPage * destinationPerPage;
+  const indexOfFirstDestination = indexOfLastDestination - destinationPerPage;
+
+  // Slice the filtered destinations for the current page
+  const currentDestinations = filteredDestinations.slice(indexOfFirstDestination, indexOfLastDestination);
+
+  // Pagination controls with scroll-to-top
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo(0, 0); // Scroll to the top of the page
+  };
+
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredDestinations.length / destinationPerPage);
+
+  const handleReset = () => {
+    window.location.reload();
+  };
+
+
+
   return (
     <div className="p-4">
-      <div className="text-center mb-8 flx items-center justify-center">
-    <p className="text-2xl font-semibold">Find your next destination</p>
+      <div className="text-center mb-8 flex items-center justify-center">
+        <p className="text-2xl font-semibold">Find your next destination</p>
         <div className="mt-2">
           <label className="input input-bordered flex items-center gap-2">
             <MdOutlineSearch className="mr-2" />
@@ -153,11 +158,46 @@ const Explore = () => {
       {/* Main Section with Sidebar at the top on smaller screens */}
       <div className="w-full flex flex-col md:flex-row gap-2">
         {/* Sidebar - Moves to top on smaller screens */}
-        <div className="w-full md:w-1/4 px-4 mb-8 md:mb-0">
+        <div className="w-full md:w-1/4 px-4 mb-8">
+          {/* Reset Button */}
+          <div className="mt-6">
+            <button
+              onClick={handleReset}
+              className="w-full py-2 mb-5 text-sm font-semibold text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors duration-200"
+            >
+              Reset Filters
+            </button>
+          </div>
           <div>
-            <p className="text-2xl font-semibold text-gray-900 mb-2">
-              Countries
-            </p>
+            <p className="text-2xl font-semibold text-gray-900 mb-2">Price Range</p>
+            <hr />
+            <div className="py-2">
+              <p className="mb-1 text-sm">{`$${priceRange[0]} - $${priceRange[1]}`}</p>
+              <input
+                type="range"
+                min="0"
+                max={maxPrice}
+                value={priceRange[0]}
+                onChange={(e) =>
+                  setPriceRange([parseFloat(e.target.value), priceRange[1]])
+                }
+                className="w-full accent-gray-900"
+              />
+              <input
+                type="range"
+                min="0"
+                max={maxPrice}
+                value={priceRange[1]}
+                onChange={(e) =>
+                  setPriceRange([priceRange[0], parseFloat(e.target.value)])
+                }
+                className="w-full accent-gray-900 mt-2"
+              />
+            </div>
+          </div>
+
+          <div>
+            <p className="text-2xl font-semibold text-gray-900 mb-2">Countries</p>
             <hr />
             <form>
               <div className="flex flex-wrap py-2">
@@ -170,10 +210,7 @@ const Explore = () => {
                       onChange={handleCountryCheckboxChange}
                       className="mr-2 accent-gray-900"
                     />
-                    <label
-                      htmlFor={`country-${index}`}
-                      className="text-gray-800"
-                    >
+                    <label htmlFor={`country-${index}`} className="text-gray-800">
                       {country}
                     </label>
                   </div>
@@ -183,7 +220,7 @@ const Explore = () => {
           </div>
 
           <div>
-            <p className="text-2xl font-semibold  text-gray-900 mb-2">Cities</p>
+            <p className="text-2xl font-semibold text-gray-900 mb-2">Cities</p>
             <hr />
             <form>
               <div className="flex flex-wrap py-2">
@@ -204,24 +241,23 @@ const Explore = () => {
               </div>
             </form>
           </div>
+
           <div>
-            <p className="text-2xl font-semibold text-gray-900 mb-4">
-              Categories
-            </p>
+            <p className="text-2xl font-semibold text-gray-900 mb-4">Categories</p>
             <hr />
             <form>
               <div className="flex flex-wrap py-2">
-                {uniqueCategories.map((city, index) => (
+                {uniqueCategories.map((category, index) => (
                   <div key={index} className="flex items-center mb-3 w-1/2">
                     <input
                       type="checkbox"
-                      id={`city-${index}`}
-                      name={city}
+                      id={`category-${index}`}
+                      name={category}
                       onChange={handleCategoryCheckboxChange}
                       className="mr-2 accent-gray-900"
                     />
-                    <label htmlFor={`city-${index}`} className="text-gray-800">
-                      {city}
+                    <label htmlFor={`category-${index}`} className="text-gray-800">
+                      {category}
                     </label>
                   </div>
                 ))}
@@ -231,43 +267,81 @@ const Explore = () => {
         </div>
 
         {/* Main Content */}
-        <div className="flex w-full md:w-3/4  justify-start">
-          <div className="grid h-fit grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6">
-            {filteredDestinations.map((destination, index) => (
-              <div
-                key={index}
-                className="p-4 bg-white rounded-md shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300"
-              >
-                <img
-                  src={`http://localhost:3000/backend/${destination.destination_image}`}
-                  alt={destination.country}
-                  className="w-full object-cover rounded-md mb-4"
-                />
-                <div className="text-center">
-                  <h1 className="text-lg font-semibold text-gray-800 mb-2">
-                    {destination.city}
-                  </h1>
-                  <p className="text-sm text-gray-600 font-medium mb-1">
-                    {destination.country}
-                  </p>
-                  <p className="text-sm text-gray-700 mb-3">
-                    {destination.description.length > 24
-                      ? `${destination.description.slice(0, 24)}...`
-                      : destination.description}
-                  </p>
-                </div>
-                <button
-                  className="w-full px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-md hover:bg-gray-700 transition-colors duration-200"
-                  onClick={() => handleDetails(destination.destination_id)}
+        <div className="flex flex-col w-full">
+          <div className="flex w-full h-full justify-start">
+            <div className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {currentDestinations.map((destination, index) => (
+                <div
+                  key={index}
+                  className="p-6 bg-gray-50 rounded-lg shadow-lg transform transition duration-300 hover:bg-white hover:shadow-2xl"
                 >
-                  View Details
+                  <div className="relative overflow-hidden rounded-lg">
+                    <img
+                      src={`http://localhost:3000/backend/${destination.destination_image}`}
+                      alt={destination.country}
+                      className="w-full h-48 object-cover transition-transform duration-300 hover:scale-110 rounded-t-lg"
+                    />
+                  </div>
+                  <div className="text-center mt-4 space-y-2">
+                    <h1 className="text-2xl font-semibold text-gray-800">{destination.city}</h1>
+                    <p className="text-md text-gray-600">{destination.country}</p>
+                    <p className="text-sm text-gray-500">
+                      {destination.description.length > 50
+                        ? `${destination.description.slice(0, 40)}...`
+                        : destination.description}
+                    </p>
+                  </div>
+                  <button
+                    className="w-full py-2 text-sm font-semibold text-white bg-slate-800 rounded-md hover:bg-black transition-colors duration-200 mt-4"
+                    onClick={() => handleDetails(destination.destination_id)}
+                  >
+                    View Details
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Pagination Controls */}
+          <div className="flex justify-center mt-8">
+            <nav className="inline-flex items-center space-x-2">
+              <button
+                onClick={() => paginate(currentPage - 1)}
+                className={`px-4 py-2 text-lg font-semibold text-gray-900 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 transition-all ${currentPage === 1 ? "cursor-not-allowed opacity-50" : ""
+                  }`}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+
+              {/* Page Numbers */}
+              {[...Array(totalPages)].map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => paginate(index + 1)}
+                  className={`px-4 py-2 text-lg font-semibold text-gray-600 bg-white border border-gray-300 hover:bg-gray-100 transition-all ${currentPage === index + 1
+                    ? "bg-gray-200 text-gray-900 font-semibold"
+                    : ""
+                    }`}
+                >
+                  {index + 1}
                 </button>
-              </div>
-            ))}
+              ))}
+
+              <button
+                onClick={() => paginate(currentPage + 1)}
+                className={`px-4 py-2 text-lg font-semibold text-gray-900 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 transition-all ${currentPage === totalPages ? "cursor-not-allowed opacity-50" : ""
+                  }`}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+            </nav>
           </div>
         </div>
       </div>
     </div>
+
   );
 };
 
