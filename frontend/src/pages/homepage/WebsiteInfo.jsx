@@ -9,7 +9,7 @@ const WebsiteInfo = ({ packagesCount, travellers, destinationCount }) => {
   return (
     <>
       <div className="px-10 py-4 rounded-2xl border border-gray-600 mb-10">
-        <p className="text-gray-600 text-3xl font-bold py-5">Track Your Journey: </p>
+        <p className="text-gray-600 text-4xl font-bold py-5">Find Out About Trailblazers! </p>
         <span >
           Explore Available Packages, Destinations, Total Travelers, and Active Adventures of our site.
 

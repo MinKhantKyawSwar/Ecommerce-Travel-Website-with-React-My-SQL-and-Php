@@ -10,10 +10,12 @@ import WebsiteInfo from "./WebsiteInfo";
 import TravelImage1 from "../../assets/pictures/1.png";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import Topdata from "./Topdata";
 
 const Home = () => {
     const [destinations, setDestinations] = useState([]);
     const [topDestinations, setTopDestinations] = useState([]);
+    const [topDataDestinations, setTopDataDestinations] = useState([]);
     const [travellers, setTravellers] = useState([]);
     const [selectedDestination, setSelectedDestination] = useState(null);
 
@@ -166,6 +168,47 @@ const Home = () => {
         }
     };
 
+    const getTopDataDestinations = async () => {
+        try {
+            setLoading(true);
+            const response = await axios.get(
+                "http://localhost:3000/backend/getIndexInfo.php"
+            );
+
+            if (response.data.status === 1) {
+                const destinations = response.data.data;
+
+                // Shuffle the array to get random items
+                const shuffledDestinations = destinations.sort(
+                    () => 0.5 - Math.random()
+                );
+
+                // Filter to get unique destination IDs
+                const uniqueDestinations = [];
+                const destinationIds = new Set();
+
+                for (let destination of shuffledDestinations) {
+                    if (!destinationIds.has(destination.destination_id)) {
+                        uniqueDestinations.push(destination);
+                        destinationIds.add(destination.destination_id);
+                    }
+
+                    // Stop once we have 4 unique destinations
+                    if (uniqueDestinations.length === 3) break;
+                }
+
+                // Set the random destinations
+                setTopDataDestinations(uniqueDestinations);
+            } else {
+                setError("No data found");
+            }
+        } catch (err) {
+            setError("Failed to fetch data: " + err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleDetails = async (id) => {
         try {
             setLoading(true);
@@ -215,6 +258,7 @@ const Home = () => {
         getPackageCount();
         getCustomerCount();
         getDestinationCount();
+        getTopDataDestinations();   
     }, []);
 
     // if (loading) return <p className="text-center text-lg">Loading...</p>;
@@ -253,10 +297,7 @@ const Home = () => {
             </div>
             {!loading && (
                 <>
-
-<div className="relative h-full w-full bg-neutral-900"><div className="absolute inset-0 bg-fuchsia-400 bg-[size:20px_20px] opacity-20 blur-[100px]"></div></div>
                     <div>
-
                         <Hero customers={customers} />
                         <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
                             {/* Image Section */}
@@ -264,7 +305,7 @@ const Home = () => {
                                 <img
                                     src={TravelImage1}
                                     alt="Travel"
-                                    className=" h-[35rem] object-cover"
+                                    className=" h-[42rem] object-cover"
                                 />
                             </div>
 
@@ -272,22 +313,22 @@ const Home = () => {
                             <div className="flex flex-col space-y-6 text-center md:text-left">
                                 <motion.h1
                                     ref={ref}
-                                    className="font-sans text-5xl md:text-6xl font-extrabold leading-tight text-gray-900"
+                                    className="font-sans text-4xl md:text-6xl font-extrabold leading-tight text-gray-900"
                                     initial="hidden"
                                     animate={controls}
                                     variants={variants}
                                 >
                                     Discover the world's wonders
-                                    <br /> with us
                                 </motion.h1>
                                 <p className="text-lg text-gray-600">
                                     Embark on a journey like no other. Explore breathtaking landscapes, rich cultures, and unforgettable experiences with our travel packages.
                                 </p>
                                 <div>
-                                    <button className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 transition">
-                                        Start Your Journey
-                                    </button>
-                                </div>
+                                <Topdata
+                                    topDataDestinations={topDataDestinations}
+                                    handleDetails={handleDetails}
+                                />
+                            </div>
                             </div>
                         </div>
 
