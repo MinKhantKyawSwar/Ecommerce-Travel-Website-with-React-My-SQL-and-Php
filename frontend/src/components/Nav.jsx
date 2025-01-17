@@ -101,7 +101,7 @@ const Nav = () => {
   }, [userInfo, savedArr]);
 
   return (
-    <div className="navbar bg-white text-gray-900 rounded-2xl border border-gray-400 shadow-md fixed top-0 left-0 max-w-[97%] ml-[1.5%] pt-2 mt-6 z-50">
+    <div className="navbar bg-white text-gray-900 rounded-2xl border border-gray-400 shadow-md fixed top-0 left-0 max-w-[97%] ml-[1.5%] pt-2 mt-3 z-50">
       <div className="navbar-start px-4  ">
         <Link
           to="/Explore"
@@ -122,7 +122,7 @@ const Nav = () => {
         <div className="navbar-end px-2 md:px-4 flex items-center space-x-3">
 
           <div className="dropdown dropdown-end">
-            <Link to="/saved-packages">
+            <Link to="/favorite-destinations">
               <div
                 tabIndex={0}
                 role="button"
@@ -133,16 +133,15 @@ const Nav = () => {
                   {savedNoti > 0 ? (
                     <>
                       <IoMdHeart />
-                      <span className="badge badge-sm indicator-item bg-red-500 text-white">
+                      {/* <span className="badge badge-sm indicator-item bg-red-500 text-white">
                         {savedNoti}
-                      </span>
+                      </span> */}
                     </>
                   )
                     : (
                       <>
-                        <IoIosHeartEmpty text/>
+                        <IoIosHeartEmpty />
                       </>
-
                     )
                   }
                 </div>

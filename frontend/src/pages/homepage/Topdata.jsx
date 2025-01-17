@@ -5,7 +5,6 @@ const Topdata = ({ topDataDestinations, handleDetails }) => {
     return (
         <>
             <section className="mb-4">
-
                 {/* Carousel Container */}
                 <div className="carousel carousel-center gap-2 rounded-box relative sm:p-3 lg:p-4">
                     {/* Grid for Destinations */}

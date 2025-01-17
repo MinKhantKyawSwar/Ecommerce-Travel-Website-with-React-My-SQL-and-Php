@@ -17,32 +17,30 @@ switch ($method) {
             // Retrieve all headers
             $data = json_decode($eData);
             $user = $data->user;
-            $package = $data->package;
-            $least_price = $data->least_price;
+            $destination = $data->destination;
             $saved_at = $data->saved_at;
 
             $conn = $db->connect();
             // Check if the package is already saved by the user
-            $checkPackage = "SELECT * FROM saveditems WHERE user = :user AND package = :package";
-            $stmt = $conn->prepare($checkPackage);
+            $checkDestination = "SELECT * FROM favorite_destinations WHERE user = :user AND destination = :destination";
+            $stmt = $conn->prepare($checkDestination);
             $stmt->bindParam(':user', $user);
-            $stmt->bindParam(':package', $package);
+            $stmt->bindParam(':destination', $destination);
             $stmt->execute();
-            $existingPackage = $stmt->fetch(PDO::FETCH_ASSOC);
+            $existingDestination = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($existingPackage) {
-                $response = ['status' => 2, 'message' => "Package already saved!"];
+            if ($existingDestination) {
+                $response = ['status' => 2, 'message' => "destination already saved!"];
             } else {
-                $setSavedItems = "INSERT INTO saveditems (user, package, price, saved_at) VALUES (:user, :package, :least_price, :saved_at)";
-                $stmt = $conn->prepare($setSavedItems);
+                $setFavoriteItems = "INSERT INTO favorite_destinations (user, destination, saved_at) VALUES (:user, :destination, :saved_at)";
+                $stmt = $conn->prepare($setFavoriteItems);
                 $stmt->bindParam(':user', $user);
-                $stmt->bindParam(':package', $package);
+                $stmt->bindParam(':destination', $destination);
                 $stmt->bindParam(':saved_at', $saved_at);
-                $stmt->bindParam(':least_price', $least_price);
                 $status = $stmt->execute();
 
                 if ($status) {
-                    $response = ['status' => 1, 'message' => "Package Successfully saved!"];
+                    $response = ['status' => 1, 'message' => "Destination successfully favorite!"];
                 } else {
                     $response = ['status' => 0, 'message' => "Failed to save package!"];
                 }
@@ -61,38 +59,29 @@ switch ($method) {
                 $user_id = $headers['User-Id'];
 
                 $conn = $db->connect();
-                $getSavedPackages = "
+                $getFavoriteDestinations = "
                         SELECT DISTINCT
-                            saveditems.*,
-                            package.*,
-                            package_info.price,
-                            destination.destination_image,
+                            favorite_destinations.*,
                             destination.*,
                             location.*
                         FROM 
-                            saveditems
+                            favorite_destinations
                         JOIN 
-                            package ON package.package_id = saveditems.package
+                            destination ON destination.destination_id = favorite_destinations.destination
                         JOIN 
-                            package_info ON package_info.package = package.package_id
-                        JOIN 
-                            users ON users.user_id = saveditems.user
-                        JOIN 
-                            destination ON destination.destination_id = package.destination
+                            users ON users.user_id = favorite_destinations.user
                         JOIN 
                             location ON location.location_id = destination.location
                         WHERE 
-                            saveditems.user = :user_id AND
-                            package_info.price = saveditems.price;
-                    ";
-                $stmt = $conn->prepare($getSavedPackages);
+                            favorite_destinations.user = :user_id;";
+                $stmt = $conn->prepare($getFavoriteDestinations);
                 $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
                 $stmt->execute();
 
-                $savedPackages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $favoriteDestination = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                if ($savedPackages) {
-                    $response = ['status' => 1, 'message' => "Data found", 'data' => $savedPackages];
+                if ($favoriteDestination) {
+                    $response = ['status' => 1, 'message' => "Data found", 'data' => $favoriteDestination];
                 } else {
                     $response = ['status' => 0, 'message' => "No packages found."];
                 }
@@ -110,13 +99,13 @@ switch ($method) {
             // Retrieve all headers
             $headers = getallheaders();
             // Check if "User -Id" header exists
-            if (isset($headers['Saved-PackageId'])) {
-                $saved_packageId = $headers['Saved-PackageId'];
+            if (isset($headers['Saved-Destination-Id'])) {
+                $savedDestinationId = $headers['Saved-Destination-Id'];
 
                 $conn = $db->connect();
-                $deleteSavedPackages = "Delete from saveditems where saved_id = :package_id";
+                $deleteSavedPackages = "Delete from favorite_destinations where favorite_destination_id = :destination_id";
                 $stmt = $conn->prepare($deleteSavedPackages);
-                $stmt->bindParam(':package_id', $saved_packageId);
+                $stmt->bindParam(':destination_id', $savedDestinationId, PDO::PARAM_INT);
 
 
                 if ($stmt->execute()) {

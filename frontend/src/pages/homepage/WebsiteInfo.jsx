@@ -8,13 +8,13 @@ import ScrollNumberAnimation from "./animation/ScrollNumberAnimation";
 const WebsiteInfo = ({ packagesCount, travellers, destinationCount }) => {
   return (
     <>
-      <div className="px-10 py-4 rounded-2xl border border-gray-600 mb-10">
+      <div className="px-10 py-4 rounded-2xl border border-gray-600 mb-10 text-center">
         <p className="text-gray-600 text-4xl font-bold py-5">Find Out About Trailblazers! </p>
         <span >
           Explore Available Packages, Destinations, Total Travelers, and Active Adventures of our site.
 
         </span>
-        <div className="flex flex-warp items-center justify-between py-10 w-[80%]">
+        <div className="flex flex-warp items-center justify-between py-10">
 
           {/* Available Packages */}
           <div className="w-[15%] flex flex-col items-center text-center">

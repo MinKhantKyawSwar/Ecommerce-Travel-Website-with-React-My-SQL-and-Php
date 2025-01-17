@@ -1,3 +1,4 @@
+
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,18 +8,11 @@ import FunPlaces from "./FunPlaces";
 import TopRatedDestinations from "./TopRatedDestinations";
 import Features from "./Features";
 import WebsiteInfo from "./WebsiteInfo";
-import TravelImage1 from "../../assets/pictures/1.png";
-import TravelImage2 from "../../assets/pictures/2.png";
-import TravelImage3 from "../../assets/pictures/3.png";
-import TravelImage4 from "../../assets/pictures/4.png";
-import { motion, useAnimation } from "framer-motion";
-import { useInView } from "react-intersection-observer";
-import Topdata from "./Topdata";
+import TravelImage from "../../assets/pictures/explore_the_world.png";
 
-const Index = () => {
+const Home = () => {
   const [destinations, setDestinations] = useState([]);
   const [topDestinations, setTopDestinations] = useState([]);
-  const [topDataDestinations, setTopDataDestinations] = useState([]);
   const [travellers, setTravellers] = useState([]);
   const [selectedDestination, setSelectedDestination] = useState(null);
 
@@ -171,47 +165,6 @@ const Index = () => {
     }
   };
 
-  const getTopDataDestinations = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(
-        "http://localhost:3000/backend/getIndexInfo.php"
-      );
-
-      if (response.data.status === 1) {
-        const destinations = response.data.data;
-
-        // Shuffle the array to get random items
-        const shuffledDestinations = destinations.sort(
-          () => 0.5 - Math.random()
-        );
-
-        // Filter to get unique destination IDs
-        const uniqueDestinations = [];
-        const destinationIds = new Set();
-
-        for (let destination of shuffledDestinations) {
-          if (!destinationIds.has(destination.destination_id)) {
-            uniqueDestinations.push(destination);
-            destinationIds.add(destination.destination_id);
-          }
-
-          // Stop once we have 4 unique destinations
-          if (uniqueDestinations.length === 3) break;
-        }
-
-        // Set the random destinations
-        setTopDataDestinations(uniqueDestinations);
-      } else {
-        setError("No data found");
-      }
-    } catch (err) {
-      setError("Failed to fetch data: " + err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleDetails = async (id) => {
     try {
       setLoading(true);
@@ -261,47 +214,10 @@ const Index = () => {
     getPackageCount();
     getCustomerCount();
     getDestinationCount();
-    getTopDataDestinations();
   }, []);
 
   // if (loading) return <p className="text-center text-lg">Loading...</p>;
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
-
-
-  // animations
-  const controls = useAnimation();
-  const [ref, inView] = useInView({ threshold: 0.1 }); // Adjust threshold as needed
-
-  useEffect(() => {
-    if (inView) {
-      controls.start("visible");
-    } else {
-      controls.start("hidden");
-    }
-  }, [controls, inView]);
-  const variants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
-  };
-
-  // travel image carousel
-  const images = [TravelImage1, TravelImage2, TravelImage3, TravelImage4];
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-
-  const nextSlide = () => {
-    setIsTransitioning(true);
-
-    setTimeout(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length); // Loop to the first image after the last
-      setIsTransitioning(false);
-    }, 1500); // Match this timeout to the CSS transition duration
-  };
-
-  useEffect(() => {
-    const interval = setInterval(nextSlide, 5000); // Slide every 3 seconds
-    return () => clearInterval(interval); // Cleanup interval on unmount
-  }, []);
 
   return (
     <>
@@ -323,59 +239,41 @@ const Index = () => {
         <>
           <div>
             <Hero customers={customers} />
-            <div className="mt-6 max-w-7xl mx-auto px-6 py-6 grid grid-cols-1 md:grid-cols-2 items-center">
-              {/* Image Section */}
-              <div className="relative overflow-hidden h-[36rem]">
-                <div
-                  className={`flex h-full transition-transform duration-[1500ms] ease-in-out ${
-                    isTransitioning ? `transform -translate-x-${currentIndex * 100}%` : ""
-                  }`}
-                  style={{
-                    transform: `translateX(-${currentIndex * 100}%)`, // Move to the current index
-                  }}
-                >
-                  {images.map((image, index) => (
-                    <div key={index} className="w-full h-full flex-shrink-0">
-                      <img
-                        src={image}
-                        alt={`Slide ${index + 1}`}
-                        className="ml-24 h-full object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Text Section */}
-              <div className="flex flex-col text-center md:text-left ">
-                <motion.h1
-                  ref={ref}
-                  className="pb-10 mt-10 font-sans text-4xl md:text-6xl font-extrabold leading-tight text-gray-900"
-                  initial="hidden"
-                  animate={controls}
-                  variants={variants}
-                >
-                  Discover the world's wonders
-                </motion.h1>
-                <p className="text-lg text-gray-600">
-                  Embark on a journey like no other. Explore breathtaking landscapes, rich cultures, and unforgettable experiences with our travel packages.
-                </p>
-                <div>
-                  <Topdata
-                    topDataDestinations={topDataDestinations}
-                    handleDetails={handleDetails}
-                  />
-                </div>
-              </div>
-            </div>
 
             <div className="max-w-7xl mx-auto px-4 py-12">
-              <div className="">
+              <div className="relative">
+                {/* Hero Section */}
+                <div
+                  className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 text-white text-center rounded-2xl py-20 px-6 sm:px-8 lg:px-12 bg-cover bg-center relative"
+                  style={{ backgroundImage: `url(${TravelImage})` }}
+                >
+
+                  {/* Content Section */}
+                  <div className="relative z-10">
+                    <div className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
+                     <p> Explore the World</p>
+                    </div>
+                    <p className="text-lg sm:text-xl mb-8 max-w-2xl mx-auto">
+                      Find the best destinations and plan your next adventure
+                      with us. Discover new cultures, cuisines, and landscapes
+                      all over the globe.
+                    </p>
+                    <Link to={'/register'} className="bg-transparent border-2 text-white font-semibold px-8 py-3 rounded-2xl shadow-lg hover:bg-neutral-800 transition duration-200 transform hover:scale-105">
+                      Start Your Journey
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-10">
                 <WebsiteInfo
                   packagesCount={packagesCount}
                   travellers={travellers}
                   destinationCount={destinationCount}
                 />
+              </div>
+              <div className="mb-20">
+                <Features />
               </div>
               <div>
                 <TopRatedDestinations
@@ -383,10 +281,6 @@ const Index = () => {
                   handleDetails={handleDetails}
                 />
               </div>
-              <div className="mb-20">
-                <Features />
-              </div>
-
               <div>
                 <FunPlaces
                   destinations={destinations}
@@ -401,4 +295,5 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Home;
+
