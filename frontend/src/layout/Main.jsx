@@ -4,15 +4,20 @@ import Footer from "../components/Footer";
 
 const Main = () => {
   return (
-    <section className="max-w-[100%] mx-auto py-2">
+    <div className="flex flex-col min-h-screen">
+      {/* Navigation */}
       <Nav />
-      <div className="pt-24 px-10 ">
+
+      {/* Main Content */}
+      <main className="flex-grow pt-24 px-10">
         <Outlet />
-      </div>
-      <div className="px-0 pt-5">
+      </main>
+
+      {/* Footer */}
+      <footer className="my-0">
         <Footer />
-      </div>
-    </section>
+      </footer>
+    </div>
   );
 };
 

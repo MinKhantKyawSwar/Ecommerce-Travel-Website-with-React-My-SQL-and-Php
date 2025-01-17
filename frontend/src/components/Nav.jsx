@@ -2,7 +2,9 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../providers/UserContext";
 import axios from "axios";
-import { FaRegBookmark } from "react-icons/fa";
+import { FaRegBookmark, FaBookmark } from "react-icons/fa";
+import { IoIosHeartEmpty, IoMdHeart } from "react-icons/io";
+
 
 const Nav = () => {
   const {
@@ -94,7 +96,7 @@ const Nav = () => {
     }
   }, [token]); // Dependency on token
 
-  useEffect(() => { 
+  useEffect(() => {
     fetchSavedItemsCount();
   }, [userInfo, savedArr]);
 
@@ -118,6 +120,35 @@ const Nav = () => {
       </div>
       {token ? (
         <div className="navbar-end px-2 md:px-4 flex items-center space-x-3">
+
+          <div className="dropdown dropdown-end">
+            <Link to="/saved-packages">
+              <div
+                tabIndex={0}
+                role="button"
+                className="btn btn-ghost btn-circle hover:bg-gray-100"
+              >
+                <div className="indicator text-2xl">
+                  {/* Display saved notification badge */}
+                  {savedNoti > 0 ? (
+                    <>
+                      <IoMdHeart />
+                      <span className="badge badge-sm indicator-item bg-red-500 text-white">
+                        {savedNoti}
+                      </span>
+                    </>
+                  )
+                    : (
+                      <>
+                        <IoIosHeartEmpty text/>
+                      </>
+
+                    )
+                  }
+                </div>
+              </div>
+            </Link>
+          </div>
           <div className="dropdown dropdown-end">
             <Link to="/saved-packages">
               <div
@@ -126,13 +157,21 @@ const Nav = () => {
                 className="btn btn-ghost btn-circle hover:bg-gray-100"
               >
                 <div className="indicator text-lg">
-                  <FaRegBookmark />
                   {/* Display saved notification badge */}
-                  {savedNoti > 0 && (
-                    <span className="badge badge-sm indicator-item bg-red-500 text-white">
-                      {savedNoti}
-                    </span>
-                  )}
+                  {savedNoti > 0 ? (
+                    <>
+                      <FaBookmark />
+                      <span className="badge badge-sm indicator-item bg-red-500 text-white">
+                        {savedNoti}
+                      </span>
+                    </>
+                  )
+                    : (
+                      <>
+                        <FaRegBookmark />
+                      </>
+                    )
+                  }
                 </div>
               </div>
             </Link>
@@ -156,7 +195,7 @@ const Nav = () => {
                 tabIndex={0}
                 className="menu menu-sm dropdown-content bg-white rounded-lg shadow-md z-10 mt-2 w-52 p-2"
               >
-                { userInfo.role === "customer" &&
+                {userInfo.role === "customer" &&
                   (<li>
                     <Link
                       to="/profile"

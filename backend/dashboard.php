@@ -151,7 +151,7 @@ switch ($method) {
                                     users.username
                                 ORDER BY 
                                     total_spent DESC
-                                LIMIT 5;";
+                                LIMIT 10;";
 
                 $stmt = $conn->prepare($getTotalCount);
                 $stmt->execute();
@@ -184,7 +184,7 @@ switch ($method) {
                                     location.city, location.country
                                 ORDER BY
                                     average_rating DESC
-                                LIMIT 5;";
+                                LIMIT 10;";
 
                 $stmt = $conn->prepare($getTotalCount);
                 $stmt->execute();
@@ -257,7 +257,7 @@ switch ($method) {
                                     city
                                 ORDER BY 
                                     total_travellers DESC
-                                LIMIT 5;";
+                                LIMIT 10;";
 
                 $stmt = $conn->prepare($getTotalCount);
                 // Bind the dynamic date parameters
@@ -304,7 +304,7 @@ switch ($method) {
                     package.package_id
                   ORDER BY 
                     total_travellers DESC
-                  LIMIT 5;";
+                  LIMIT 10;";
 
                 $stmt = $conn->prepare($getTotalCount);
                 $stmt->bindParam(':previousMonthStart', $previousMonthStart);
