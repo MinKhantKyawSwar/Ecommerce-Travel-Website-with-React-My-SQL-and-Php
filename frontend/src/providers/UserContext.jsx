@@ -10,9 +10,16 @@ export const UserContextProvider = ({ children }) => {
   const [destinationId, setDestinationId] = useState(null);
   const [userInfo, setUserInfo] = useState({});
   const [isEmail, setIsEmail] = useState("");
+  //for saved package
   const [savedNoti, setSavedNoti] = useState(() => {
     const savedItemsCount = localStorage.getItem("savedNoti");
     return savedItemsCount ? savedItemsCount : 0;
+  });
+
+  //for favorite destination
+  const [savedDestinationNoti, setSavedDestinationNoti] = useState(() => {
+    const favoriteDestinationCount = localStorage.getItem("favoriteDestinationNoti");
+    return favoriteDestinationCount ? favoriteDestinationCount : 0;
   });
   
 
@@ -33,6 +40,11 @@ export const UserContextProvider = ({ children }) => {
     localStorage.setItem("savedNoti", newCount);
   };
 
+  const updateFavoriteDestinationNoti = (newCount) => {
+    setSavedDestinationNoti(newCount);
+    localStorage.setItem("favoriteDestinationNoti", newCount);
+  };
+
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
@@ -43,7 +55,15 @@ export const UserContextProvider = ({ children }) => {
     if (savedItemsCount) {
       setSavedNoti(savedItemsCount); // Initialize saved items count
     }
+
+    const favoriteDestinationCount = localStorage.getItem("favoriteDestinationNoti");
+    if (favoriteDestinationCount) {
+      setSavedDestinationNoti(favoriteDestinationCount); // Initialize favorite items count
+    }
   }, []);
+
+
+ 
 
   return (
     <UserContext.Provider
@@ -59,6 +79,8 @@ export const UserContextProvider = ({ children }) => {
         setIsEmail,
         savedNoti, // Exposing savedNoti
         updateSavedNoti, // Exposing function to update savedNoti
+        savedDestinationNoti,
+        updateFavoriteDestinationNoti,
       }}
     >
       {children}

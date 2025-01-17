@@ -15,10 +15,13 @@ const Nav = () => {
     deleteToken,
     savedNoti,
     updateSavedNoti,
+    savedDestinationNoti,
+    updateFavoriteDestinationNoti,
   } = useContext(UserContext);
   const navigate = useNavigate();
 
   const [savedArr, setSavedArr] = useState([]);
+  const [favoriteArr, setFavoriteArr] = useState([]);
 
   // Logout handler
   const logoutHandler = () => {
@@ -88,6 +91,35 @@ const Nav = () => {
     }
   };
 
+
+   // Fetch the saved items count for the logged-in user
+   const fetchFavoriteDestinationCount = async () => {
+    const userId = localStorage.getItem("user_id");
+    if (!userId) return;
+
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/backend/getFavoriteInfo.php`,
+        {
+          params: { user_id: userId },
+        }
+      );
+
+      if (response.data.status === 1) {
+        setFavoriteArr(response.data.data.item_count); // Update the saved items count
+        
+        const savedKey = `favoriteDestination_${userId}`;
+        localStorage.setItem(savedKey, favoriteArr);
+        updateFavoriteDestinationNoti(response.data.data.item_count); // Update the saved items count
+
+      } else {
+        updateSavedNoti(0); // Reset saved items count
+      }
+    } catch (error) {
+      console.error("Error fetching saved items count:", error.message);
+    }
+  };
+
   // Fetch user ID and saved items count when the token changes
   useEffect(() => {
     if (token) {
@@ -99,6 +131,12 @@ const Nav = () => {
   useEffect(() => {
     fetchSavedItemsCount();
   }, [userInfo, savedArr]);
+
+
+  useEffect(() => {
+    fetchFavoriteDestinationCount();
+  }, [userInfo, favoriteArr]);
+  
 
   return (
     <div className="navbar bg-white text-gray-900 rounded-2xl border border-gray-400 shadow-md fixed top-0 left-0 max-w-[97%] ml-[1.5%] pt-2 mt-3 z-50">
@@ -130,12 +168,12 @@ const Nav = () => {
               >
                 <div className="indicator text-2xl">
                   {/* Display saved notification badge */}
-                  {savedNoti > 0 ? (
+                  {savedDestinationNoti > 0 ? (
                     <>
                       <IoMdHeart />
-                      {/* <span className="badge badge-sm indicator-item bg-red-500 text-white">
-                        {savedNoti}
-                      </span> */}
+                      <span className="badge badge-sm indicator-item bg-red-500 text-white">
+                        {savedDestinationNoti}
+                      </span>
                     </>
                   )
                     : (

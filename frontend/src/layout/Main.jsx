@@ -9,7 +9,7 @@ const Main = () => {
       <Nav />
 
       {/* Main Content */}
-      <main className="flex-grow pt-24 px-10">
+      <main className="flex-grow pt-14 px-10">
         <Outlet />
       </main>
 

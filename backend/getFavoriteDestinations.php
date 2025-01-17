@@ -29,9 +29,7 @@ switch ($method) {
             $stmt->execute();
             $existingDestination = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($existingDestination) {
-                $response = ['status' => 2, 'message' => "destination already saved!"];
-            } else {
+            if (!$existingDestination)  {
                 $setFavoriteItems = "INSERT INTO favorite_destinations (user, destination, saved_at) VALUES (:user, :destination, :saved_at)";
                 $stmt = $conn->prepare($setFavoriteItems);
                 $stmt->bindParam(':user', $user);

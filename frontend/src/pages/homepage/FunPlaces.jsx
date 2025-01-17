@@ -1,15 +1,29 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { IoIosHeartEmpty, IoMdHeart } from "react-icons/io";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { Bounce, Slide, ToastContainer, toast } from "react-toastify";
+import { UserContext } from "../../providers/UserContext";
 
 const FunPlaces = ({ destinations, handleDetails }) => {
   const [savedDestinations, setSavedDestinations] = useState([]);
   const [error, setError] = useState(null);
+  const { savedDestinationNoti, updateFavoriteDestinationNoti } = useContext(UserContext);
 
   const user_id = localStorage.getItem("user_id");
+
+  const savedKey = `favoriteDestination_${user_id}`;
+
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem(savedKey) || "[]");
+    if (Array.isArray(saved)) {
+      setSavedDestinations(saved);
+    } else {
+      setSavedDestinations([]); // Fallback in case of invalid data
+    }
+  }, [savedKey]);
+
 
   const toggleSavedItem = async (id) => {
     const isSaved = savedDestinations.includes(id);
@@ -18,7 +32,7 @@ const FunPlaces = ({ destinations, handleDetails }) => {
       // Remove item
       try {
         const response = await axios.post(
-          `http://localhost:3000/backend/removeSavedPackage.php`,
+          `http://localhost:3000/backend/removeFavoriteDestinations.php`,
           { user_id, destination_id: id },
           {
             headers: { "Content-Type": "application/json" },
@@ -31,7 +45,8 @@ const FunPlaces = ({ destinations, handleDetails }) => {
             (dest_id) => dest_id !== id
           );
           setSavedDestinations(updatedSavedDestinations);
-          // localStorage.setItem(savedDestinationKey, updatedSavedDestinations);
+          localStorage.setItem(savedKey, updatedSavedDestinations);
+          updateFavoriteDestinationNoti(savedDestinationNoti - 1);
           toast.success("Package successfully removed!", {
             position: "top-center",
             autoClose: 1000,
@@ -70,10 +85,10 @@ const FunPlaces = ({ destinations, handleDetails }) => {
         );
 
         if (response.data.status === 1) {
-          const updatedSavedDestinations = [...savedPackages, id];
+          const updatedSavedDestinations = [...savedDestinations, id];
           setSavedDestinations(updatedSavedDestinations);
-          // localStorage.setItem(savedDestinationKey, updatedSavedDestinations);
-          updateSavedNoti(Number(savedNoti) + 1);
+          localStorage.setItem(savedKey, updatedSavedDestinations);
+          updateFavoriteDestinationNoti(Number(savedDestinationNoti) + 1);
           toast.success("Destinations successfully Favorited!", {
             position: "top-center",
             autoClose: 1000,
@@ -175,9 +190,9 @@ const FunPlaces = ({ destinations, handleDetails }) => {
                   className="absolute top-2 right-2 text-white bg-black/50 p-2 rounded-full hover:bg-black/70 transition z-10"
                 >
                   {savedDestinations.includes(destination.destination_id) ? (
-                    <IoMdHeart />
+                    <IoMdHeart className="text-2xl" />
                   ) : (
-                    <IoIosHeartEmpty />
+                    <IoIosHeartEmpty className="text-2xl" />
                   )}
                 </button>
               )}

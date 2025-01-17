@@ -17,7 +17,7 @@ switch ($method) {
         try {
             // Parse the incoming request data
             $data = json_decode($eData);
-            $user_id = $data->user; // User ID from the request
+            $user_id = $data->user_id; // User ID from the request
             $destination_id = $data->destination_id; // Package ID from the request
 
             // Connect to the database

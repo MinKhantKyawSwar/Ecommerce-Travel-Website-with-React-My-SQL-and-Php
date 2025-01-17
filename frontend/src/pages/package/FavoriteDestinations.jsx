@@ -68,7 +68,7 @@ const SavedDestinations = () => {
   };
 
   const handleBooking = async (id, index) => {
-    navigate(`/booking/${id}`);
+    navigate(`/destination/${id}`);
   };
 
   let user_id = localStorage.getItem("user_id");
@@ -111,12 +111,12 @@ const SavedDestinations = () => {
                 )}
 
                 {/* Content Section */}
-                <div className="flex-grow">
+                <div className="flex-">
                   <h1 className="text-xl font-semibold">
-                    {item.destination_name}
+                    {item.city}
                   </h1>
                   <h3 className="text-lg font-light text-gray-700">
-                    {item.destination_name}
+                    {item.country}
                   </h3>
                 </div>
 
@@ -129,7 +129,7 @@ const SavedDestinations = () => {
                   <div className="flex space-x-2 justify-between">
                     <button
                       className="bg-green-500 text-white rounded-lg px-8 py-2 hover:bg-green-600 transition duration-200"
-                      onClick={(_) => handleBooking(item.package, index)}
+                      onClick={(_) => handleBooking(item.destination_id, index)}
                     >
                       Details
                     </button>
