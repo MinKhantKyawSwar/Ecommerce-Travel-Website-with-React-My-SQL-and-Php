@@ -274,17 +274,17 @@ switch ($method) {
             $add_on = $data->add_on;
             $discount = $data->discount;
             $total_price = $data->total_price;
-
+            $booking_status = "pending";
 
             // Connection to database
             $conn = $db->connect();
 
             // Check availability
             $getAvailabilitySql = "SELECT number_of_available_people 
-                                   FROM package_info 
-                                   WHERE travel_date = :travel_date 
-                                   AND source_location = :source_location 
-                                   AND package = :package";
+                                       FROM package_info 
+                                       WHERE travel_date = :travel_date 
+                                       AND source_location = :source_location 
+                                       AND package = :package";
             $stmt = $conn->prepare($getAvailabilitySql);
             $stmt->bindParam(':travel_date', $formattedDate);
             $stmt->bindParam(':source_location', $source_location);
@@ -304,14 +304,14 @@ switch ($method) {
             $total_people = $number_of_available_people - $number_of_people;
 
             if ($total_people < 0) {
-                $response = ['status' => 0, 'message' => $number_of_available_people];
+                $response = ['status' => 0, 'message' => "Not enough availability. Only {$number_of_available_people} spots left."];
             } else {
                 // Update availability
                 $updateAvailabilitySql = "UPDATE package_info 
-                                          SET number_of_available_people = :total_people 
-                                          WHERE travel_date = :travel_date 
-                                          AND source_location = :source_location 
-                                          AND package = :package";
+                                              SET number_of_available_people = :total_people 
+                                              WHERE travel_date = :travel_date 
+                                              AND source_location = :source_location 
+                                              AND package = :package";
                 $stmt = $conn->prepare($updateAvailabilitySql);
                 $stmt->bindParam(':total_people', $total_people);
                 $stmt->bindParam(':travel_date', $formattedDate);
@@ -325,8 +325,8 @@ switch ($method) {
                 }
 
                 // Insert booking
-                $sql = "INSERT INTO booking(user, package, source_location, booking_date, travel_date, payment_method, number_of_people, add_on, discount, total_price) 
-                        VALUES (:user, :package, :source_location, :booking_date, :travel_date, :payment_method, :number_of_people, :add_on, :discount, :total_price)";
+                $sql = "INSERT INTO booking(user, package, source_location, booking_date, travel_date, payment_method, number_of_people, add_on, discount, total_price, booking_status) 
+                            VALUES (:user, :package, :source_location, :booking_date, :travel_date, :payment_method, :number_of_people, :add_on, :discount, :total_price, :booking_status)";
                 $stmt = $conn->prepare($sql);
                 $stmt->bindParam(':user', $user);
                 $stmt->bindParam(':package', $package);
@@ -338,12 +338,13 @@ switch ($method) {
                 $stmt->bindParam(':add_on', $add_on);
                 $stmt->bindParam(':discount', $discount);
                 $stmt->bindParam(':total_price', $total_price);
+                $stmt->bindParam(':booking_status', $booking_status);
                 if ($stmt->execute()) {
                     $booking_id = $conn->lastInsertId();
 
                     // Insert passport data
                     $sqlPassport = "INSERT INTO passport_info (booking_id, full_name, passport_number, expiration_date) 
-                                    VALUES (:booking_id, :full_name, :passport_number, :expiration_date)";
+                                        VALUES (:booking_id, :full_name, :passport_number, :expiration_date)";
                     $stmtPassport = $conn->prepare($sqlPassport);
 
                     foreach ($data->passports as $passport) {
@@ -358,6 +359,22 @@ switch ($method) {
                     }
 
                     $response = ['status' => 1, 'message' => "Successfully Booked!"];
+                    // Insert notification for successful payment and waiting admin approval
+                    $message = "Payment is successful and your booking is waiting for admin approval";
+                    $noti_status = "unread";
+                    $created_at = date("Y-m-d H:i:s");
+
+                    $updateNotification = "INSERT INTO notifications (user, message, noti_status, created_at, updated_at) 
+                                        VALUES (:user, :message, :status, :created_at, :updated_at)";
+                    $updatestmt = $conn->prepare($updateNotification);
+                    $updatestmt->bindParam(":user", $user, PDO::PARAM_INT);
+                    $updatestmt->bindParam(":message", $message, PDO::PARAM_STR);
+                    $updatestmt->bindParam(":noti_status", $noti_status, PDO::PARAM_STR);
+                    $updatestmt->bindParam(":created_at", $created_at, PDO::PARAM_STR);
+                    $updatestmt->bindParam(":updated_at", $created_at, PDO::PARAM_STR);
+                    $updatestmt->execute();
+
+                    $response = ['status' => 1, 'message' => 'Notification added successfully!'];
                 } else {
                     throw new Exception("Failed to create booking! Please try again.");
                 }
@@ -367,7 +384,6 @@ switch ($method) {
         } catch (PDOException $e) {
             $response = ['status' => 0, 'message' => "Database Error: " . $e->getMessage()];
         }
-
 
         // Return the response as JSON
         echo json_encode($response);

@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, redirect, useNavigate } from "react-router-dom";
 import { UserContext } from "../providers/UserContext";
 import axios from "axios";
 import { FaRegBookmark, FaBookmark } from "react-icons/fa";
 import { IoIosHeartEmpty, IoMdHeart } from "react-icons/io";
+import { useNotification } from "../providers/NotificationContext";
 
 
 const Nav = () => {
@@ -18,6 +19,9 @@ const Nav = () => {
     savedDestinationNoti,
     updateFavoriteDestinationNoti,
   } = useContext(UserContext);
+
+  const { unreadCount } = useNotification();
+
   const navigate = useNavigate();
 
   const [savedArr, setSavedArr] = useState([]);
@@ -91,9 +95,12 @@ const Nav = () => {
     }
   };
 
+  const notificationHandler = () => {
+    navigate('/notification')
+  }
 
-   // Fetch the saved items count for the logged-in user
-   const fetchFavoriteDestinationCount = async () => {
+  // Fetch the saved items count for the logged-in user
+  const fetchFavoriteDestinationCount = async () => {
     const userId = localStorage.getItem("user_id");
     if (!userId) return;
 
@@ -107,7 +114,7 @@ const Nav = () => {
 
       if (response.data.status === 1) {
         setFavoriteArr(response.data.data.item_count); // Update the saved items count
-        
+
         const savedKey = `favoriteDestination_${userId}`;
         localStorage.setItem(savedKey, favoriteArr);
         updateFavoriteDestinationNoti(response.data.data.item_count); // Update the saved items count
@@ -136,7 +143,7 @@ const Nav = () => {
   useEffect(() => {
     fetchFavoriteDestinationCount();
   }, [userInfo, favoriteArr]);
-  
+
 
   return (
     <div className="navbar bg-white text-gray-900 rounded-2xl border border-gray-400 shadow-md fixed top-0 left-0 max-w-[97%] ml-[1.5%] pt-2 mt-3 z-50">
@@ -216,47 +223,73 @@ const Nav = () => {
 
           {userInfo && (
             <div className="dropdown dropdown-end">
-              <div
-                tabIndex={0}
-                role="button"
-                className="btn btn-ghost btn-circle avatar hover:bg-gray-100"
-              >
-                <div className="w-8 rounded-full">
-                  <img
-                    alt="User Avatar"
-                    src={`http://localhost:3000/backend/${userInfo.profile_image}`}
-                  />
+              <div className="relative">
+                {unreadCount > 0 && (
+                  <div className="absolute top-0 right-0 badge text-center z-10 text-white w-6 h-6 p-2 bg-red-600 rounded-full text-xs font-semibold">
+                    {unreadCount}
+                  </div>
+                )}
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className="btn btn-ghost btn-circle avatar hover:bg-gray-100 p-2 rounded-full transition duration-200 ease-in-out"
+                >
+                  <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-gray-300">
+                    <img
+                      alt="User Avatar"
+                      src={`http://localhost:3000/backend/${userInfo.profile_image}`}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
                 </div>
               </div>
+
               <ul
                 tabIndex={0}
-                className="menu menu-sm dropdown-content bg-white rounded-lg shadow-md z-10 mt-2 w-52 p-2"
+                className="menu menu-sm dropdown-content bg-white rounded-lg shadow-lg z-10 mt-2 w-52 p-4 space-y-2"
               >
-                {userInfo.role === "customer" &&
-                  (<li>
+                {userInfo.role === "customer" && (
+                  <li>
                     <Link
                       to="/profile"
-                      className="flex justify-between items-center hover:bg-gray-100"
+                      className="flex justify-between items-center p-2 rounded-lg text-gray-800 hover:bg-gray-100 transition duration-200 ease-in-out"
                     >
                       Profile
                       <span className="badge text-pink-600">New</span>
                     </Link>
-                  </li>)
-                }
+                  </li>
+                )}
+
                 {userInfo.role === "admin" && (
                   <li>
                     <Link
                       to="/admin"
-                      className="text-blue-600 font-medium hover:bg-gray-100"
+                      className="text-blue-600 font-medium p-2 rounded-lg hover:bg-gray-100 transition duration-200 ease-in-out"
                     >
-                      Admin Dashboard
+                      Admin Panel
                     </Link>
                   </li>
                 )}
+
+                <li>
+                  <button
+                    onClick={notificationHandler}
+                    className="w-full text-left p-2 rounded-lg hover:bg-gray-100 transition duration-200 ease-in-out"
+                  >
+                    Notifications
+                    {unreadCount > 0 && (
+                    <div className="absolute right-0 badge text-center z-10 text-white w-6 h-6 p-2 bg-red-600 rounded-full text-xs font-semibold">
+                      {unreadCount}
+                    </div>
+                  )}
+                  </button>
+                  
+                </li>
+
                 <li>
                   <button
                     onClick={logoutHandler}
-                    className="w-full text-left hover:bg-gray-100"
+                    className="w-full text-left p-2 rounded-lg hover:bg-gray-100 transition duration-200 ease-in-out"
                   >
                     Logout
                   </button>
@@ -264,6 +297,7 @@ const Nav = () => {
               </ul>
             </div>
           )}
+
         </div>
       ) : (
         <div className="navbar-end px-1 md:px-4 flex space-x-3">

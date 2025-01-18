@@ -55,7 +55,7 @@ const Booking = () => {
     add_on: "",
     discount: "",
     passports: [],
-    status: "pending"
+    booking_status: "pending"
   };
 
   const AuthFormSchema = Yup.object().shape({
@@ -424,7 +424,7 @@ const Booking = () => {
       discount: discountId,
       total_price: totalPrice,
       passports: values.passports,
-      status: "pending"
+      booking_status: "pending"
     };
 
     const toastFire = (message) => {
@@ -478,21 +478,21 @@ const Booking = () => {
       }
 
       // Fetch transaction data
-      const dataResponse = await axios.get(
-        "http://localhost:3000/backend/getTransactions.php",
-        {
-          headers: {
-            User: Number(localStorage.getItem("user_id")),
-          },
-        }
-      );
-      // Handle transaction response
-      if (dataResponse.data.status === 0) {
-        toast.error(dataResponse.data.message);
-      } else if (dataResponse.data.status === 1) {
-        setBookingId(dataResponse.data.data[0].booking_id);
-        setTimeout(() => setRedirect(true), 1500); // Redirect after 1.5 seconds
-      }
+      // const dataResponse = await axios.get(
+      //   "http://localhost:3000/backend/getTransactions.php",
+      //   {
+      //     headers: {
+      //       User: Number(localStorage.getItem("user_id")),
+      //     },
+      //   }
+      // );
+      // // Handle transaction response
+      // if (dataResponse.data.status === 0) {
+      //   toast.error(dataResponse.data.message);
+      // } else if (dataResponse.data.status === 1) {
+      //   setBookingId(dataResponse.data.data[0].booking_id);
+      //   setTimeout(() => setRedirect(true), 1500); // Redirect after 1.5 seconds
+      // }
     } catch (error) {
       console.error("Error:", error);
       toast.error(error);
@@ -537,7 +537,7 @@ const Booking = () => {
 
   if (redirect) {
     // navigate(`/recipts/${bookingId}`);
-    navigate(`/`)
+    navigate('/')
   }
 
   return (
@@ -570,7 +570,7 @@ const Booking = () => {
             </h1>
 
             <div className="mb-3">
-              <label htmlFor="travel_date" className="font-medium block mb-1">
+              <label for="travel_date" className="font-medium block mb-1">
                 Travel Date
                 <span className="text-sm text-gray-500 block">
                   (*be sure to choose it first to show up your start location!)
@@ -592,7 +592,7 @@ const Booking = () => {
             </div>
 
             <div className="mb-3">
-              <label htmlFor="country" className="font-medium block mb-1">
+              <label for="country" className="font-medium block mb-1">
                 Country
               </label>
               <Field
@@ -623,7 +623,7 @@ const Booking = () => {
               <StyledErrorMessage name="country" />{" "}
               {/* Ensure this matches the Field name */}
               <div className="mb-3">
-                <label htmlFor="city" className="font-medium block mb-1">
+                <label for="city" className="font-medium block mb-1">
                   City
                 </label>
                 <Field
@@ -659,7 +659,7 @@ const Booking = () => {
 
             <div className="mb-3">
               <label
-                htmlFor="payment_method"
+                for="payment_method"
                 className="font-medium block mb-1"
               >
                 Payment Method
@@ -699,7 +699,7 @@ const Booking = () => {
               }
               <div className="mb-3">
                 <label
-                  htmlFor="number_of_people"
+                  for="number_of_people"
                   className="font-medium block mb-1"
                 >
                   Number Of People
@@ -793,7 +793,7 @@ const Booking = () => {
               )}
             </FieldArray>
             <div className="mb-3">
-              <label htmlFor="add_on" className="font-medium block mb-1">
+              <label for="add_on" className="font-medium block mb-1">
                 Add on
               </label>
               <Field
@@ -814,7 +814,7 @@ const Booking = () => {
               <StyledErrorMessage name="add_on" />
             </div>
             <div className="mb-3">
-              <label htmlFor="discount" className="font-medium block mb-1">
+              <label for="discount" className="font-medium block mb-1">
                 Discount
               </label>
               <Field

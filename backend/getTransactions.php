@@ -154,6 +154,7 @@ switch ($method) {
             if (isset($data['booking_status']) && isset($data['booking_id'])) {
                 $booking_status = $data['booking_status'];
                 $booking_id = $data['booking_id'];
+                $user_id = $data['user_id'];
 
                 // Database connection
                 $conn = $db->connect();
@@ -170,6 +171,7 @@ switch ($method) {
                     'status' => 1,
                     'message' => 'Booking status updated successfully.'
                 ];
+                
             } else {
                 // Invalid input response
                 $response = [

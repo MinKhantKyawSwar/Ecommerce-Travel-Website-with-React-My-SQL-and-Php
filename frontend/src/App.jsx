@@ -25,6 +25,8 @@ import ResetPassword from "./components/Auth/ResetPassword";
 import CustomerDetailsPage from "./pages/admin/CustomerDetailsPage";
 import Chatbot from "./components/Chatbot";
 import FavoriteDestinations from "./pages/package/FavoriteDestinations";
+import NotificationPage from "./pages/Notification";
+import { NotificationProvider } from "./providers/NotificationContext";
 
 function App() {
   const router = createBrowserRouter([
@@ -123,22 +125,28 @@ function App() {
         },
         {
           path: "/customerDetails/:userId",
-          element: <CustomerDetailsPage/>,
+          element: <CustomerDetailsPage />,
         },
         {
           path: "/chatbot",
-          element: <Chatbot/>,
+          element: <Chatbot />,
         },
         {
           path: "/favorite-destinations",
-          element: <FavoriteDestinations/>,
+          element: <FavoriteDestinations />,
+        },
+        {
+          path: "/notification",
+          element: <NotificationPage />,
         }
       ],
     },
   ]);
   return (
     <UserContextProvider>
-      <RouterProvider router={router} />
+      <NotificationProvider>
+        <RouterProvider router={router} />
+      </NotificationProvider>
     </UserContextProvider>
   );
 }
