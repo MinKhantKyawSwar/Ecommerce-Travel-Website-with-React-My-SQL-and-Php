@@ -19,6 +19,8 @@ const Nav = () => {
     savedDestinationNoti,
     updateFavoriteDestinationNoti,
   } = useContext(UserContext);
+  const [notifications, setNotifications] = useState([]);
+
 
   const { unreadCount } = useNotification();
 
@@ -135,6 +137,9 @@ const Nav = () => {
     }
   }, [token]); // Dependency on token
 
+
+  let noti = 0;
+
   useEffect(() => {
     fetchSavedItemsCount();
   }, [userInfo, savedArr]);
@@ -144,6 +149,16 @@ const Nav = () => {
     fetchFavoriteDestinationCount();
   }, [userInfo, favoriteArr]);
 
+  useEffect(() => {
+    // Polling every 10 seconds to check for updated status
+    const interval = setInterval(() => {
+      // localStorage.getItem("notification")
+      unreadCount
+    }, 5000);
+
+    // Clean up interval when the component unmounts
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="navbar bg-white text-gray-900 rounded-2xl border border-gray-400 shadow-md fixed top-0 left-0 max-w-[97%] ml-[1.5%] pt-2 mt-3 z-50">
@@ -202,11 +217,11 @@ const Nav = () => {
               >
                 <div className="indicator text-lg">
                   {/* Display saved notification badge */}
-                  {savedNoti > 0 ? (
+                  {noti > 0 ? (
                     <>
                       <FaBookmark />
                       <span className="badge badge-sm indicator-item bg-red-500 text-white">
-                        {savedNoti}
+                        {noti}
                       </span>
                     </>
                   )
@@ -278,12 +293,12 @@ const Nav = () => {
                   >
                     Notifications
                     {unreadCount > 0 && (
-                    <div className="absolute right-0 badge text-center z-10 text-white w-6 h-6 p-2 bg-red-600 rounded-full text-xs font-semibold">
-                      {unreadCount}
-                    </div>
-                  )}
+                      <div className="absolute right-0 badge text-center z-10 text-white w-6 h-6 p-2 bg-red-600 rounded-full text-xs font-semibold">
+                        {unreadCount}
+                      </div>
+                    )}
                   </button>
-                  
+
                 </li>
 
                 <li>

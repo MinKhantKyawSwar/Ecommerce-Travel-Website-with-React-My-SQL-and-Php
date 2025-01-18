@@ -274,7 +274,6 @@ switch ($method) {
             $add_on = $data->add_on;
             $discount = $data->discount;
             $total_price = $data->total_price;
-            $booking_status = "pending";
 
             // Connection to database
             $conn = $db->connect();
@@ -323,6 +322,7 @@ switch ($method) {
                 } else {
                     throw new Exception("Failed to update available people.");
                 }
+                $booking_status = "pending";
 
                 // Insert booking
                 $sql = "INSERT INTO booking(user, package, source_location, booking_date, travel_date, payment_method, number_of_people, add_on, discount, total_price, booking_status) 
@@ -344,7 +344,7 @@ switch ($method) {
 
                     // Insert passport data
                     $sqlPassport = "INSERT INTO passport_info (booking_id, full_name, passport_number, expiration_date) 
-                                        VALUES (:booking_id, :full_name, :passport_number, :expiration_date)";
+                                    VALUES (:booking_id, :full_name, :passport_number, :expiration_date)";
                     $stmtPassport = $conn->prepare($sqlPassport);
 
                     foreach ($data->passports as $passport) {
@@ -358,23 +358,25 @@ switch ($method) {
                         }
                     }
 
-                    $response = ['status' => 1, 'message' => "Successfully Booked!"];
                     // Insert notification for successful payment and waiting admin approval
                     $message = "Payment is successful and your booking is waiting for admin approval";
                     $noti_status = "unread";
                     $created_at = date("Y-m-d H:i:s");
 
                     $updateNotification = "INSERT INTO notifications (user, message, noti_status, created_at, updated_at) 
-                                        VALUES (:user, :message, :status, :created_at, :updated_at)";
+                                           VALUES (:user, :message, :noti_status, :created_at, :updated_at)";
                     $updatestmt = $conn->prepare($updateNotification);
                     $updatestmt->bindParam(":user", $user, PDO::PARAM_INT);
                     $updatestmt->bindParam(":message", $message, PDO::PARAM_STR);
                     $updatestmt->bindParam(":noti_status", $noti_status, PDO::PARAM_STR);
                     $updatestmt->bindParam(":created_at", $created_at, PDO::PARAM_STR);
                     $updatestmt->bindParam(":updated_at", $created_at, PDO::PARAM_STR);
-                    $updatestmt->execute();
 
-                    $response = ['status' => 1, 'message' => 'Notification added successfully!'];
+                    if ($updatestmt->execute()) {
+                        $response = ['status' => 1, 'message' => "Successfully Booked! Notification added successfully!"];
+                    } else {
+                        throw new Exception("Failed to add notification. Booking was successful.");
+                    }
                 } else {
                     throw new Exception("Failed to create booking! Please try again.");
                 }

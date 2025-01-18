@@ -375,23 +375,24 @@ const Booking = () => {
 
   const paymentHandler = () => {
 
-      setLoading(true);
-      setOrder(true);
-      
-      setTimeout(() => {
-        toast.success("Payment Successful", {
-          position: "top-center",
-          autoClose: 1500,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
-        document.getElementById("my_modal_4").close()}, 2000);
-    
+    setLoading(true);
+    setOrder(true);
+
+    setTimeout(() => {
+      toast.success("Payment Successful", {
+        position: "top-center",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      document.getElementById("my_modal_4").close()
+    }, 2000);
+
   };
 
   const validateForm = () => {
@@ -424,7 +425,7 @@ const Booking = () => {
       discount: discountId,
       total_price: totalPrice,
       passports: values.passports,
-      booking_status: "pending"
+      booking_status: "pending",
     };
 
     const toastFire = (message) => {
@@ -469,35 +470,20 @@ const Booking = () => {
 
       // Handle the response
       if (response.data.status === 0) {
-        toast.error(response.data.message);
+        toastError(response.data.message);
       } else if (response.data.status === 1) {
-        console.log(response.data);
         toastFire(response.data.message);
+        setTimeout(() => navigate('/'), 1500); // Redirect to home page after 1.5 seconds
+        setTimeout(()=> window.location.reload(), 1600)
       } else if (response.data.status === 6) {
-        toast.error(response.data.message);
+        toastError(response.data.message);
       }
-
-      // Fetch transaction data
-      // const dataResponse = await axios.get(
-      //   "http://localhost:3000/backend/getTransactions.php",
-      //   {
-      //     headers: {
-      //       User: Number(localStorage.getItem("user_id")),
-      //     },
-      //   }
-      // );
-      // // Handle transaction response
-      // if (dataResponse.data.status === 0) {
-      //   toast.error(dataResponse.data.message);
-      // } else if (dataResponse.data.status === 1) {
-      //   setBookingId(dataResponse.data.data[0].booking_id);
-      //   setTimeout(() => setRedirect(true), 1500); // Redirect after 1.5 seconds
-      // }
     } catch (error) {
       console.error("Error:", error);
-      toast.error(error);
+      toastError("An error occurred. Please try again.");
     }
   };
+
 
   const handleDateSelect = (date, setFieldValue) => {
     setTravelDate(date); // Set the state with the Date object
@@ -535,10 +521,6 @@ const Booking = () => {
     ]
   );
 
-  if (redirect) {
-    // navigate(`/recipts/${bookingId}`);
-    navigate('/')
-  }
 
   return (
     <>
@@ -717,16 +699,16 @@ const Booking = () => {
                     const updatedPassports =
                       count > values.passports.length
                         ? [
-                            ...values.passports,
-                            ...Array.from(
-                              { length: count - values.passports.length },
-                              () => ({
-                                fullName: "",
-                                passportNumber: "",
-                                expirationDate: "",
-                              })
-                            ),
-                          ]
+                          ...values.passports,
+                          ...Array.from(
+                            { length: count - values.passports.length },
+                            () => ({
+                              fullName: "",
+                              passportNumber: "",
+                              expirationDate: "",
+                            })
+                          ),
+                        ]
                         : values.passports.slice(0, count);
 
                     setFieldValue("passports", updatedPassports);
@@ -870,135 +852,134 @@ const Booking = () => {
                             Complete Your Order
                           </h2>
 
-                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 mb-6">
-                              <div className="col-span-2 sm:col-span-1">
-                                <label
-                                  for="full_name"
-                                  className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                                >
-                                  Full Name
-                                </label>
-                                <input
-                                  type="text"
-                                  id="full_name"
-                                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 dark:focus:ring-primary-500"
-                                  placeholder="Bonnie Green"
-                                  onChange={validateForm}
-                                  required
-                                />
-                              </div>
-
-                              <div className="col-span-2 sm:col-span-1">
-                                <label
-                                  for="card-number-input"
-                                  className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                                >
-                                  Card Number
-                                </label>
-                                <input
-                                  type="text"
-                                  id="card-number-input"
-                                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pe-10 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 dark:focus:ring-primary-500"
-                                  placeholder="xxxxxxxxxxxxxxxx"
-                                  pattern="^4[0-9]{12}(?:[0-9]{3})?$"
-                                  onChange={validateForm}
-                                  required
-                                  maxLength="16"
-                                />
-                              </div>
-
-                              <div className="col-span-2 sm:col-span-1">
-                                <label
-                                  for="card-expiration-input"
-                                  className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                                >
-                                  Card Expiration
-                                </label>
-                                <input
-                                  type="text"
-                                  id="card-expiration-input"
-                                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 dark:focus:ring-primary-500"
-                                  placeholder="MM/YY"
-                                  onChange={validateForm}
-                                  required
-                                />
-                              </div>
-
-                              <div className="col-span-2 sm:col-span-1">
-                                <label
-                                  for="cvv-input"
-                                  className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                                  maxLength="3"
-                                >
-                                  CVV
-                                </label>
-                                <input
-                                  type="number"
-                                  id="cvv-input"
-                                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 dark:focus:ring-primary-500"
-                                  placeholder="•••"
-                                  minLength={3}
-                                  onChange={validateForm}
-                                  required
-                                />
-                              </div>
-                            </div>
-                            <div className="flex items-center justify-center gap-8">
-                              <img
-                                className="h-8 w-auto dark:hidden"
-                                src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/paypal.svg"
-                                alt=""
-                              />
-                              <img
-                                className="hidden h-8 w-auto dark:flex"
-                                src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/paypal-dark.svg"
-                                alt=""
-                              />
-                              <img
-                                className="h-8 w-auto dark:hidden"
-                                src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/visa.svg"
-                                alt=""
-                              />
-                              <img
-                                className="hidden h-8 w-auto dark:flex"
-                                src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/visa-dark.svg"
-                                alt=""
-                              />
-                              <img
-                                className="h-8 w-auto dark:hidden"
-                                src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/mastercard.svg"
-                                alt=""
-                              />
-                              <img
-                                className="hidden h-8 w-auto dark:flex"
-                                src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/mastercard-dark.svg"
-                                alt=""
-                              />
-                            </div>
-
-                            <div className="modal-action">
-                              <a
-                                className={`w-full flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-medium ${
-                                  isFormValid
-                                    ? "bg-black text-white"
-                                    : "bg-gray-400 text-gray-600 cursor-not-allowed"
-                                } mt-6`}
-                                disabled={!isFormValid}
-                                onClick={paymentHandler}
+                          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 mb-6">
+                            <div className="col-span-2 sm:col-span-1">
+                              <label
+                                for="full_name"
+                                className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
                               >
-                                {loading ? (
-                                  <TailSpin
-                                    visible={true}
-                                    height="20"
-                                    width="20"
-                                    color="#FFFFFF"
-                                    ariaLabel="loading-spinner"
-                                  />
-                                ) : (
-                                  <span>Pay Now</span>
-                                )}
-                              </a>
+                                Full Name
+                              </label>
+                              <input
+                                type="text"
+                                id="full_name"
+                                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                                placeholder="Bonnie Green"
+                                onChange={validateForm}
+                                required
+                              />
                             </div>
+
+                            <div className="col-span-2 sm:col-span-1">
+                              <label
+                                for="card-number-input"
+                                className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                              >
+                                Card Number
+                              </label>
+                              <input
+                                type="text"
+                                id="card-number-input"
+                                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pe-10 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                                placeholder="xxxxxxxxxxxxxxxx"
+                                pattern="^4[0-9]{12}(?:[0-9]{3})?$"
+                                onChange={validateForm}
+                                required
+                                maxLength="16"
+                              />
+                            </div>
+
+                            <div className="col-span-2 sm:col-span-1">
+                              <label
+                                for="card-expiration-input"
+                                className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                              >
+                                Card Expiration
+                              </label>
+                              <input
+                                type="text"
+                                id="card-expiration-input"
+                                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                                placeholder="MM/YY"
+                                onChange={validateForm}
+                                required
+                              />
+                            </div>
+
+                            <div className="col-span-2 sm:col-span-1">
+                              <label
+                                for="cvv-input"
+                                className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                                maxLength="3"
+                              >
+                                CVV
+                              </label>
+                              <input
+                                type="number"
+                                id="cvv-input"
+                                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                                placeholder="•••"
+                                minLength={3}
+                                onChange={validateForm}
+                                required
+                              />
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-center gap-8">
+                            <img
+                              className="h-8 w-auto dark:hidden"
+                              src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/paypal.svg"
+                              alt=""
+                            />
+                            <img
+                              className="hidden h-8 w-auto dark:flex"
+                              src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/paypal-dark.svg"
+                              alt=""
+                            />
+                            <img
+                              className="h-8 w-auto dark:hidden"
+                              src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/visa.svg"
+                              alt=""
+                            />
+                            <img
+                              className="hidden h-8 w-auto dark:flex"
+                              src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/visa-dark.svg"
+                              alt=""
+                            />
+                            <img
+                              className="h-8 w-auto dark:hidden"
+                              src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/mastercard.svg"
+                              alt=""
+                            />
+                            <img
+                              className="hidden h-8 w-auto dark:flex"
+                              src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/mastercard-dark.svg"
+                              alt=""
+                            />
+                          </div>
+
+                          <div className="modal-action">
+                            <a
+                              className={`w-full flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-medium ${isFormValid
+                                ? "bg-black text-white"
+                                : "bg-gray-400 text-gray-600 cursor-not-allowed"
+                                } mt-6`}
+                              disabled={!isFormValid}
+                              onClick={paymentHandler}
+                            >
+                              {loading ? (
+                                <TailSpin
+                                  visible={true}
+                                  height="20"
+                                  width="20"
+                                  color="#FFFFFF"
+                                  ariaLabel="loading-spinner"
+                                />
+                              ) : (
+                                <span>Pay Now</span>
+                              )}
+                            </a>
+                          </div>
                         </div>
                       </div>
                     </div>

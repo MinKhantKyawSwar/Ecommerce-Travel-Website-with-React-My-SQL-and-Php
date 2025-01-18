@@ -8,12 +8,18 @@ import TotalIncome from "./Dashboards/TotalIncome";
 import TotalTravellers from "./Dashboards/TotalTravellers";
 import TopCustomers from "./Dashboards/TopCustomers";
 import TopRating from "./Dashboards/TopRating";
+import MonthlyRevenueChart from "./Dashboards/MonthlyRevenueChart";
+import YearlyRevenueChart from "./Dashboards/YearlyRevenueChart";
+import DestinationTravelersChart from "./Dashboards/DestinationTravelersChart";
 
 const Dashboard = () => {
   const [packagesCount, setPackagesCount] = useState(0);
   const [totalIncome, setTotalIncome] = useState(0);
   const [travellers, setTravellers] = useState(0);
   const [dailyRevenue, setDailyRevenue] = useState([]);
+  const [monthlyRevenueData, setMonthlyRevenue] = useState([]);
+  const [yearlyRevenueData, setYearlyRevenue] = useState([]);
+  const [destinationData, setDestinationData] = useState([]);
   const [userAccountsData, setUserAccountsData] = useState([]);
   const [destinationsData, setDestinationsData] = useState([]);
   const [topCustomers, setTopCustomers] = useState([]);
@@ -59,7 +65,7 @@ const Dashboard = () => {
       );
       if (response.data.status === 1) {
         setTotalIncome(response.data.data);
-        console.log(response.data.data);
+        
       } else {
         setError("No data found for income");
       }
@@ -88,6 +94,72 @@ const Dashboard = () => {
       setError("Failed to fetch data: " + err.message);
     }
   };
+
+  const getMonthlyRevenue = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/backend/dashboard.php",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Total_Revenue_Each_Month: "",
+          },
+        }
+      );
+      if (response.data.status === 1) {
+        setMonthlyRevenue(response.data.monthly_revenue);
+        console.log(response.data.monthly_revenue);
+      } else {
+        setError("No data found for income");
+      }
+    } catch (err) {
+      setError("Failed to fetch data: " + err.message);
+    }
+  };
+
+  const getYearlyRevenue = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/backend/dashboard.php",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Total_Revenue_Each_Year: "",
+          },
+        }
+      );
+      if (response.data.status === 1) {
+        setYearlyRevenue(response.data.yearly_revenue);
+      } else {
+        setError("No data found for income");
+      }
+    } catch (err) {
+      setError("Failed to fetch data: " + err.message);
+    }
+  };
+  const fetchDestinationData = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/backend/dashboard.php",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Total_Travelers_Per_Destination: "",
+          },
+        }
+      );
+
+      if (response.data.status === 1) {
+        setDestinationData(response.data.chart_data); 
+        console.log(response.data)
+      } else {
+        setError("No data found for travelers destinations");
+      }
+    } catch (err) {
+      setError("Failed to fetch data: " + err.message);
+    }
+  }; 
+ 
 
   const getTopDestinations = async () => {
     try {
@@ -123,7 +195,6 @@ const Dashboard = () => {
       );
       if (response.data.status === 1) {
         setTopRating(response.data.data);
-      console.log(response.data.data)
       } else {
         setError("No data found for destination");
       }
@@ -228,7 +299,10 @@ const Dashboard = () => {
       getTopDestinations(),
       getTopPackages(),
       getTopCustomers(),
-      getTopRating()
+      getTopRating(),
+      getMonthlyRevenue(),
+      getYearlyRevenue(),
+      fetchDestinationData()
     ])
       .then(() => {
         setLoading(false); // Set loading to false when all data is fetched
@@ -305,10 +379,36 @@ const Dashboard = () => {
       {/* Chart Section */}
       <div className="mt-8 bg-white p-6 rounded-lg shadow-lg">
         <h2 className="text-lg font-semibold text-gray-700 mb-4">
-          Daily Revenue
+          Daily Sales
         </h2>
         <div className="relative h-[400px] min-h-[300px] overflow-hidden">
           <DailyRevenueChart dailyRevenue={dailyRevenue} />
+        </div>
+      </div>
+
+      <div className="mt-8 bg-white p-6 rounded-lg shadow-lg">
+        <h2 className="text-lg font-semibold text-gray-700 mb-4">
+          Monthly Sales
+        </h2>
+        <div className="relative h-[400px] min-h-[300px] overflow-hidden">
+          <MonthlyRevenueChart monthlyRevenueData={monthlyRevenueData} />
+        </div>
+      </div>
+
+      <div className="mt-8 bg-white p-6 rounded-lg shadow-lg">
+        <h2 className="text-lg font-semibold text-gray-700 mb-4">
+          Yearly Sales
+        </h2>
+        <div className="relative h-[400px] min-h-[300px] overflow-hidden">
+          <YearlyRevenueChart yearlyRevenueData={yearlyRevenueData} />
+        </div>
+      </div>
+      <div className="mt-8 bg-white p-6 rounded-lg shadow-lg">
+        <h2 className="text-lg font-semibold text-gray-700 mb-4">
+          Travellers Around the World
+        </h2>
+        <div className="relative h-[400px] min-h-[300px] overflow-hidden">
+          <DestinationTravelersChart destinationData={destinationData} />
         </div>
       </div>
 

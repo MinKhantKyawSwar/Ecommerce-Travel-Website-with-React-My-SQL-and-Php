@@ -151,7 +151,7 @@ switch ($method) {
             $data = json_decode(file_get_contents('php://input'), true);
 
             // Validate input data
-            if (isset($data['booking_status']) && isset($data['booking_id'])) {
+            if (isset($data['booking_status'], $data['booking_id'], $data['user_id'])) {
                 $booking_status = $data['booking_status'];
                 $booking_id = $data['booking_id'];
                 $user_id = $data['user_id'];
@@ -159,28 +159,52 @@ switch ($method) {
                 // Database connection
                 $conn = $db->connect();
 
-                // Prepare and execute update query
+                // Update booking status
                 $updateTransactionInfo = "UPDATE booking SET booking_status = :booking_status WHERE booking_id = :booking_id";
                 $stmt = $conn->prepare($updateTransactionInfo);
                 $stmt->bindParam(":booking_status", $booking_status, PDO::PARAM_STR);
                 $stmt->bindParam(":booking_id", $booking_id, PDO::PARAM_STR);
-                $stmt->execute();
 
-                // Response for successful update
-                $response = [
-                    'status' => 1,
-                    'message' => 'Booking status updated successfully.'
-                ];
-                
+                if ($stmt->execute()) {
+                    // Prepare notification message based on booking status
+                    $message = ($booking_status === "approved")
+                        ? "Admin has approved your booking! Thank you for choosing to travel with us!"
+                        : "Admin has denied your booking. There is something wrong with your payment! Please rebook and check if you sent the correct payment amount to us.";
+
+                    $noti_status = "unread";
+                    $created_at = date("Y-m-d H:i:s");
+
+                    // Insert notification
+                    $updateNotification = "INSERT INTO notifications (user, message, noti_status, created_at, updated_at) 
+                                               VALUES (:user, :message, :noti_status, :created_at, :updated_at)";
+                    $updatestmt = $conn->prepare($updateNotification);
+                    $updatestmt->bindParam(":user", $user_id, PDO::PARAM_INT);
+                    $updatestmt->bindParam(":message", $message, PDO::PARAM_STR);
+                    $updatestmt->bindParam(":noti_status", $noti_status, PDO::PARAM_STR);
+                    $updatestmt->bindParam(":created_at", $created_at, PDO::PARAM_STR);
+                    $updatestmt->bindParam(":updated_at", $created_at, PDO::PARAM_STR);
+
+                    if ($updatestmt->execute()) {
+                        // Success response
+                        $response = [
+                            'status' => 1,
+                            'message' => 'Booking status updated successfully and notification added.'
+                        ];
+                    } else {
+                        throw new Exception("Failed to add notification. Booking was successful.");
+                    }
+                } else {
+                    throw new Exception("Failed to update booking status.");
+                }
             } else {
                 // Invalid input response
                 $response = [
                     'status' => 0,
-                    'message' => 'Invalid input. Booking status or transaction ID is missing.'
+                    'message' => 'Invalid input. Required fields are missing (booking_status, booking_id, user_id).'
                 ];
             }
         } catch (PDOException $e) {
-            // Error response
+            // Database error response
             $response = [
                 'status' => 0,
                 'message' => "Database error: " . $e->getMessage()
@@ -196,6 +220,7 @@ switch ($method) {
         // Return JSON response
         echo json_encode($response);
         break;
+
 
 
     default:

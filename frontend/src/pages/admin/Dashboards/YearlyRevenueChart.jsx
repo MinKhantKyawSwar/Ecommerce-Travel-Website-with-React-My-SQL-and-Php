@@ -5,8 +5,6 @@ import {
   CategoryScale,
   LinearScale,
   BarElement,
-  LineElement,
-  PointElement,
   Title,
   Tooltip,
   Legend,
@@ -17,55 +15,58 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
-  LineElement,
-  PointElement,
   Title,
   Tooltip,
   Legend
 );
 
-const DailyRevenueChart = ({ dailyRevenue }) => {
-  const generateDateRange = () => {
-    const dates = [];
+const YearlyRevenueChart = ({ yearlyRevenueData }) => {
+  const generateYearRange = () => {
+    const years = [];
     const today = new Date();
 
-    // Generate past 30 days
-    for (let i = 30; i > 0; i--) {
-      const pastDate = new Date();
-      pastDate.setDate(today.getDate() - i);
-      dates.push(pastDate.toISOString().split("T")[0]); // Format: YYYY-MM-DD
+    // Generate past 5 years
+    for (let i = 5; i > 0; i--) {
+      const pastYear = new Date();
+      pastYear.setFullYear(today.getFullYear() - i);
+      years.push(pastYear.getFullYear()); // Add past years
     }
 
-    // Add today's date
-    dates.push(today.toISOString().split("T")[0]);
+    // Add this year
+    years.push(today.getFullYear());
 
-    // Generate next 30 days
-    for (let i = 1; i <= 30; i++) {
-      const futureDate = new Date();
-      futureDate.setDate(today.getDate() + i);
-      dates.push(futureDate.toISOString().split("T")[0]); // Format: YYYY-MM-DD
-    }
-
-    return dates;
+    return years;
   };
 
-  const dates = generateDateRange();
+  const years = generateYearRange();
+
+  // Group yearly revenue by year
+  const getYearlyRevenue = () => {
+    return years.map((year) => {
+      // Filter by the year from `booking_date` (adjust the property if needed)
+      return yearlyRevenueData
+        .filter((entry) => {
+          // Assuming entry.booking_year is the correct year field, adjust if needed
+          const entryYear = new Date(entry.booking_year).getFullYear()+1; // Extract the year
+          return entryYear === year; // Compare the extracted year with the year in the loop
+        })
+        .reduce((sum, entry) =>Number( sum + entry.total_price), 0); // Sum up sales for that year (initial value set to 0)
+    });
+  };
+
+  const yearlyRevenue = getYearlyRevenue();
+
   // Chart data and options
   const data = {
-    labels: dates,
+    labels: years,
     datasets: [
       {
-        label: "Daily Sales",
-        type: "line",
-        data: dates.map((date) => {
-          const match = dailyRevenue.find(
-            (entry) => entry.booking_day === date
-          );
-          return match ? Number(match.total_price) : 0; // Use 0 if no data for the date
-        }),
+        label: "Yearly Sales",
+        type: "bar",
+        data: yearlyRevenue,
         backgroundColor: "rgba(100, 100, 100, 0.5)", // Adjusted to a transparent black fill
-        borderColor: "rgba(10, 10, 14, 1)", // Changed line color to black
-        borderWidth: 2, // Adjusted line thickness
+        borderColor: "rgba(10, 10, 14, 1)", // Changed bar border color to black
+        borderWidth: 2, // Adjusted bar border thickness
       },
     ],
   };
@@ -79,7 +80,7 @@ const DailyRevenueChart = ({ dailyRevenue }) => {
       },
       title: {
         display: true,
-        text: "Daily Sales Chart",
+        text: "Yearly Sales Chart",
         font: {
           size: 18, // Larger title font size
         },
@@ -125,4 +126,4 @@ const DailyRevenueChart = ({ dailyRevenue }) => {
   );
 };
 
-export default DailyRevenueChart;
+export default YearlyRevenueChart;

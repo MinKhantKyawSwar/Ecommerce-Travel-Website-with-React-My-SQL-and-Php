@@ -113,6 +113,84 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "No booking found."];
                 }
+            } else if (isset($headers['Total_Revenue_Each_Month'])) {
+                // Connection to database
+                $conn = $db->connect();
+
+                // SQL query to calculate total revenue for each month
+                $getTotalCount = "
+                    SELECT DATE_FORMAT(booking_date, '%Y-%m') as booking_month, SUM(total_price) as total_price 
+                    FROM booking 
+                    GROUP BY booking_month
+                    ORDER BY booking_month DESC";
+
+                $stmt = $conn->prepare($getTotalCount);
+                $stmt->execute();
+
+                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                if ($result) {
+                    $response = ['status' => 1, 'message' => "Data found", 'monthly_revenue' => $result];
+                } else {
+                    $response = ['status' => 0, 'message' => "No booking found."];
+                }
+            } else if (isset($headers['Total_Revenue_Each_Year'])) {
+                // Connection to database
+                $conn = $db->connect();
+
+                // SQL query to calculate total revenue for each year
+                $getTotalCount = "
+                    SELECT YEAR(booking_date) as booking_year, SUM(total_price) as total_price 
+                    FROM booking 
+                    GROUP BY booking_year
+                    ORDER BY booking_year DESC";
+
+                $stmt = $conn->prepare($getTotalCount);
+                $stmt->execute();
+
+                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                if ($result) {
+                    $response = ['status' => 1, 'message' => "Data found", 'yearly_revenue' => $result];
+                } else {
+                    $response = ['status' => 0, 'message' => "No booking found."];
+                }
+            } else if (isset($headers['Total_Travelers_Per_Destination'])) {
+                // Connection to database
+                $conn = $db->connect();
+
+                // SQL query to calculate total travelers for each destination
+                $getTotalCount = "
+                    SELECT location.city as city, location.country as country, SUM(number_of_people) AS total_travelers
+                    FROM booking
+                    JOIN location on location.location_id = booking.source_location
+                    GROUP BY location.city, location.country
+                    ORDER BY total_travelers DESC";
+
+                $stmt = $conn->prepare($getTotalCount);
+                $stmt->execute();
+
+                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                if ($result) {
+                    // Prepare the data for the donut chart
+                    $chartData = [];
+                    foreach ($result as $row) {
+                        $chartData[] = [
+                            'label' => $row['city'] . ', ' . $row['country'], // Combine city and country as the label
+                            'value' => $row['total_travelers']
+                        ];
+                    }
+
+                    // Send response with chart data
+                    $response = [
+                        'status' => 1,
+                        'message' => "Data found",
+                        'chart_data' => $chartData
+                    ];
+                } else {
+                    $response = ['status' => 0, 'message' => "No bookings found."];
+                }
             } else if (isset($headers['Total_Destination'])) {
                 // Connection to database
                 $conn = $db->connect();

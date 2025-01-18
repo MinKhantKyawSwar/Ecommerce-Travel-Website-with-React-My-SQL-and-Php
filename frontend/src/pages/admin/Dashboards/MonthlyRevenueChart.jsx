@@ -24,48 +24,52 @@ ChartJS.register(
   Legend
 );
 
-const DailyRevenueChart = ({ dailyRevenue }) => {
-  const generateDateRange = () => {
-    const dates = [];
+const MonthlyRevenueChart = ({ monthlyRevenueData }) => {
+  const generateMonthRange = () => {
+    const months = [];
+
     const today = new Date();
 
-    // Generate past 30 days
-    for (let i = 30; i > 0; i--) {
-      const pastDate = new Date();
-      pastDate.setDate(today.getDate() - i);
-      dates.push(pastDate.toISOString().split("T")[0]); // Format: YYYY-MM-DD
+    // Generate past 12 months
+    for (let i = 12; i > 0; i--) {
+      const pastMonth = new Date();
+      pastMonth.setMonth(today.getMonth() - i);
+      months.push(`${pastMonth.getFullYear()}-${(pastMonth.getMonth() + 1).toString().padStart(2, '0')}`); // Format: YYYY-MM
     }
 
-    // Add today's date
-    dates.push(today.toISOString().split("T")[0]);
-
-    // Generate next 30 days
-    for (let i = 1; i <= 30; i++) {
-      const futureDate = new Date();
-      futureDate.setDate(today.getDate() + i);
-      dates.push(futureDate.toISOString().split("T")[0]); // Format: YYYY-MM-DD
-    }
-
-    return dates;
+    // Add this month
+    months.push(`${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}`);
+    return months;
   };
 
-  const dates = generateDateRange();
+  const months = generateMonthRange();
+
+  // Group daily revenue by month
+  const getMonthlyRevenue = () => {
+    return months.map((month) => {
+      return monthlyRevenueData
+        .filter((entry) => {
+          // Ensure that booking_day is in the correct format YYYY-MM to match
+          const entryMonth = entry.booking_month.slice(0, 7); // Get YYYY-MM from booking_day
+          return entryMonth === month; // Compare just the month (YYYY-MM)
+        })
+        .reduce((sum, entry) =>Number( sum + entry.total_price), 0); // Sum up sales for that month
+    });
+  };
+
+  const monthlyRevenue = getMonthlyRevenue();
+
   // Chart data and options
   const data = {
-    labels: dates,
+    labels: months,
     datasets: [
       {
-        label: "Daily Sales",
-        type: "line",
-        data: dates.map((date) => {
-          const match = dailyRevenue.find(
-            (entry) => entry.booking_day === date
-          );
-          return match ? Number(match.total_price) : 0; // Use 0 if no data for the date
-        }),
+        label: "Monthly Sales",
+        type: "bar",
+        data: monthlyRevenue,
         backgroundColor: "rgba(100, 100, 100, 0.5)", // Adjusted to a transparent black fill
-        borderColor: "rgba(10, 10, 14, 1)", // Changed line color to black
-        borderWidth: 2, // Adjusted line thickness
+        borderColor: "rgba(10, 10, 14, 1)", // Changed bar border color to black
+        borderWidth: 2, // Adjusted bar border thickness
       },
     ],
   };
@@ -79,7 +83,7 @@ const DailyRevenueChart = ({ dailyRevenue }) => {
       },
       title: {
         display: true,
-        text: "Daily Sales Chart",
+        text: "Monthly Sales Chart",
         font: {
           size: 18, // Larger title font size
         },
@@ -125,4 +129,4 @@ const DailyRevenueChart = ({ dailyRevenue }) => {
   );
 };
 
-export default DailyRevenueChart;
+export default MonthlyRevenueChart;

@@ -5,8 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNotification } from "../providers/NotificationContext";
 
 const Notification = () => {
-    const [notifications, setNotifications] = useState([]);
-    const { setUnreadCount } = useNotification();
+    const { notifications, markAsRead, deleteNotification } = useNotification();
     const [expandedMessages, setExpandedMessages] = useState({});
 
     const toggleMessage = (id) => {
@@ -17,86 +16,6 @@ const Notification = () => {
         markAsRead(id);
     };
 
-    const id = localStorage.getItem("user_id");
-
-    const fetchNotifications = async () => {
-        try {
-            const response = await axios.post(
-                "http://localhost:3000/backend/getNotifications.php",
-                { user_id: id }, // Send user_id in the body
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-
-            if (response.data.status === 1) {
-                setNotifications(response.data.notifications);
-                const notifications = response.data.notifications || [];
-                const unreadNotifications = notifications.filter(
-                    (n) => n.noti_status === "unread"
-                );
-
-                setUnreadCount(unreadNotifications.length);
-            } else {
-                console.error("Error:", response.data.message);
-            }
-        } catch (error) {
-            console.error("Error fetching notifications:", error.message);
-        }
-    };
-
-
-    // Mark notification as read
-    const markAsRead = async (id) => {
-        try {
-            const response = await axios.post(
-                "http://localhost:3000/backend/updateNotification.php",
-                { notification_id: id, noti_status: "read" }
-            );
-            if (response.data.status === 1) {
-                toast.success("Notification marked as read!", {
-                    position: "top-center",
-                    autoClose: 2000,
-                    theme: "light",
-                });
-                fetchNotifications(); // Refresh notifications
-            }
-        } catch (error) {
-            console.error("Error marking as read:", error.message);
-            toast.error("Failed to mark as read.");
-        }
-    };
-
-    // Delete notification
-    const deleteNotification = async (id) => {
-        try {
-            const response = await axios.post(
-                "http://localhost:3000/backend/deleteNotification.php",
-                { notification_id: id }
-            );
-            if (response.data.status === 1) {
-                toast.success("Notification deleted!", {
-                    position: "top-center",
-                    autoClose: 2000,
-                    theme: "light",
-                });
-                fetchNotifications(); // Refresh notifications
-            }
-        } catch (error) {
-            console.error("Error deleting notification:", error.message);
-            toast.error("Failed to delete notification.");
-        }
-    };
-
-    // Fetch notifications on component mount
-    useEffect(() => {
-        fetchNotifications();
-    }, []);
-    useEffect(() => {
-        fetchNotifications();
-    }, [setUnreadCount]);
 
     return (
         <div className="p-4 rounded-lg bg-white dark:bg-gray-800 shadow-md">
