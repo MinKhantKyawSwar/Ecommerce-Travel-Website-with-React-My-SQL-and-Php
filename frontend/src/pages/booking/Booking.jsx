@@ -55,6 +55,7 @@ const Booking = () => {
     add_on: "",
     discount: "",
     passports: [],
+    status: "pending"
   };
 
   const AuthFormSchema = Yup.object().shape({
@@ -423,6 +424,7 @@ const Booking = () => {
       discount: discountId,
       total_price: totalPrice,
       passports: values.passports,
+      status: "pending"
     };
 
     const toastFire = (message) => {
@@ -534,7 +536,8 @@ const Booking = () => {
   );
 
   if (redirect) {
-    navigate(`/recipts/${bookingId}`);
+    // navigate(`/recipts/${bookingId}`);
+    navigate(`/`)
   }
 
   return (

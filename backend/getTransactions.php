@@ -126,7 +126,9 @@ switch ($method) {
                                 JOIN 
                                     add_on ON booking.add_on = add_on.add_on_id
                                 JOIN 
-                                    discount ON booking.discount = discount.discount_id;";
+                                    discount ON booking.discount = discount.discount_id
+                                ORDER BY 
+                                        booking.booking_id DESC;";
                 $stmt = $conn->prepare($getTransactionInfo);
                 $stmt->execute();
 
@@ -143,6 +145,57 @@ switch ($method) {
         }
         echo json_encode($response);
         break;
+    case "POST":
+        try {
+            // Parse incoming JSON data
+            $data = json_decode(file_get_contents('php://input'), true);
+
+            // Validate input data
+            if (isset($data['booking_status']) && isset($data['booking_id'])) {
+                $booking_status = $data['booking_status'];
+                $booking_id = $data['booking_id'];
+
+                // Database connection
+                $conn = $db->connect();
+
+                // Prepare and execute update query
+                $updateTransactionInfo = "UPDATE booking SET booking_status = :booking_status WHERE booking_id = :booking_id";
+                $stmt = $conn->prepare($updateTransactionInfo);
+                $stmt->bindParam(":booking_status", $booking_status, PDO::PARAM_STR);
+                $stmt->bindParam(":booking_id", $booking_id, PDO::PARAM_STR);
+                $stmt->execute();
+
+                // Response for successful update
+                $response = [
+                    'status' => 1,
+                    'message' => 'Booking status updated successfully.'
+                ];
+            } else {
+                // Invalid input response
+                $response = [
+                    'status' => 0,
+                    'message' => 'Invalid input. Booking status or transaction ID is missing.'
+                ];
+            }
+        } catch (PDOException $e) {
+            // Error response
+            $response = [
+                'status' => 0,
+                'message' => "Database error: " . $e->getMessage()
+            ];
+        } catch (Exception $e) {
+            // General error response
+            $response = [
+                'status' => 0,
+                'message' => "Error: " . $e->getMessage()
+            ];
+        }
+
+        // Return JSON response
+        echo json_encode($response);
+        break;
+
+
     default:
         echo json_encode(['status' => 0, 'message' => 'Invalid request method']);
         break;

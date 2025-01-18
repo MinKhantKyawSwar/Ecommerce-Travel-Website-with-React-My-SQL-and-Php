@@ -131,6 +131,14 @@ const Profile = () => {
     navigate(`/recipts/${id}`);
   };
 
+  const pendingHandler = (id) => {
+    toast.success("We are currently reviewing your booking!", {
+      position: "top-center",
+      autoClose: 2000,
+      theme: "light",
+    });
+  }
+
   if (loading) {
     return <p>Loading user info...</p>; // Show a loading message while waiting for user data
   }
@@ -204,19 +212,19 @@ const Profile = () => {
                       <p className="text-gray-600 tracking-wide">{userInfo.email}</p>
                       <p className="text-gray-600">{userInfo.phone}</p>
                       <div className="flex justify-center lg:justify-start mt-4">
-                      <button
-                        onClick={EditHandler}
-                        className="py-2 px-6 rounded-lg bg-gray-800 text-white hover:bg-gray-700 transition duration-200 flex items-center"
-                      >
-                        <PencilSquareIcon className="w-6 h-6 mr-2" />
-                        Edit Profile
-                      </button>
+                        <button
+                          onClick={EditHandler}
+                          className="py-2 px-6 rounded-lg bg-gray-800 text-white hover:bg-gray-700 transition duration-200 flex items-center"
+                        >
+                          <PencilSquareIcon className="w-6 h-6 mr-2" />
+                          Edit Profile
+                        </button>
+                      </div>
                     </div>
-                    </div>
-                  
-                  
+
+
                   </div>
-                  
+
                 </div>
               ) : (
                 <div className="w-full">
@@ -381,45 +389,87 @@ const Profile = () => {
       </div>
 
       <div className="h-full mt-5 my-10 rounded-lg px-4 py-4 bg-gray-100 pb-20">
-        <h2 className="text-xl font-semibold mb-4">Previous Booked Trips</h2>
-        {bookedData.length > 0 ? (
-          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {bookedData.map((booking, index) => (
-              <li
-                key={index}
-                className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg hover:border-gray-900 border border-transparent transition-all duration-300 cursor-pointer"
-                onClick={() => detailsHandler(booking.booking_id)} // Pass booking_id to the handler
-              >
-                <img
-                  src={`http://localhost:3000/backend/${booking.destination_image}`}
-                  alt={booking.package_name}
-                  className="w-full h-32 object-cover rounded-t-lg"
-                />
-                <h3 className="text-lg font-bold mt-2">
-                  {booking.package_name}
-                </h3>
-                <p className="text-gray-600">{booking.destination_name}</p>
-                <div className="flex items-center justify-between mt-2">
-                  <span className="text-sm text-gray-500">
-                    Travel Date:{" "}
-                    {booking.travel_date ? booking.travel_date : "N/A"}
-                  </span>
-                  <span className="text-sm text-gray-500">
-                    People: {booking.number_of_people}
-                  </span>
-                  <span className="text-sm text-gray-500">
-                    Add-ons: {booking.add_on}
-                  </span>
-                </div>
-                <p className="text-lg font-semibold mt-2">
-                  Total Price: ${booking.total_price}
-                </p>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500">No booked trips found.</p>
-        )}
+        <div className="mb-5">
+          <h2 className="text-xl font-semibold mb-4">Pending Booked Trips</h2>
+          {bookedData.filter((booking) => booking.booking_status === "pending").length > 0 ? (
+            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {bookedData
+                .filter((booking) => booking.booking_status === "pending")
+                .map((booking, index) => (
+                  <li
+                    key={index}
+                    className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg hover:border-gray-900 border border-transparent transition-all duration-300 cursor-pointer"
+                    onClick={() => pendingHandler(booking.booking_id)} // Pass booking_id to the handler
+                  >
+                    <img
+                      src={`http://localhost:3000/backend/${booking.destination_image}`}
+                      alt={booking.package_name}
+                      className="w-full h-32 object-cover rounded-t-lg"
+                    />
+                    <h3 className="text-lg font-bold mt-2">{booking.package_name}</h3>
+                    <p className="text-gray-600">{booking.destination_name}</p>
+                    <div className="flex items-center justify-between mt-2">
+                      <span className="text-sm text-gray-500">
+                        Travel Date: {booking.travel_date ? booking.travel_date : "N/A"}
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        People: {booking.number_of_people}
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        Add-ons: {booking.add_on}
+                      </span>
+                    </div>
+                    <p className="text-lg font-semibold mt-2">
+                      Total Price: ${booking.total_price}
+                    </p>
+                  </li>
+                ))}
+            </ul>
+          ) : (
+            <p className="text-gray-500">No booked trips found.</p>
+          )}
+        </div>
+
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Previous Booked Trips</h2>
+          {bookedData.filter((booking) => booking.booking_status === "approved").length > 0 ? (
+            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {bookedData
+                .filter((booking) => booking.booking_status === "approved")
+                .map((booking, index) => (
+                  <li
+                    key={index}
+                    className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg hover:border-gray-900 border border-transparent transition-all duration-300 cursor-pointer"
+                    onClick={() => detailsHandler(booking.booking_id)} // Pass booking_id to the handler
+                  >
+                    <img
+                      src={`http://localhost:3000/backend/${booking.destination_image}`}
+                      alt={booking.package_name}
+                      className="w-full h-32 object-cover rounded-t-lg"
+                    />
+                    <h3 className="text-lg font-bold mt-2">{booking.package_name}</h3>
+                    <p className="text-gray-600">{booking.destination_name}</p>
+                    <div className="flex items-center justify-between mt-2">
+                      <span className="text-sm text-gray-500">
+                        Travel Date: {booking.travel_date ? booking.travel_date : "N/A"}
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        People: {booking.number_of_people}
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        Add-ons: {booking.add_on}
+                      </span>
+                    </div>
+                    <p className="text-lg font-semibold mt-2">
+                      Total Price: ${booking.total_price}
+                    </p>
+                  </li>
+                ))}
+            </ul>
+          ) : (
+            <p className="text-gray-500">No booked trips found.</p>
+          )}
+        </div>
       </div>
     </>
   );
