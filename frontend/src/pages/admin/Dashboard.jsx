@@ -24,7 +24,7 @@ const Dashboard = () => {
   const [destinationsData, setDestinationsData] = useState([]);
   const [topCustomers, setTopCustomers] = useState([]);
   const [topRating, setTopRating] = useState([]);
-  
+
   const [packagesData, setPackagesData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -65,7 +65,7 @@ const Dashboard = () => {
       );
       if (response.data.status === 1) {
         setTotalIncome(response.data.data);
-        
+
       } else {
         setError("No data found for income");
       }
@@ -108,7 +108,6 @@ const Dashboard = () => {
       );
       if (response.data.status === 1) {
         setMonthlyRevenue(response.data.monthly_revenue);
-        console.log(response.data.monthly_revenue);
       } else {
         setError("No data found for income");
       }
@@ -150,16 +149,15 @@ const Dashboard = () => {
       );
 
       if (response.data.status === 1) {
-        setDestinationData(response.data.chart_data); 
-        console.log(response.data)
+        setDestinationData(response.data.chart_data);
       } else {
         setError("No data found for travelers destinations");
       }
     } catch (err) {
       setError("Failed to fetch data: " + err.message);
     }
-  }; 
- 
+  };
+
 
   const getTopDestinations = async () => {
     try {
@@ -273,7 +271,7 @@ const Dashboard = () => {
         {
           headers: {
             "Content-Type": "application/json",
-            Total_Spent_Customers:"",
+            Total_Spent_Customers: "",
           },
         }
       );
@@ -347,6 +345,14 @@ const Dashboard = () => {
           <TotalTravellers travellers={travellers} />
         </div>
       </div>
+      <div className="mt-8 bg-white p-6 rounded-lg shadow-lg">
+        <h2 className="text-lg font-semibold text-gray-700 mb-4">
+          Travellers Around the World
+        </h2>
+        <div className="relative h-[300px] min-h-[300px] overflow-hidden">
+        <DestinationTravelersChart destinationData={destinationData} />
+        </div>
+      </div>
 
       <div className="mt-8 bg-white p-6 rounded-lg shadow-lg">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
@@ -385,6 +391,7 @@ const Dashboard = () => {
           <DailyRevenueChart dailyRevenue={dailyRevenue} />
         </div>
       </div>
+     
 
       <div className="mt-8 bg-white p-6 rounded-lg shadow-lg">
         <h2 className="text-lg font-semibold text-gray-700 mb-4">
@@ -403,14 +410,7 @@ const Dashboard = () => {
           <YearlyRevenueChart yearlyRevenueData={yearlyRevenueData} />
         </div>
       </div>
-      <div className="mt-8 bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-lg font-semibold text-gray-700 mb-4">
-          Travellers Around the World
-        </h2>
-        <div className="relative h-[400px] min-h-[300px] overflow-hidden">
-          <DestinationTravelersChart destinationData={destinationData} />
-        </div>
-      </div>
+      
 
       <div className="mt-8 bg-white p-6 rounded-lg shadow-lg">
         <h2 className="text-lg font-semibold text-gray-700 mb-4">

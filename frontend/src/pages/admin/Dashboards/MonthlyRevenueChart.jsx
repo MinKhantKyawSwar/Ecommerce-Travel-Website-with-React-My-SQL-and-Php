@@ -31,7 +31,7 @@ const MonthlyRevenueChart = ({ monthlyRevenueData }) => {
     const today = new Date();
 
     // Generate past 12 months
-    for (let i = 12; i > 0; i--) {
+    for (let i = 6; i > 0; i--) {
       const pastMonth = new Date();
       pastMonth.setMonth(today.getMonth() - i);
       months.push(`${pastMonth.getFullYear()}-${(pastMonth.getMonth() + 1).toString().padStart(2, '0')}`); // Format: YYYY-MM
@@ -39,6 +39,12 @@ const MonthlyRevenueChart = ({ monthlyRevenueData }) => {
 
     // Add this month
     months.push(`${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}`);
+    months.push(`${today.getFullYear()}-${(today.getMonth() + 2)}`);
+    months.push(`${today.getFullYear()}-${(today.getMonth() + 3)}`);
+    months.push(`${today.getFullYear()}-${(today.getMonth() + 4)}`);
+    months.push(`${today.getFullYear()}-${(today.getMonth() + 5)}`);
+    months.push(`${today.getFullYear()}-${(today.getMonth() + 6)}`);
+
     return months;
   };
 
@@ -53,7 +59,7 @@ const MonthlyRevenueChart = ({ monthlyRevenueData }) => {
           const entryMonth = entry.booking_month.slice(0, 7); // Get YYYY-MM from booking_day
           return entryMonth === month; // Compare just the month (YYYY-MM)
         })
-        .reduce((sum, entry) =>Number( sum + entry.total_price), 0); // Sum up sales for that month
+        .reduce((sum, entry) => Number(sum + entry.total_price), 0); // Sum up sales for that month
     });
   };
 
@@ -67,11 +73,12 @@ const MonthlyRevenueChart = ({ monthlyRevenueData }) => {
         label: "Monthly Sales",
         type: "bar",
         data: monthlyRevenue,
-        backgroundColor: "rgba(100, 100, 100, 0.5)", // Adjusted to a transparent black fill
-        borderColor: "rgba(10, 10, 14, 1)", // Changed bar border color to black
+        backgroundColor: "rgba(65, 105, 225, 0.5)", // Light blue with transparency
+        borderColor: "rgba(25, 25, 112, 1)", // Dark blue border
         borderWidth: 2, // Adjusted bar border thickness
       },
     ],
+
   };
 
   const options = {

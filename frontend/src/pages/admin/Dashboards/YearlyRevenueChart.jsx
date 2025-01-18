@@ -34,6 +34,9 @@ const YearlyRevenueChart = ({ yearlyRevenueData }) => {
 
     // Add this year
     years.push(today.getFullYear());
+    years.push(today.getFullYear()+1);
+    years.push(today.getFullYear()+2);
+    years.push(today.getFullYear()+3);
 
     return years;
   };
@@ -64,11 +67,11 @@ const YearlyRevenueChart = ({ yearlyRevenueData }) => {
         label: "Yearly Sales",
         type: "bar",
         data: yearlyRevenue,
-        backgroundColor: "rgba(100, 100, 100, 0.5)", // Adjusted to a transparent black fill
-        borderColor: "rgba(10, 10, 14, 1)", // Changed bar border color to black
+        backgroundColor: "rgba(25, 122, 272, 0.5)", // Light teal with transparency
+        borderColor: "rgba(54, 12, 235, 1)", // Blue border color
         borderWidth: 2, // Adjusted bar border thickness
       },
-    ],
+    ],    
   };
 
   const options = {

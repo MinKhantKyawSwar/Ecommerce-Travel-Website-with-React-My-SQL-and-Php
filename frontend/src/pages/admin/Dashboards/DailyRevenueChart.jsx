@@ -63,11 +63,12 @@ const DailyRevenueChart = ({ dailyRevenue }) => {
           );
           return match ? Number(match.total_price) : 0; // Use 0 if no data for the date
         }),
-        backgroundColor: "rgba(100, 100, 100, 0.5)", // Adjusted to a transparent black fill
-        borderColor: "rgba(10, 10, 14, 1)", // Changed line color to black
+        backgroundColor: "rgba(55, 132, 102, 0.2)", 
+        borderColor: "rgba(55, 132, 102, 1)", 
         borderWidth: 2, // Adjusted line thickness
       },
     ],
+    
   };
 
   const options = {
