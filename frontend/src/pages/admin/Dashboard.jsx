@@ -11,6 +11,7 @@ import TopRating from "./Dashboards/TopRating";
 import MonthlyRevenueChart from "./Dashboards/MonthlyRevenueChart";
 import YearlyRevenueChart from "./Dashboards/YearlyRevenueChart";
 import DestinationTravelersChart from "./Dashboards/DestinationTravelersChart";
+import PaymentCountChart from "./Dashboards/PaymentCountChart";
 
 const Dashboard = () => {
   const [packagesCount, setPackagesCount] = useState(0);
@@ -20,11 +21,12 @@ const Dashboard = () => {
   const [monthlyRevenueData, setMonthlyRevenue] = useState([]);
   const [yearlyRevenueData, setYearlyRevenue] = useState([]);
   const [destinationData, setDestinationData] = useState([]);
+  const [paymentData, setPaymentData] = useState([]);
   const [userAccountsData, setUserAccountsData] = useState([]);
   const [destinationsData, setDestinationsData] = useState([]);
   const [topCustomers, setTopCustomers] = useState([]);
   const [topRating, setTopRating] = useState([]);
-
+  
   const [packagesData, setPackagesData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -43,6 +45,28 @@ const Dashboard = () => {
       );
       if (response.data.status === 1) {
         setPackagesCount(response.data.total_packages);
+      } else {
+        setError("No data found for packages");
+      }
+    } catch (err) {
+      setError("Failed to fetch data: " + err.message);
+    }
+  };
+
+  const getPaymentCount = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/backend/dashboard.php",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Total_Payment_Count": "",
+          },
+        }
+      );
+      if (response.data.status === 1) {
+        setPaymentData(response.data.total_payment_count);
+        console.log(response.data.total_payment_count);
       } else {
         setError("No data found for packages");
       }
@@ -300,7 +324,8 @@ const Dashboard = () => {
       getTopRating(),
       getMonthlyRevenue(),
       getYearlyRevenue(),
-      fetchDestinationData()
+      fetchDestinationData(),
+      getPaymentCount()
     ])
       .then(() => {
         setLoading(false); // Set loading to false when all data is fetched
@@ -379,6 +404,15 @@ const Dashboard = () => {
           <div className="flex-1 relative h-[100%] min-h-[100%] overflow-hidden">
             <TopRating topRating={topRating} />
           </div>
+        </div>
+      </div>
+
+      <div className="mt-8  bg-white p-6 rounded-lg shadow-lg">
+        <h2 className="text-lg font-semibold text-gray-700 mb-4">
+          Payment Count Chart
+        </h2>
+        <div className="relative h-[400px] min-h-[300px] overflow-hidden">
+          <PaymentCountChart paymentData={paymentData} />
         </div>
       </div>
 

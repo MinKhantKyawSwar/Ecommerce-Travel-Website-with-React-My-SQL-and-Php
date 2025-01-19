@@ -155,7 +155,31 @@ switch ($method) {
                 } else {
                     $response = ['status' => 0, 'message' => "No booking found."];
                 }
-            } else if (isset($headers['Total_Travelers_Per_Destination'])) {
+            } else if (isset($headers['Total_Payment_Count'])) {
+                // Connection to database
+                $conn = $db->connect();
+            
+                // SQL query to calculate the total count of payments by payment method
+                $getTotalCount = "
+                    SELECT payment.payment_name, COUNT(*) as payment_count
+                    FROM booking
+                    JOIN payment ON payment.payment_id = booking.payment_method
+                    GROUP BY payment.payment_name
+                    ORDER BY payment_count DESC";
+            
+                $stmt = $conn->prepare($getTotalCount);
+                $stmt->execute();
+            
+                // Use fetchAll to retrieve all rows
+                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+                if ($result && count($result) > 0) {
+                    $response = ['status' => 1, 'message' => "Data found", 'total_payment_count' => $result];
+                } else {
+                    $response = ['status' => 0, 'message' => "No payments found."];
+                }
+            }
+            else if (isset($headers['Total_Travelers_Per_Destination'])) {
                 // Connection to database
                 $conn = $db->connect();
 

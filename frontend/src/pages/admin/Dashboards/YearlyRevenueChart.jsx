@@ -68,7 +68,7 @@ const YearlyRevenueChart = ({ yearlyRevenueData }) => {
         type: "bar",
         data: yearlyRevenue,
         backgroundColor: "rgba(25, 122, 272, 0.5)", // Light teal with transparency
-        borderColor: "rgba(54, 12, 235, 1)", // Blue border color
+        borderColor: "rgba(54, 512, 235, 1)", // Blue border color
         borderWidth: 2, // Adjusted bar border thickness
       },
     ],    
