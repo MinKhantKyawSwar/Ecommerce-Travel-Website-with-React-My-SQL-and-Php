@@ -31,8 +31,6 @@ export const NotificationProvider = ({ children }) => {
                     (n) => n.noti_status === "unread"
                 );
                 setUnreadCount(unreadNotifications.length);
-                localStorage.setItem("notification", unreadNotifications.length)
-
             }
         } catch (error) {
             console.error("Error fetching notifications:", error.message);

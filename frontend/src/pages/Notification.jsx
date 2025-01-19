@@ -11,7 +11,7 @@ const Notification = () => {
     const toggleMessage = (id) => {
         setExpandedMessages((prevState) => ({
             ...prevState,
-            [id]: !prevState[id], 
+            [id]: !prevState[id],
         }));
         markAsRead(id);
     };
@@ -57,9 +57,11 @@ const Notification = () => {
                             notifications.map((notification, index) => (
                                 <tr
                                     key={notification.notification_id}
-                                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                                    className={`border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer 
+                                    ${notification.noti_status === 'read' ? 'bg-white dark:text-gray-900' : 'bg-gray-100'}`}
                                     onClick={() => toggleMessage(notification.notification_id)} // Clicking the row will toggle the message
                                 >
+
                                     <td className="px-6 py-4 text-center">{index + 1}</td>
                                     <td className="px-6 py-4">
                                         <div className="relative">
@@ -69,11 +71,12 @@ const Notification = () => {
                                                     {notification.message}
                                                 </div>
                                             ) : (
-                                                <div className="text-gray-700 dark:text-gray-300 w-[500px] truncate">
+                                                <div className={`w-[500px] truncate ${notification.noti_status === 'read' ? 'text-gray-500 dark:text-gray-900' : 'text-gray-900 dark:text-gray-300'}`}>
                                                     {notification.message.length > 50
                                                         ? `${notification.message.substring(0, 50)}...`
                                                         : notification.message}
                                                 </div>
+
                                             )}
                                         </div>
                                     </td>

@@ -152,7 +152,6 @@ const Nav = () => {
   useEffect(() => {
     // Polling every 10 seconds to check for updated status
     const interval = setInterval(() => {
-      // localStorage.getItem("notification")
       unreadCount
     }, 5000);
 

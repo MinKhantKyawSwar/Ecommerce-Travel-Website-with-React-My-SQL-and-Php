@@ -11,8 +11,6 @@ const Transactions = () => {
   const [reload, setReload] = useState(false);
   const navigate = useNavigate();
 
-  const user_id = localStorage.getItem("user_id")
-
   const getAllTransactions = async () => {
     try {
       const response = await axios.get(
@@ -55,11 +53,11 @@ const Transactions = () => {
     window.scrollTo(0, 0); // Scroll to top on page change
   };
 
-  const transactionHandler = async (id, booking_id, status) => {
+  const transactionHandler = async (email, id, booking_id, status) => {
     try {
       const response = await axios.post(
         `http://localhost:3000/backend/getTransactions.php`,
-        { "booking_id": booking_id, "user_id": Number(id), "booking_status": status }
+        { "booking_id": booking_id, "user_id": Number(id), "booking_status": status,"email" :email }
       );
       if (response.data.status === 1) {
         toast.success(`Successfully ${status}`, {
@@ -153,7 +151,7 @@ const Transactions = () => {
                       </button>
                       <button
                         onClick={() =>
-                          transactionHandler(transaction.user_id, transaction.booking_id, "approved")
+                          transactionHandler(transaction.email, transaction.user_id, transaction.booking_id, "approved")
                         }
                         className="px-2 py-2 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
                       >
@@ -161,7 +159,7 @@ const Transactions = () => {
                       </button>
                       <button
                         onClick={() =>
-                          transactionHandler(transaction.user_id, transaction.booking_id, "denied")
+                          transactionHandler(transaction.email, transaction.user_id, transaction.booking_id, "denied")
                         }
                         className="px-3 py-2 text-xs font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
                       >
