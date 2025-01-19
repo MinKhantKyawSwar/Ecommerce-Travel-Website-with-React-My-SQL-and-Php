@@ -189,7 +189,7 @@ const TopRatedDestinations = ({ topDestinations, handleDetails }) => {
                       e.stopPropagation();
                       toggleSavedItem(destination.destination_id);
                     }}
-                    className="absolute top-2 right-2 text-white bg-black/50 p-2 rounded-full hover:bg-black/70 transition z-10"
+                    className="absolute top-6 right-6 text-white bg-black/50 p-2 rounded-full hover:bg-black/70 transition z-10"
                   >
                     {savedDestinations.includes(destination.destination_id) ? (
                       <IoMdHeart className="text-2xl" />
@@ -229,10 +229,7 @@ const TopRatedDestinations = ({ topDestinations, handleDetails }) => {
                     </button>
                   </div>
                   <span className="absolute top-4 left-4 bg-white/50 backdrop-blur-md backdrop-saturate-150 border border-gray-200 text-gray-900 text-sm font-semibold px-3 py-1 rounded-md shadow-sm">
-                    {destination.category_name}
-                  </span>
-                  <span className="absolute top-4 right-4 bg-white/50 backdrop-blur-md backdrop-saturate-150 border border-gray-200 text-black text-sm font-semibold px-2 py-1 rounded-md flex items-center">
-                    ⭐ {destination.rating}
+                  ⭐ {destination.rating}
                   </span>
                 </div>
               </div>

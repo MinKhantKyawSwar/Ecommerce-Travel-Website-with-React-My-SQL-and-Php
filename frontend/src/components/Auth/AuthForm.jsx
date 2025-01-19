@@ -57,39 +57,8 @@ const AuthForm = ({ isLogin }) => {
         .required("Confirm Password is required."),
   });
 
-  const resetPasswordHandler = async (values) => {
-    const { resetEmail } = values;
-    setIsEmail(resetEmail);
-    const url = "http://localhost:3000/backend/checkUser.php"; // Backend endpoint for resetting passwords
-    const data = { email: resetEmail }; // Match the backend payload structure
-
-    try {
-      const response = await axios.post(url, data, {
-        headers: { "Content-Type": "application/json" },
-      });
-
-      if (response.data.status === 1) {
-        toast.success("Email Found", {
-          position: "top-center",
-          autoClose: 2000,
-          theme: "light",
-        });
-        navigate("/reset-password");
-      } else {
-        toast.error(response.data.message || "Failed to send reset email.", {
-          position: "top-center",
-          autoClose: 2000,
-          theme: "light",
-        });
-      }
-    } catch (error) {
-      console.error("Error during reset password request:", error.message);
-      toast.error("An error occurred. Please try again later.", {
-        position: "top-center",
-        autoClose: 2000,
-        theme: "light",
-      });
-    }
+  const resetPasswordHandler = async () => {
+    navigate('/reset-password')
   };
 
   const submitHandler = async (values) => {
@@ -278,8 +247,7 @@ const AuthForm = ({ isLogin }) => {
                       <div className="flex items-center justify-between">
                         <a
                           className="underline cursor-pointer"
-                          onClick={() =>
-                            document.getElementById("my_modal_3").showModal()
+                          onClick={resetPasswordHandler
                           }
                         >
                           Forget Password?
@@ -339,8 +307,8 @@ const AuthForm = ({ isLogin }) => {
                 type="submit"
                 disabled={isSubmitting}
                 className={`py-3 w-full font-medium text-center rounded-lg text-white ${isSubmitting
-                    ? "bg-gray-600 cursor-not-allowed"
-                    : "bg-gray-800 hover:bg-gray-700"
+                  ? "bg-gray-600 cursor-not-allowed"
+                  : "bg-gray-800 hover:bg-gray-700"
                   } transition duration-200`}
               >
                 {isLogin
@@ -369,45 +337,7 @@ const AuthForm = ({ isLogin }) => {
             </Form>
           )}
         </Formik>
-        <dialog id="my_modal_3" className="modal">
-          <div className="modal-box">
-            <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
-              <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-                ✕
-              </button>
 
-              <h3 className="font-bold text-lg">Hello!</h3>
-              <p className="py-4 text-gray-700">
-                Press ESC key or click on ✕ button to close
-              </p>
-            </form>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const resetEmail = e.target.resetEmail.value;
-                resetPasswordHandler({ resetEmail });
-              }}
-            >
-              <label className="input input-bordered flex items-center gap-2 mb-4">
-                Email
-                <input
-                  type="email"
-                  className="grow"
-                  name="resetEmail"
-                  placeholder="Enter your email"
-                  required
-                />
-              </label>
-              <button
-                type="submit"
-                className="px-2 py-4 rounded-lg bg-gray-800 text-white w-full"
-              >
-                Reset Password
-              </button>
-            </form>
-          </div>
-        </dialog>
       </div>
     </>
   );

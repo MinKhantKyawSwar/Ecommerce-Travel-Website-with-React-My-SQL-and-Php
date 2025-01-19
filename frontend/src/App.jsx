@@ -27,6 +27,7 @@ import Chatbot from "./components/Chatbot";
 import FavoriteDestinations from "./pages/package/FavoriteDestinations";
 import NotificationPage from "./pages/Notification";
 import { NotificationProvider } from "./providers/NotificationContext";
+import ForgetPassword from "./components/Auth/ForgetPassword";
 
 function App() {
   const router = createBrowserRouter([
@@ -53,7 +54,8 @@ function App() {
         },
         {
           path: "/reset-password",
-          element: <ResetPassword />,
+          // element: <ResetPassword />,
+          element: <ForgetPassword />,
         },
         {
           path: "/profile",
