@@ -14,12 +14,14 @@ import TravelImage4 from "../../assets/pictures/4.png";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import Topdata from "./Topdata";
+import MainPageReview from "./MainPageReview";
 
 const Index = () => {
   const [destinations, setDestinations] = useState([]);
   const [topDestinations, setTopDestinations] = useState([]);
   const [topDataDestinations, setTopDataDestinations] = useState([]);
   const [travellers, setTravellers] = useState([]);
+  const [homePageReview, setHomePageReview] = useState([]);
   const [selectedDestination, setSelectedDestination] = useState(null);
 
   const [destinationCount, setDestinationCount] = useState([]);
@@ -253,6 +255,29 @@ const Index = () => {
     }
   };
 
+
+  // Fetch review
+  const homePageReviews = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/backend/homePageReviews.php",
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.data.status === 1) {
+        setHomePageReview(response.data.data);
+        console.log(response.data.data)
+      } else {
+        setError("No data found for customers");
+      }
+    } catch (err) {
+      setError("Failed to fetch data: " + err.message);
+    }
+  };
+
   // Trigger data fetching on component mount
   useEffect(() => {
     getDestinations();
@@ -262,6 +287,7 @@ const Index = () => {
     getCustomerCount();
     getDestinationCount();
     getTopDataDestinations();
+    homePageReviews();
   }, []);
 
   // if (loading) return <p className="text-center text-lg">Loading...</p>;
@@ -327,9 +353,8 @@ const Index = () => {
               {/* Image Section */}
               <div className="relative overflow-hidden h-[36rem]">
                 <div
-                  className={`flex h-full transition-transform duration-[1500ms] ease-in-out ${
-                    isTransitioning ? `transform -translate-x-${currentIndex * 100}%` : ""
-                  }`}
+                  className={`flex h-full transition-transform duration-[1500ms] ease-in-out ${isTransitioning ? `transform -translate-x-${currentIndex * 100}%` : ""
+                    }`}
                   style={{
                     transform: `translateX(-${currentIndex * 100}%)`, // Move to the current index
                   }}
@@ -369,6 +394,14 @@ const Index = () => {
               </div>
             </div>
 
+            <div className="mt-5">
+              <h2 className="text-2xl md:text-3xl text-center font-bold text-gray-800 uppercase tracking-wide">
+                Check Out Reviews
+              </h2>
+              <MainPageReview
+                homePageReview={homePageReview}
+              />
+            </div>
             <div className="max-w-7xl mx-auto px-4 py-12">
               <div className="">
                 <WebsiteInfo

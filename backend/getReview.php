@@ -45,41 +45,74 @@ switch ($method) {
         echo json_encode($response);
         break;
 
-    case "POST":
+   case "POST":
 
-        try {
-            // Retrieve all data
-            $data = json_decode($eData);
-            $review_title = $data->reviewTitle;
-            $description = $data->description;
-            $rating = $data->rating;
-            $created_at = $data->created_at;
-            $user = $data->userId;
-            $destination = $data->destination;
+    try {
+        // Retrieve all data
+        $data = json_decode($eData);
+        $review_title = $data->reviewTitle;
+        $description = $data->description;
+        $rating = $data->rating;
+        $created_at = $data->created_at;
+        $user = $data->userId;
+        $destination = $data->destination;
 
-            $conn = $db->connect();
-            $setSavedItems = "INSERT INTO review (review_title, description, rating, created_at, user, destination) VALUES 
-                (:review_title, :description, :rating, :created_at, :user, :destination)";
-            $stmt = $conn->prepare($setSavedItems);
-            $stmt->bindParam(':review_title', $review_title);
-            $stmt->bindParam(':description', $description);
-            $stmt->bindParam(':rating', $rating);
-            $stmt->bindParam(':created_at', $created_at);
-            $stmt->bindParam(':user', $user);
-            $stmt->bindParam(':destination', $destination);
-            $status = $stmt->execute();
+        $conn = $db->connect();
 
-            if ($status) {
-                $response = ['status' => 1, 'message' => "Review Successfully given!"];
-            } else {
-                $response = ['status' => 0, 'message' => "Failed to save item!"];
+        // Insert the new review into the review table
+        $setSavedItems = "INSERT INTO review (review_title, description, rating, created_at, user, destination) VALUES 
+            (:review_title, :description, :rating, :created_at, :user, :destination)";
+        $stmt = $conn->prepare($setSavedItems);
+        $stmt->bindParam(':review_title', $review_title);
+        $stmt->bindParam(':description', $description);
+        $stmt->bindParam(':rating', $rating);
+        $stmt->bindParam(':created_at', $created_at);
+        $stmt->bindParam(':user', $user);
+        $stmt->bindParam(':destination', $destination);
+        $status = $stmt->execute();
+
+        if ($status) {
+            // Review successfully added, now calculate the average rating for the destination
+            $getAvgReview = "
+                SELECT
+                    ROUND(AVG(review.rating)) AS average_rating
+                FROM
+                    review
+                JOIN
+                    destination ON review.destination = destination.destination_id
+                JOIN 
+                    users ON users.user_id = review.user
+                JOIN 
+                    location ON location.location_id = destination.location
+                WHERE review.destination = :destination";
+            $stmt2 = $conn->prepare($getAvgReview);
+            $stmt2->bindParam(":destination", $destination);
+            $stmt2->execute();
+
+            // Fetch the calculated average rating
+            $result = $stmt2->fetch(PDO::FETCH_ASSOC);
+            $average_rating = $result['average_rating'];
+
+            if ($average_rating !== null) {
+                // Update the destination with the new average rating
+                $updateAvgReview = "UPDATE destination SET rating = :average_rating WHERE destination_id = :destination_id";
+                $stmt3 = $conn->prepare($updateAvgReview);
+                $stmt3->bindParam(":average_rating", $average_rating); // Bind the average_rating correctly
+                $stmt3->bindParam(":destination_id", $destination); // Use the correct parameter for destination_id
+                $status3 = $stmt3->execute();
             }
-        } catch (PDOException $e) {
-            $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
-        }
 
-        echo json_encode($response);
-        break;
+            // Prepare the response
+            $response = ['status' => 1, 'message' => "Review successfully given!"];
+        } else {
+            $response = ['status' => 0, 'message' => "Failed to save item!"];
+        }
+    } catch (Exception $e) {
+        $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
+    }
+    echo json_encode($response);
+    break;
+
     case "PUT":
         try {
             $data = json_decode(json: $eData);

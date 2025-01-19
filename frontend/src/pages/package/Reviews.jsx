@@ -39,34 +39,34 @@ const Reviews = ({ id }) => {
       setLoading(false); // Set loading to false after fetching
     }
   };
-  const totalRatingData = async (totalRating) => {
-    const data = {
-      totalRating: parseFloat(totalRating),
-      destination: parseInt(id),
-    };
-    try {
-      const response = await axios.put(
-        `http://localhost:3000/backend/updateReviewInfo.php`,
-        data,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+  // const totalRatingData = async (totalRating) => {
+  //   const data = {
+  //     totalRating: parseFloat(totalRating),
+  //     destination: parseInt(id),
+  //   };
+  //   try {
+  //     const response = await axios.put(
+  //       `http://localhost:3000/backend/updateReviewInfo.php`,
+  //       data,
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
 
-      if (response.data.status === 1) {
-        console.log(response.data.data);
-      } else {
-        setError(response.data.message);
-        console.log(response.data);
-      }
-    } catch (err) {
-      setError("Failed to add rating: " + err.message);
-    } finally {
-      setLoading(false); // Set loading to false after fetching
-    }
-  };
+  //     if (response.data.status === 1) {
+  //       console.log(response.data.data);
+  //     } else {
+  //       setError(response.data.message);
+  //       console.log(response.data);
+  //     }
+  //   } catch (err) {
+  //     setError("Failed to add rating: " + err.message);
+  //   } finally {
+  //     setLoading(false); // Set loading to false after fetching
+  //   }
+  // };
 
   // Calculate total stars
   const calculateRatings = () => {
@@ -147,7 +147,7 @@ const Reviews = ({ id }) => {
         );
 
         if (response.data.status === 1) {
-          totalRatingData(averageRating);
+          // totalRatingData(averageRating);
           setPrevReview([...prevReview, response.data.data]);
           setReviewTitle("");
           setDescription("");
