@@ -403,8 +403,13 @@ const DestinationForm = () => {
   }, [previousDestination]);
 
   if (redirect) {
-    return <Navigate to={`/admin`} />;
+    if (!isEdit) {
+      return <Navigate to="/admin/manage-destination/packages" />;
+    } else {
+      return <Navigate to="/admin" />;
+    }
   }
+  
 
   return (
     <>
