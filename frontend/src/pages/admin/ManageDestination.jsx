@@ -15,6 +15,7 @@ const ManageDestination = () => {
   const [currentPage, setCurrentPage] = useState(1); // Current page state
   const [destinationPerPage, setDestinationPerPage] = useState(5); // Number of items per page
   const [currentDetailsPage, setCurrentDetailsPage] = useState(1); // Numbers of details per current page
+  const [searchTerm, setSearchTerm] = useState("");
 
   const { setDestinationId } = useContext(UserContext);
 
@@ -182,11 +183,23 @@ const ManageDestination = () => {
     getDestinations();
   }, []);
 
+  //search function
+  const filteredDestinations = destinations.filter(
+    (destination) =>
+      destination.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      destination.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      destination.region_name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setCurrentPage(1); // Reset to page 1 after searching
+  };
+
   //pagination for the whole page
   const indexOfLastDestination = currentPage * destinationPerPage;
-  const indexOfFirstCustomer = indexOfLastDestination - destinationPerPage;
-  const currentDestinations = destinations.slice(
-    indexOfFirstCustomer,
+  const indexOfFirstDestination = indexOfLastDestination - destinationPerPage;
+  const currentDestinations = filteredDestinations.slice(
+    indexOfFirstDestination,
     indexOfLastDestination
   );
 
@@ -197,7 +210,7 @@ const ManageDestination = () => {
   };
 
   // Calculate total pages
-  const totalPages = Math.ceil(destinations.length / destinationPerPage);
+  const totalPages = Math.ceil(filteredDestinations.length / destinationPerPage);
   //------------------------------------------------------------------
 
   const ITEMS_PER_PAGE = 5;
@@ -219,19 +232,53 @@ const ManageDestination = () => {
 
   return (
     <>
-      <div className="p-4 rounded-lg bg-white dark:bg-gray-800 shadow-md">
-        <h2 className="text-lg font-semibold mb-2">Manage Destination</h2>
-        <hr />
-      </div>
-      <div>
-        <div className="flex gap-10 p-4 rounded-lg bg-white dark:bg-gray-800 shadow-md mt-4">
-          <button
-            className="w-full text-green-600 font-medium py-2 px-10 mt-4 rounded-lg border border-green-600 hover:bg-green-600 hover:text-white transition duration-200"
-            onClick={() => navigate(`/admin/manage-destination`)}
+      <div className="w-full p-6 flex flex-col gap-4 rounded-lg bg-white shadow-md">
+        {/* Header Section */}
+        <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+          {/* Header Section */}
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            {/* Title */}
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+              Manage Destination
+            </h2>
+
+            {/* Add Button */}
+            <button
+              className="px-6 py-2 text-sm font-medium text-gray-800 border border-gray-800 rounded-lg shadow-sm hover:bg-gray-800 hover:text-white transition duration-200"
+              onClick={() => navigate(`/admin/manage-destination`)}
+            >
+              Add Destination
+            </button>
+          </div>
+
+          {/* Search Bar */}
+          <form
+            onSubmit={handleSearch}
+            className="flex items-center justify-center mt-6"
           >
-            Add
-          </button>
+            <div className="relative w-full md:w-2/3">
+              <input
+                type="text"
+                placeholder="🔍 Search by city, country, or region"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-4 py-2 text-gray-900 placeholder-gray-500 border rounded-lg shadow-sm focus:ring-gray-700 focus:border-gray-700 dark:bg-gray-700 dark:text-gray-300 dark:placeholder-gray-400"
+              />
+            </div>
+          </form>
         </div>
+
+        {/* Divider */}
+        <hr className="border-t border-gray-300" />
+
+        {/* Content (optional section for extending later) */}
+        <div className="text-gray-600">
+          {/* Placeholder for additional content */}
+        </div>
+      </div>
+
+      <div>
+
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -529,8 +576,8 @@ const ManageDestination = () => {
                     <button
                       onClick={() => paginate(index + 1)}
                       className={`px-3 py-2 leading-tight text-sm text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 ${currentPage === index + 1
-                          ? "bg-gray-200 text-gray-900 font-semibold"
-                          : ""
+                        ? "bg-gray-200 text-gray-900 font-semibold"
+                        : ""
                         }`}
                     >
                       {index + 1}
@@ -541,8 +588,8 @@ const ManageDestination = () => {
                   <button
                     onClick={() => paginate(currentPage + 1)}
                     className={`px-3 py-2 ml-0 leading-tight text-sm text-gray-900 font-semibold bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 ${currentPage === totalPages
-                        ? "cursor-not-allowed opacity-50"
-                        : ""
+                      ? "cursor-not-allowed opacity-50"
+                      : ""
                       }`}
                     disabled={currentPage === totalPages}
                   >
