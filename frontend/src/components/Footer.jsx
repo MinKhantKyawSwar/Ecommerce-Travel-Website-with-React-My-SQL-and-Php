@@ -44,15 +44,6 @@ const Footer = () => {
               </div>
             </fieldset>
           </form>
-          <div className="absolute right-16">
-            <img
-              src={botIcon}
-              alt="chatbot"
-              className="w-16 hover:scale-110 hover:cursor-pointer transition-transform duration-200 ease-in-out"
-              onClick={() => chatBotHandler()}
-            />
-          </div>
-
         </div>
         <div className="w-full px-4 text-center mt-10">
           <p className="text-sm">

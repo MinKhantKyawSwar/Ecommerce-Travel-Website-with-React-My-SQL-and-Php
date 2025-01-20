@@ -20,14 +20,14 @@ const MainPageReview = ({ homePageReview }) => {
       />
       <div className="mt-6">
         <div className="flex leading-tight justify-between px-10"></div>
-        <div className="mt-6 flex justify-center gap-4 items-center space-x-4 px-10">
+        <div className="mt-6 flex justify-center gap-4 items-center space-x-5 px-10">
           {homePageReview && homePageReview.length > 0 ? (
             homePageReview.slice(0, 5).map((review, index) => (
               <div
                 key={index}
                 className={`${index === 2
-                    ? "bg-white shadow-xl rounded-lg p-6 w-[350px] h-[300px] transform scale-105 border border-gray-300 hover:shadow-2xl"
-                    : "bg-white shadow-lg rounded-lg p-4 w-[200px] h-[250px] border border-gray-200 hover:shadow-2xl"
+                    ? "bg-white shadow-xl rounded-lg p-6 w-[350px] h-[340px] transform scale-105 border border-gray-300 hover:shadow-2xl"
+                    : "bg-white shadow-lg rounded-lg p-4 w-[200px] h-[270px] border border-gray-200 hover:shadow-2xl"
                   } flex-shrink-0`}
               >
                 {/* Destination Image */}

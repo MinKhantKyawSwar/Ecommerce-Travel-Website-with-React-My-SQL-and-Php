@@ -394,7 +394,7 @@ const Index = () => {
               </div>
             </div>
 
-            <div className="mt-5">
+            <div className="mt-12">
               <h2 className="text-2xl md:text-3xl text-center font-bold text-gray-800 uppercase tracking-wide">
                 Check Out Reviews
               </h2>

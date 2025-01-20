@@ -5,7 +5,7 @@ import { Link } from "react-router-dom"
 const Hero = ({ customers }) => {
   return (
     <div>
-      <div className="relative top-0 md:mt-4 w-full mb-5">
+      <div className="relative top-0 md:mt-6 w-full mb-12">
         {/* right-[28%] */}
         <div className="absolute bottom-72 lg:bottom-16 left-16 md:left-20">
           <div className="flex justify-center md:mt-4">
@@ -16,7 +16,7 @@ const Hero = ({ customers }) => {
                 <img
                   src={`http://localhost:3000/backend/${customer.profile_image}`}
                   alt="profile"
-                  className="rounded-full h-5 w-5 md:h-8 md:w-8 border-2 border-gray-300"
+                  className="rounded-full h-5 w-5 object-cover md:h-8 md:w-8 border-2 border-gray-300"
                 />
               </div>
             ))}
@@ -27,7 +27,7 @@ const Hero = ({ customers }) => {
           </div>
         </div>
         <video
-          className="w-full md:h-[35rem] object-cover rounded-2xl"
+          className="w-full md:h-[37rem] object-cover rounded-2xl"
           src={video}
           autoPlay
           loop

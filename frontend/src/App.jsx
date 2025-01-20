@@ -23,7 +23,6 @@ import EditPackageDetailsForm from "./components/Forms/EditPackageDetailsForm";
 import ScrollToTopOnNavigation from "./providers/ScrollToTopOnNavigation";
 import ResetPassword from "./components/Auth/ResetPassword";
 import CustomerDetailsPage from "./pages/admin/CustomerDetailsPage";
-import Chatbot from "./components/Chatbot";
 import FavoriteDestinations from "./pages/package/FavoriteDestinations";
 import NotificationPage from "./pages/Notification";
 import { NotificationProvider } from "./providers/NotificationContext";
@@ -128,10 +127,6 @@ function App() {
         {
           path: "/customerDetails/:userId",
           element: <CustomerDetailsPage />,
-        },
-        {
-          path: "/chatbot",
-          element: <Chatbot />,
         },
         {
           path: "/favorite-destinations",

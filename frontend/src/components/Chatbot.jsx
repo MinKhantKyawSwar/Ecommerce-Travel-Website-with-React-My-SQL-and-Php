@@ -39,7 +39,6 @@ const faq = [
   "Do you provide child-friendly tours?",
   "Can I pay in installments?"
 ];
-
 const Chatbot = () => {
   const { userInfo } = useContext(UserContext);
   const [messages, setMessages] = useState([]);
@@ -117,12 +116,13 @@ const Chatbot = () => {
   }, []);
 
   return (
-    <div className="flex  justify-center">
-      <div className="flex h-full flex-col w-3/4 p-6 rounded-xl shadow-lg border border-gray-300">
+    <div className=" flex justify-center">
+      <div className="bg-white flex flex-col w-3/4 h-[600px] p-6 rounded-xl shadow-lg border border-gray-300">
 
-        <div className="flex items-center justify-center mb-20">
+        <div className="flex items-center justify-center mb-6">
           <p className="font-bold text-3xl">Trailblazers ChatBot</p>
         </div>
+
         {/* Random Questions */}
         {showQuestions && (
           <div className="mb-6 space-y-4">
@@ -142,42 +142,31 @@ const Chatbot = () => {
         )}
 
         {/* Chat Messages */}
-        <div className="flex-1 mb-5 space-y-4 ">
+        <div className="flex-1 mb-5 space-y-4 overflow-y-auto max-h-[400px] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
           {messages.map((msg, index) => (
-            <div
-              key={index}
-              className="p-4 rounded-lg flex flex-col space-y-2"
-            >
+            <div key={index} className="p-4 rounded-lg flex flex-col space-y-2">
               {
                 !msg.destination ? (
-                  <div className="flex items-start space-x-2">
-                    {
-                      msg.sender === "user" ? (
-                        <div className="absolute right-20 md:right-60 pr-10 md:pr-4">
-                          <div className="flex items-end space-x-2">
-                            <p className="bg-neutral-700 text-white p-2 rounded-lg max-w-xs break-words shadow-lg">
-                              {msg.text}
-                            </p>
-                            <img
-                              src={`http://localhost:3000/backend/${userInfo.profile_image}`}
-                              alt="User Logo"
-                              className="w-8 h-8 rounded-full border-2 border-white"
-                            />
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex items-start space-x-2">
-                          <img
-                            src={botIcon}
-                            alt="Bot Logo"
-                            className="w-8 h-8 rounded-full border-2 border-white"
-                          />
-                          <p className="bg-gray-100 text-black p-2 rounded-lg max-w-xs break-words shadow-lg">
-                            {msg.text}
-                          </p>
-                        </div>
-                      )
-                    }
+                  <div className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} space-x-2`}>
+                    <div className={`flex items-end space-x-2 ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}>
+                      {msg.sender === 'user' && (
+                        <img
+                          src={`http://localhost:3000/backend/${userInfo.profile_image}`}
+                          alt="User Logo"
+                          className="w-8 h-8 rounded-full border-2 border-white"
+                        />
+                      )}
+                      {msg.sender !== 'user' && (
+                        <img
+                          src={botIcon}
+                          alt="Bot Logo"
+                          className="w-8 h-8 rounded-full border-2 border-white"
+                        />
+                      )}
+                      <p className={`p-2 rounded-lg max-w-xs break-words shadow-lg ${msg.sender === 'user' ? 'bg-neutral-700 text-white' : 'bg-gray-100 text-black'}`}>
+                        {msg.text}
+                      </p>
+                    </div>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -206,24 +195,23 @@ const Chatbot = () => {
                         click here to view details
                       </a>
                     </div>
-
                   </div>
                 )
               }
             </div>
-
           ))}
           {loading && (
             <div className="flex items-center justify-center">
-              {/* <DNA
+              <TailSpin
                 visible={true}
-                height="80"
-                width="80"
-                ariaLabel="dna-loading"
+                height="24"
+                width="24"
+                color="#ffffff"
+                ariaLabel="tail-spin-loading"
+                radius="1"
                 wrapperStyle={{}}
-                wrapperClass="dna-wrapper"
-              /> */}
-              <span className="loading loading-dots loading-lg"></span>
+                wrapperClass=""
+              />
             </div>
           )}
         </div>
@@ -242,22 +230,20 @@ const Chatbot = () => {
             onClick={() => handleSendMessage(userInput)}
             className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-black"
           >
-
-            {
-              loading ?
-                (<TailSpin
-                  visible={true}
-                  height="24"
-                  width="24"
-                  color="#ffffff"
-                  ariaLabel="tail-spin-loading"
-                  radius="1"
-                  wrapperStyle={{}}
-                  wrapperClass=""
-                />) :
-                ("Send")
-
-            }
+            {loading ? (
+              <TailSpin
+                visible={true}
+                height="24"
+                width="24"
+                color="#ffffff"
+                ariaLabel="tail-spin-loading"
+                radius="1"
+                wrapperStyle={{}}
+                wrapperClass=""
+              />
+            ) : (
+              "Send"
+            )}
           </button>
         </div>
       </div>
