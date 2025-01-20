@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { Bounce, Slide, ToastContainer, toast } from "react-toastify";
 
 const Packages = ({ destination_id, packages, setPackages }) => {
+
   const [error, setError] = useState(null);
   const [savedPackages, setSavedPackages] = useState([]);
   const navigate = useNavigate();
@@ -117,7 +118,17 @@ const Packages = ({ destination_id, packages, setPackages }) => {
             transition: Bounce,
           });
         } else if (response.data.status === 2) {
-          alert("Already saved");
+          toast.error("Package already saved!", {
+            position: "top-center",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          });
         } else {
           setError("Item was not saved");
         }
@@ -138,9 +149,9 @@ const Packages = ({ destination_id, packages, setPackages }) => {
   };
 
   const handleBooking = (id) => {
-    if(localStorage.getItem("user_id")){
+    if (localStorage.getItem("user_id")) {
       navigate(`/booking/${id}`);
-    }else{
+    } else {
       navigate(`/register`)
     }
   };
@@ -160,57 +171,84 @@ const Packages = ({ destination_id, packages, setPackages }) => {
         theme="light"
         transition={Slide}
       />
-      <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800 mb-10">
+      <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-900 mb-10">
         {!error && packages.length > 0 ? (
           <>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-              {packages.length} packages Available
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              {packages.length} packages available
             </p>
-            <div className="flex gap-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {packages.map((pkg) => (
                 <div
                   key={pkg.package_id}
-                  className="border rounded-lg p-4 shadow-md w-full md:w-1/3"
+                  className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg overflow-hidden hover:shadow-xl hover:border hover:border-black transition-shadow duration-300"
                 >
-                  {localStorage.getItem("user_id") && (
-                    <button
-                      onClick={() =>
-                        toggleSavedItem(pkg.package_id, pkg.least_price)
-                      }
-                      className="mb-2 px-2 py-2 rounded float-right text-lg"
-                    >
-                      {savedPackages.includes(pkg.package_id) ? (
-                        <FaBookmark />
-                      ) : (
-                        <FaRegBookmark />
+                  <div className="p-5">
+                    {/* Package Name and Bookmark */}
+                    <div className="flex justify-between items-start mb-4">
+                      <h3 className="font-semibold text-lg text-gray-800 dark:text-white">
+                        {pkg.package_name}
+                      </h3>
+                      {localStorage.getItem("user_id") && (
+                        <button
+                          onClick={() =>
+                            toggleSavedItem(pkg.package_id, pkg.least_price)
+                          }
+                          className="text-xl text-gray-500 hover:text-gray-800"
+                        >
+                          {savedPackages.includes(pkg.package_id) ? (
+                            <FaBookmark />
+                          ) : (
+                            <FaRegBookmark />
+                          )}
+                        </button>
                       )}
-                    </button>
-                  )}
-                  <p className="font-medium text-xl mb-2">{pkg.package_name}</p>
-                  <p className="text-sm mb-4">
-                    Starting from <b>${pkg.least_price}</b>/per person
-                    <br />
-                    <b>Facilities:</b> {pkg.facilities}
-                    <br />
-                    <b>Meals:</b> {pkg.meals.length > 30 ? (<>{pkg.meals.substring(0, 30)}...</>) : pkg.meals}
-                    <br />
-                    <b>Activities:</b> {pkg.activities.length > 30 ? (<>{pkg.activities.substring(0, 30)}...</>) : pkg.activities}
-                    <br />
-                    <b>Duration:</b> {pkg.duration}
-                  </p>
-                  <div className="flex justify-between">
-                    <button
-                      className="border-2 border-blue-500 text-blue-500 px-3 py-2 rounded hover:bg-blue-500 hover:text-white transition"
-                      onClick={() => handleDetails(pkg.package_id)}
-                    >
-                      Check More
-                    </button>
-                    <button
-                      className="border-2 border-green-500 text-green-500 px-3 py-2 rounded hover:bg-green-500 hover:text-white transition"
-                      onClick={() => handleBooking(pkg.package_id)}
-                    >
-                      Book Package
-                    </button>
+                    </div>
+
+                    {/* Package Details */}
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                      <span className="block">
+                        <b>Starting from:</b> ${pkg.least_price}/per person
+                      </span>
+                      <span className="block">
+                        <b>Facilities:</b> {pkg.facilities}
+                      </span>
+                      <span className="block">
+                        <b>Meals:</b>{" "}
+                        {pkg.meals.length > 30 ? (
+                          <>{pkg.meals.substring(0, 30)}...</>
+                        ) : (
+                          pkg.meals
+                        )}
+                      </span>
+                      <span className="block">
+                        <b>Activities:</b>{" "}
+                        {pkg.activities.length > 30 ? (
+                          <>{pkg.activities.substring(0, 30)}...</>
+                        ) : (
+                          pkg.activities
+                        )}
+                      </span>
+                      <span className="block">
+                        <b>Duration:</b> {pkg.duration}
+                      </span>
+                    </p>
+
+                    {/* Buttons */}
+                    <div className="flex justify-between items-center">
+                      <button
+                        className="bg-gray-800 text-white px-4 py-2 rounded-lg shadow hover:bg-gray-800 transition"
+                        onClick={() => handleDetails(pkg.package_id)}
+                      >
+                        Check More
+                      </button>
+                      <button
+                        className="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600 transition"
+                        onClick={() => handleBooking(pkg.package_id)}
+                      >
+                        Book Package
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -218,12 +256,13 @@ const Packages = ({ destination_id, packages, setPackages }) => {
           </>
         ) : (
           !error && (
-            <p className="text-red-500">
+            <p className="text-red-500 text-center">
               No packages available for this destination.
             </p>
           )
         )}
       </div>
+
     </>
   );
 };

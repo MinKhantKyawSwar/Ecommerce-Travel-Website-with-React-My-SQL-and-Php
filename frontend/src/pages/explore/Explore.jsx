@@ -140,14 +140,14 @@ const Explore = () => {
 
   return (
     <div className="p-4">
-      <div className="text-center mb-8 flex items-center justify-center">
+      <div className="text-center mb-8 flex w-full flex-col items-center justify-center">
         <p className="text-2xl font-semibold">Find your next destination</p>
-        <div className="mt-2">
+        <div className="mt-2 w-1/2">
           <label className="input input-bordered flex items-center gap-2">
             <MdOutlineSearch className="mr-2" />
             <input
               type="text"
-              className="grow w-full max-w-md"
+              className="grow max-w-md"
               placeholder="Search countries or cities..."
               onChange={handleSearchChange}
             />

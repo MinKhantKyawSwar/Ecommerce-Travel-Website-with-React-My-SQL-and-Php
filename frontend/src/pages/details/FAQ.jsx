@@ -36,7 +36,7 @@ const FAQ = () => {
 
   return (
     <div className="max-w-4xl mx-auto my-10 p-6 bg-white shadow-lg rounded-lg">
-      <h2 className="text-3xl font-bold text-center text-blue-600 mb-6">
+      <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
         FAQs
       </h2>
       <div className="space-y-4">

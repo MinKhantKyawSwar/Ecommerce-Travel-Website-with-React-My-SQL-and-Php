@@ -123,19 +123,6 @@ const DetailsTopSection = ({ destination }) => {
 
   return (
     <>
-      <ToastContainer
-        position="top-center"
-        autoClose={2000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        transition={Slide}
-      />
       <div className="p-6 border rounded-lg shadow-md bg-white dark:bg-gray-800">
         <div className="flex justify-between md:flex-row md:items-center md:justify-between">
           <div className="pb-6 border-b md:border-b-0 md:pb-0 md:border-r md:pr-6">
@@ -158,7 +145,7 @@ const DetailsTopSection = ({ destination }) => {
                 e.stopPropagation();
                 toggleSavedItem(destination.destination_id);
               }}
-              className="absolute top-44 right-16 text-white bg-black/50 p-2 rounded-full hover:bg-black/70 transition z-10"
+              className="absolute top-46 right-16 text-white bg-black/50 p-2 rounded-full hover:bg-black/70 transition z-10"
             >
               {savedDestinations.includes(destination.destination_id) ? (
                   <IoMdHeart className="text-2xl"/>

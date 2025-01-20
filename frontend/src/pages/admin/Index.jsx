@@ -4,8 +4,8 @@ import {
   FaHome,
   FaBox,
   FaBars,
-  FaQuestionCircle,
   FaUser,
+  FaUserFriends,
   FaTimes
 } from "react-icons/fa"; // Importing icons
 import axios from "axios";
@@ -15,6 +15,7 @@ import ManageDestination from "./ManageDestination";
 import ManageCustomer from "./ManageCustomer";
 import Profile from "./Profile";
 import ManageGuide from "./ManageGuide";
+import { FaMapLocationDot,FaPerson, } from "react-icons/fa6";
 
 const Index = () => {
   const [activeTabKey, setActiveTabKey] = useState(
@@ -92,7 +93,7 @@ const Index = () => {
       <div className="flex flex-col md:flex-row">
          {/* Sidebar Toggle Button for Mobile */}
       <button
-        className="md:hidden w-full top-96 left-4 bg-gray-50 text-blue-600 p-3 "
+        className="md:hidden w-full top-96 left-4 bg-gray-50 text-gray-900 p-3 "
         onClick={() => setSidebarVisible(!isSidebarVisible)}
       >
         {isSidebarVisible ? <FaTimes /> : <FaBars />}
@@ -107,17 +108,19 @@ const Index = () => {
             {[
               { name: "dashboard", icon: <FaHome /> },
               { name: "transactions", icon: <FaBox /> },
-              { name: "Manage Destination", icon: <FaQuestionCircle /> },
-              { name: "Manage Customers", icon: <FaQuestionCircle /> },
-              { name: "Manage Guide", icon: <FaQuestionCircle /> },
+              { name: "Manage Destination", icon: <FaMapLocationDot /> },
+              { name: "Manage Customers", icon: <FaUserFriends /> },
+              { name: "Manage Guide", icon:<FaPerson />},
               { name: "Profile", icon: <FaUser /> },
+             
+
             ].map(({ name, icon }) => (
               <li key={name}>
                 <button
                   className={`flex items-center w-full text-left p-2 rounded-lg transition-colors duration-200 ${
                     activeTabKey === name
-                      ? "bg-blue-500 text-white"
-                      : "text-gray-800 dark:text-white hover:bg-blue-100 dark:hover:bg-blue-700"
+                      ? "bg-gray-900 text-white"
+                      : "text-gray-800 hover:text-white hover:bg-gray-900 dark:hover:bg-gray-900"
                   }`}
                   onClick={() => handleTabClick(name)}
                 >

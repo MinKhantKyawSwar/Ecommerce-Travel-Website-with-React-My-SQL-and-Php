@@ -296,11 +296,11 @@ const Nav = () => {
               >
                 <div className="indicator text-lg">
                   {/* Display saved notification badge */}
-                  {noti > 0 ? (
+                  {savedNoti > 0 ? (
                     <>
                       <FaBookmark />
                       <span className="badge badge-sm indicator-item bg-red-500 text-white">
-                        {noti}
+                        {savedNoti}
                       </span>
                     </>
                   )

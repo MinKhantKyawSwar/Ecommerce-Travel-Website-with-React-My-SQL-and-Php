@@ -163,7 +163,7 @@ const AuthForm = ({ isLogin }) => {
         theme="light"
         transition={Slide}
       />
-      <div className="max-w-md mx-auto p-6 border-gray-900 border bg-white rounded-lg shadow-md my-20">
+      <div className="max-w-md mx-auto p-6 border-gray-900 border bg-white rounded-lg shadow-md my-10">
         <Formik
           initialValues={initialValues}
           validationSchema={AuthFormSchema}

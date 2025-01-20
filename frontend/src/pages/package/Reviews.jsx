@@ -292,7 +292,7 @@ const Reviews = ({ id }) => {
                   />
                   <button
                     type="submit"
-                    className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-all duration-200"
+                    className="w-full bg-gray-800 text-white py-2 rounded-md hover:bg-gray-800 transition-all duration-200"
                   >
                     {isEdit ? "Edit Review" : "Submit Review"}
                   </button>
@@ -318,7 +318,7 @@ const Reviews = ({ id }) => {
             </p>
             {[5, 4, 3, 2, 1].map((star) => (
               <div className="flex items-center mb-2" key={star}>
-                <span className="text-sm font-medium text-blue-600 hover:underline cursor-pointer">
+                <span className="text-sm font-medium text-gray-800 hover:underline cursor-pointer">
                   {star} ★
                 </span>
                 <div className="w-3/4 h-4 mx-2 bg-gray-200 rounded">
@@ -340,7 +340,7 @@ const Reviews = ({ id }) => {
               localStorage.getItem("token") && (
                 <button
                   onClick={() => setShowReviewForm(!showReviewForm)}
-                  className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-200"
+                  className="mt-4 bg-gray-800 text-white py-2 px-4 rounded-md hover:bg-gray-800 transition-all duration-200"
                 >
                   {showReviewForm ? "Cancel" : "Add Review"}
                 </button>
@@ -349,7 +349,7 @@ const Reviews = ({ id }) => {
 
           </div>
           <button
-            className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-all duration-200"
+            className="mt-4 bg-gray-800 text-white py-2 px-4 rounded-md hover:bg-gray-800 transition-all duration-200"
             onClick={() => document.getElementById("reviews").showModal()}
           >
             Show Reviews

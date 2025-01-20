@@ -6,6 +6,7 @@ import Reviews from "../package/Reviews";
 import Overview from "../details/Overview";
 import DetailsTopSection from "../details/DetailsTopSection";
 import FAQ from "../details/FAQ";
+import { Slide, ToastContainer } from "react-toastify";
 
 const Details = () => {
   const [packages, setPackages] = useState([]);
@@ -132,6 +133,20 @@ const Details = () => {
 
   return (
     <>
+    
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Slide}
+      />
       <button
         className="border-2 px-4 py-2 m-2 bg-gray-800  text-white hover:bg-black transition-all duration-200 mt-10 rounded-xl"
         onClick={goBackHandler}

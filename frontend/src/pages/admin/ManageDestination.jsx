@@ -280,23 +280,23 @@ const ManageDestination = () => {
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                  <th scope="col" className="px-6 py-3">
-                    Id
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Destination Name
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Country
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Region
-                  </th>
-                  <th scope="col" className="flex justify-center py-3">
-                    Action
-                  </th>
-                </tr>
+              <tr>
+                <th scope="col" className="px-6 py-3">
+                  Id
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Destination Name
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Country
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Region
+                </th>
+                <th scope="col" className="flex justify-center py-3">
+                  Action
+                </th>
+              </tr>
             </thead>
 
             {currentDestinations.map((destination, index) => (
@@ -349,7 +349,7 @@ const ManageDestination = () => {
                     <td colSpan="5" className="bg-gray-100 rounded">
                       {openDropdown === index && (
                         <div className="bg-gray-100 rounded-lg shadow-md p-6">
-                          <div className="flex gap-10">
+                          <div className="flex justify-between">
                             <h3 className="font-semibold text-lg mb-4">
                               Packages
                             </h3>
@@ -358,7 +358,7 @@ const ManageDestination = () => {
                                 setDestinationId(destination.destination_id);
                                 navigate(`/admin/manage-destination/packages/`);
                               }}
-                              className="font-medium text-blue-600 hover:underline transition duration-200 mb-4"
+                              className="font-medium border border-black rounded-lg px-5 py-2 text-black hover:bg-black hover:text-white` transition duration-200 mb-4"
                             >
                               Add package
                             </button>
@@ -421,19 +421,21 @@ const ManageDestination = () => {
                                     {/* Toggleable package details */}
                                     {openDetailsDropdown === packageIndex && (
                                       <div className="mt-4 bg-gray-100 p-4 rounded-lg shadow-md">
-                                        <h4 className="font-semibold text-lg mb-4">
-                                          Package Details
-                                        </h4>
-                                        <button
-                                          className="w-full text-green-600 font-medium py-2 px-10 mt-4 rounded-lg border border-green-600 hover:bg-green-600 hover:text-white transition duration-200"
-                                          onClick={() =>
-                                            navigate(
-                                              `/admin/manage-destination/packages/package-details/${packageItem.package_id}`
-                                            )
-                                          }
-                                        >
-                                          Add New Package Details
-                                        </button>
+                                        <div className="flex justify-between">
+                                          <h4 className="font-semibold text-lg mb-4">
+                                            Package Details
+                                          </h4>
+                                          <button
+                                            className=" text-black font-medium py-2 px-4 rounded-lg border border-black hover:bg-black hover:text-white transition duration-200"
+                                            onClick={() =>
+                                              navigate(
+                                                `/admin/manage-destination/packages/package-details/${packageItem.package_id}`
+                                              )
+                                            }
+                                          >
+                                            Add New Package Details
+                                          </button>
+                                        </div>
                                         <ul className="list-none pl-0 mt-4">
                                           {currentItems.map(
                                             (packageData, index) => (
