@@ -26,14 +26,14 @@ const Features = () => {
           playsInline
         />
 
-        <Link
+        {/* <Link
           to="/chatbot"
           className="absolute top-2 right-2 w-10 h-10 md:w-16 md:h-16 bg-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl hover:bg-gray-50"
         >
           <span className="text-2xl md:text-4xl">
             <MdOutlineArrowOutward />
           </span>
-        </Link>
+        </Link> */}
       </div>
 
       {/* Right Side Section */}
