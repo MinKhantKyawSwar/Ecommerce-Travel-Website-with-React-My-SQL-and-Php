@@ -20,7 +20,7 @@ switch ($method) {
             $getRandomFiveUserReview = "
                 SELECT 
                     review.*, 
-                    users.username, 
+                    users.*, 
                     location.city, 
                     location.country, 
                     destination.*

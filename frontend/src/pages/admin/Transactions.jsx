@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [transactionsPerPage, setTransactionsPerPage] = useState(6);
   const [reload, setReload] = useState(false);
@@ -36,16 +37,25 @@ const Transactions = () => {
     getAllTransactions();
   }, []);
 
+  // Filtered transactions based on search query
+  const filteredTransactions = transactions.filter(
+    (transaction) =>
+      transaction.package_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      transaction.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      transaction.travel_date.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      transaction.booking_status.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   // Calculate indices for current transactions
   const indexOfLastTransaction = currentPage * transactionsPerPage;
   const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
-  const currentTransactions = transactions.slice(
+  const currentTransactions = filteredTransactions.slice(
     indexOfFirstTransaction,
     indexOfLastTransaction
   );
 
   // Calculate total pages
-  const totalPages = Math.ceil(transactions.length / transactionsPerPage);
+  const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage);
 
   // Pagination control
   const paginate = (pageNumber) => {
@@ -57,7 +67,7 @@ const Transactions = () => {
     try {
       const response = await axios.post(
         `http://localhost:3000/backend/getTransactions.php`,
-        { "booking_id": booking_id, "user_id": Number(id), "booking_status": status,"email" :email }
+        { "booking_id": booking_id, "user_id": Number(id), "booking_status": status, "email": email }
       );
       if (response.data.status === 1) {
         toast.success(`Successfully ${status}`, {
@@ -106,10 +116,22 @@ const Transactions = () => {
         transition={Slide}
       />
       <div className="p-4 rounded-lg bg-white dark:bg-gray-800 shadow-md">
-        <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">
-          Transactions
-        </h2>
-        <hr className="mb-4 border-gray-300 dark:border-gray-700" />
+        <div className="w-full mb-4 flex flex-col gap-4">
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+            Transactions
+          </h2>
+
+          {/* Search Bar */}
+          <div className="mb-4 flex justify-center">
+            <input
+              type="text"
+              placeholder="🔍 Search by package name, username, or date"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-2/3 px-4 py-2 text-gray-900 placeholder-gray-500 border rounded-lg shadow-sm focus:ring-gray-700 focus:border-gray-700 dark:bg-gray-700 dark:text-gray-300 dark:placeholder-gray-400"
+            />
+          </div>
+        </div>
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

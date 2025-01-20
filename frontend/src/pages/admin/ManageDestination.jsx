@@ -233,48 +233,46 @@ const ManageDestination = () => {
   return (
     <>
       <div className="w-full p-6 flex flex-col gap-4 rounded-lg bg-white shadow-md">
+
         {/* Header Section */}
-        <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-          {/* Header Section */}
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            {/* Title */}
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-              Manage Destination
-            </h2>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          {/* Title */}
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+            Manage Destination
+          </h2>
 
-            {/* Add Button */}
-            <button
-              className="px-6 py-2 text-sm font-medium text-gray-800 border border-gray-800 rounded-lg shadow-sm hover:bg-gray-800 hover:text-white transition duration-200"
-              onClick={() => navigate(`/admin/manage-destination`)}
-            >
-              Add Destination
-            </button>
-          </div>
-
-          {/* Search Bar */}
-          <form
-            onSubmit={handleSearch}
-            className="flex items-center justify-center mt-6"
+          {/* Add Button */}
+          <button
+            className="px-6 py-2 text-sm font-medium text-gray-800 border border-gray-800 rounded-lg shadow-sm hover:bg-gray-800 hover:text-white transition duration-200"
+            onClick={() => navigate(`/admin/manage-destination`)}
           >
-            <div className="relative w-full md:w-2/3">
-              <input
-                type="text"
-                placeholder="🔍 Search by city, country, or region"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 text-gray-900 placeholder-gray-500 border rounded-lg shadow-sm focus:ring-gray-700 focus:border-gray-700 dark:bg-gray-700 dark:text-gray-300 dark:placeholder-gray-400"
-              />
-            </div>
-          </form>
+            Add Destination
+          </button>
         </div>
 
-        {/* Divider */}
-        <hr className="border-t border-gray-300" />
+        {/* Search Bar */}
+        <form
+          onSubmit={handleSearch}
+          className="flex items-center justify-center mt-6"
+        >
+          <div className="relative w-full md:w-2/3">
+            <input
+              type="text"
+              placeholder="🔍 Search by city, country, or region"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-4 py-2 text-gray-900 placeholder-gray-500 border rounded-lg shadow-sm focus:ring-gray-700 focus:border-gray-700 dark:bg-gray-700 dark:text-gray-300 dark:placeholder-gray-400"
+            />
+          </div>
+        </form>
+      </div>
 
-        {/* Content (optional section for extending later) */}
-        <div className="text-gray-600">
-          {/* Placeholder for additional content */}
-        </div>
+      {/* Divider */}
+      <hr className="border-t border-gray-300" />
+
+      {/* Content (optional section for extending later) */}
+      <div className="text-gray-600">
+        {/* Placeholder for additional content */}
       </div>
 
       <div>
@@ -282,23 +280,23 @@ const ManageDestination = () => {
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-              <tr>
-                <th scope="col" className="px-6 py-3">
-                  Id
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Destination Name
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Country
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Region
-                </th>
-                <th scope="col" className="flex justify-center py-3">
-                  Action
-                </th>
-              </tr>
+                <tr>
+                  <th scope="col" className="px-6 py-3">
+                    Id
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Destination Name
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Country
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Region
+                  </th>
+                  <th scope="col" className="flex justify-center py-3">
+                    Action
+                  </th>
+                </tr>
             </thead>
 
             {currentDestinations.map((destination, index) => (

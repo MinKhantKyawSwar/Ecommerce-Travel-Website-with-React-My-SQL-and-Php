@@ -86,8 +86,6 @@ const ManageGuide = () => {
   return (
     <>
       <div className="w-full p-6 flex flex-col gap-4 rounded-lg bg-white shadow-md">
-        {/* Header Section */}
-        <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
           {/* Header Section */}
           <div className="flex flex-wrap items-center justify-between gap-4">
             {/* Title */}
@@ -114,7 +112,6 @@ const ManageGuide = () => {
               className="w-full px-4 py-2 text-gray-900 placeholder-gray-500 border rounded-lg shadow-sm focus:ring-gray-700 focus:border-gray-700 dark:bg-gray-700 dark:text-gray-300 dark:placeholder-gray-400"
             />
           </div>
-        </div>
 
 
         {/* Divider */}

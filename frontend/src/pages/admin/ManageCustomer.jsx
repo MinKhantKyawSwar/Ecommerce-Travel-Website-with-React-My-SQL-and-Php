@@ -99,7 +99,7 @@ const ManageCustomer = () => {
     <div className="p-4 rounded-lg bg-white dark:bg-gray-800 shadow-md">
       <div className="flex items-center justify-between mb-4">
         {/* Header Title */}
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
           All Customers
         </h2>
 
