@@ -20,6 +20,10 @@ const Nav = () => {
     updateFavoriteDestinationNoti,
   } = useContext(UserContext);
   const [notifications, setNotifications] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [searchBar, setSearchBar] = useState(false);
 
 
   const { unreadCount } = useNotification();
@@ -159,6 +163,42 @@ const Nav = () => {
     return () => clearInterval(interval);
   }, []);
 
+
+  const handleSearchChange = async (event) => {
+    const term = event.target.value;
+    setSearchTerm(term);
+
+    if (term.trim().length > 2) {
+      try {
+        const response = await axios.get("http://localhost:3000/backend/searchDestinations.php", {
+          params: { query: term },
+        });
+        if (response.data.status === 1) {
+          setSearchResults(response.data.data);
+          setShowDropdown(true); // Ensure the dropdown is shown when there are results
+        } else {
+          setSearchResults([]);
+          setShowDropdown(false); // Hide dropdown if no results
+        }
+      } catch (error) {
+        console.error("Error fetching search results:", error.message);
+      }
+    } else {
+      setSearchResults([]);
+      setShowDropdown(false); // Hide dropdown if search term is too short
+    }
+  };
+
+  const handleSearchSelect = (id) => {
+    navigate(`/destination/${id}`); // Navigate to the selected destination
+    setSearchTerm(""); // Clear search field
+    setShowDropdown(false); // Hide dropdown after selection
+  };
+
+  const searchBarToggler = () => {
+    setSearchBar(!searchBar)
+  }
+
   return (
     <div className="navbar bg-white text-gray-900 rounded-2xl border border-gray-400 shadow-md fixed top-0 left-0 max-w-[97%] ml-[1.5%] pt-2 mt-3 z-50">
       <div className="navbar-start px-4  ">
@@ -168,6 +208,46 @@ const Nav = () => {
         >
           Explore
         </Link>
+        <button className="btn btn-ghost btn-circle" onClick={searchBarToggler}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </button>
+        {
+          searchBar && (
+            <div className="navbar-center relative w-1/2">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                placeholder="Search destinations..."
+                className="input input-bordered w-full max-w-md"
+              />
+              {showDropdown && searchResults.length > 0 && (
+                <ul className="absolute bg-white border border-gray-300 rounded-lg shadow-lg w-full max-w-md mt-2 z-50">
+                  {searchResults.map((result) => (
+                    <li
+                      key={result.destination_id} // Use the unique destination_id
+                      onClick={() => handleSearchSelect(result.destination_id)}
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    >
+                      {result.city}, {result.country} {/* Display city and country */}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )
+        }
       </div>
       <div className="navbar-center">
         <Link
