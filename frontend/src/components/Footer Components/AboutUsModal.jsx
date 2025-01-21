@@ -132,7 +132,7 @@ function AboutUsModal() {
             {/* Modal Close Button */}
             <div className="modal-action flex justify-end mt-8">
               <button
-                className="btn bg-blue-600 text-white hover:bg-blue-700 transition duration-300"
+                className="btn bg-gray-900 text-white hover:bg-black transition duration-300"
                 onClick={closeModal}
               >
                 Close
