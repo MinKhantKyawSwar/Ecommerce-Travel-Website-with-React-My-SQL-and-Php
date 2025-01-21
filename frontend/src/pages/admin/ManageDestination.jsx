@@ -358,7 +358,7 @@ const ManageDestination = () => {
                                 setDestinationId(destination.destination_id);
                                 navigate(`/admin/manage-destination/packages/`);
                               }}
-                              className="font-medium border border-black rounded-lg px-5 py-2 text-black hover:bg-black hover:text-white` transition duration-200 mb-4"
+                              className="font-medium border border-black rounded-lg px-5 py-2 text-black hover:bg-black hover:text-white transition duration-200 mb-4"
                             >
                               Add package
                             </button>

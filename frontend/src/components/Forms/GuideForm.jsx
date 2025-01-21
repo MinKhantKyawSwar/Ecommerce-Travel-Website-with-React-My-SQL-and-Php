@@ -255,7 +255,7 @@ const GuideForm = () => {
       />
       <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
         <button
-          className="text-blue-600 font-medium py-2 px-10 mt-4 rounded-lg border border-blue-600 hover:bg-blue-600 hover:text-white transition duration-200"
+          className="text-gray-900 font-medium py-2 px-10 mt-4 rounded-lg border border-gray-900 hover:bg-gray-900 hover:text-white transition duration-200"
           onClick={goBackHandler}
         >
           Go Back
@@ -272,7 +272,7 @@ const GuideForm = () => {
               method="post"
               encType="multipart/form-data"
             >
-              <h1 className="text-center font-semibold text-3xl my-4 text-blue-600">
+              <h1 className="text-center font-semibold text-3xl my-4 text-gray-900">
                 Guide Form
               </h1>
 
@@ -287,7 +287,7 @@ const GuideForm = () => {
                 />
                 <label
                   htmlFor="guide_image"
-                  className="inline-flex items-center justify-center px-4 py-2 mt-2 text-white bg-blue-500 border border-transparent rounded-md shadow-sm cursor-pointer hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+                  className="inline-flex items-center justify-center px-4 py-2 mt-2 text-white bg-gray-900 border border-transparent rounded-md shadow-sm cursor-pointer hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
                 >
                   Upload Guide Image
                 </label>
@@ -323,7 +323,7 @@ const GuideForm = () => {
                   type="text"
                   name="guide_name"
                   id="guide_name"
-                  className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="text-lg border-2 border-gray-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                 />
                 <StyledErrorMessage name="guide_name" />
               </div>
@@ -336,7 +336,7 @@ const GuideForm = () => {
                   type="text"
                   name="email"
                   id="email"
-                  className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="text-lg border-2 border-gray-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                 />
                 <StyledErrorMessage name="email" />
               </div>
@@ -349,7 +349,7 @@ const GuideForm = () => {
                   as="textarea"
                   name="description"
                   id="description"
-                  className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="text-lg border-2 border-gray-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                   rows="8"
                 />
                 <StyledErrorMessage name="description" />
@@ -363,7 +363,7 @@ const GuideForm = () => {
                   type="text"
                   name="language"
                   id="language"
-                  className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="text-lg border-2 border-gray-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                 />
                 <StyledErrorMessage name="language" />
               </div>
@@ -376,13 +376,13 @@ const GuideForm = () => {
                   type="number"
                   name="exp_years"
                   id="exp_years"
-                  className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="text-lg border-2 border-gray-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                 />
                 <StyledErrorMessage name="exp_years" />
               </div>
 
               <button
-                className="text-white bg-blue-600 py-3 font-medium w-full text-center rounded-lg hover:bg-teal-700 transition duration-200"
+                className="text-white bg-gray-900 py-3 font-medium w-full text-center rounded-lg hover:bg-teal-700 transition duration-200"
                 type="submit"
                 disabled={isSubmitting}
               >
