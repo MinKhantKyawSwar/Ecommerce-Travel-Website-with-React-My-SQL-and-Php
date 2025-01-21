@@ -372,7 +372,19 @@ switch ($method) {
                     $updatestmt->bindParam(":created_at", $created_at, PDO::PARAM_STR);
                     $updatestmt->bindParam(":updated_at", $created_at, PDO::PARAM_STR);
 
-                    if ($updatestmt->execute()) {
+                    $admin_id = 1;
+                    $adminMessage = "A user books and waiting for your approval. Please check transactions from the admin panel.";
+                    $adminNotification = "INSERT INTO notifications (user, message, noti_status, created_at, updated_at) 
+                    VALUES (:user, :message, :noti_status, :created_at, :updated_at)";
+                    $adminStmt = $conn->prepare($adminNotification);
+                    $adminStmt->bindParam(":user", $admin_id, PDO::PARAM_INT);
+                    $adminStmt->bindParam(":message", $adminMessage, PDO::PARAM_STR);
+                    $adminStmt->bindParam(":noti_status", $noti_status, PDO::PARAM_STR);
+                    $adminStmt->bindParam(":created_at", $created_at, PDO::PARAM_STR);
+                    $adminStmt->bindParam(":updated_at", $created_at, PDO::PARAM_STR);
+
+
+                    if ($updatestmt->execute() && $adminStmt->execute()) {
                         $response = ['status' => 1, 'message' => "Successfully Booked! Notification added successfully!"];
                     } else {
                         throw new Exception("Failed to add notification. Booking was successful.");

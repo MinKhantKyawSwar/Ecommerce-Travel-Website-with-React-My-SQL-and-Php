@@ -75,7 +75,7 @@ switch ($method) {
                     // Review successfully added, now calculate the average rating for the destination
                     $getAvgReview = "
                         SELECT
-                            ROUND(AVG(review.rating)) AS average_rating
+                            ROUND(AVG(review.rating),1) AS average_rating
                         FROM
                             review
                         JOIN
@@ -135,6 +135,36 @@ switch ($method) {
             $status = $stmt->execute();
 
             if ($status) {
+                  // Review successfully added, now calculate the average rating for the destination
+                  $getAvgReview = "
+                  SELECT
+                      ROUND(AVG(review.rating),1) AS average_rating
+                  FROM
+                      review
+                  JOIN
+                      destination ON review.destination = destination.destination_id
+                  JOIN 
+                      users ON users.user_id = review.user
+                  JOIN 
+                      location ON location.location_id = destination.location
+                  WHERE review.destination = :destination";
+              $stmt2 = $conn->prepare($getAvgReview);
+              $stmt2->bindParam(":destination", $destination);
+              $stmt2->execute();
+  
+              // Fetch the calculated average rating
+              $result = $stmt2->fetch(PDO::FETCH_ASSOC);
+              $average_rating = $result['average_rating'];
+  
+              if ($average_rating !== null) {
+                  // Update the destination with the new average rating
+                  $updateAvgReview = "UPDATE destination SET rating = :average_rating WHERE destination_id = :destination_id";
+                  $stmt3 = $conn->prepare($updateAvgReview);
+                  $stmt3->bindParam(":average_rating", $average_rating); // Bind the average_rating correctly
+                  $stmt3->bindParam(":destination_id", $destination); // Use the correct parameter for destination_id
+                  $status3 = $stmt3->execute();
+              }
+
                 $response = ['status' => 1, 'message' => "Review successfully updated!"];
             } else {
                 $response = ['status' => 0, ' message' => "Failed to update review!"];
@@ -161,6 +191,36 @@ switch ($method) {
             $status = $stmt->execute();
 
             if ($status) {
+                  // Review successfully added, now calculate the average rating for the destination
+                  $getAvgReview = "
+                  SELECT
+                      ROUND(AVG(review.rating),1) AS average_rating
+                  FROM
+                      review
+                  JOIN
+                      destination ON review.destination = destination.destination_id
+                  JOIN 
+                      users ON users.user_id = review.user
+                  JOIN 
+                      location ON location.location_id = destination.location
+                  WHERE review.destination = :destination";
+              $stmt2 = $conn->prepare($getAvgReview);
+              $stmt2->bindParam(":destination", $destination);
+              $stmt2->execute();
+  
+              // Fetch the calculated average rating
+              $result = $stmt2->fetch(PDO::FETCH_ASSOC);
+              $average_rating = $result['average_rating'];
+  
+              if ($average_rating !== null) {
+                  // Update the destination with the new average rating
+                  $updateAvgReview = "UPDATE destination SET rating = :average_rating WHERE destination_id = :destination_id";
+                  $stmt3 = $conn->prepare($updateAvgReview);
+                  $stmt3->bindParam(":average_rating", $average_rating); // Bind the average_rating correctly
+                  $stmt3->bindParam(":destination_id", $destination); // Use the correct parameter for destination_id
+                  $status3 = $stmt3->execute();
+              }
+
                 $response = ['status' => 1, 'message' => "Review successfully deleted!"];
             } else {
                 $response = ['status' => 0, 'message' => "Failed to delete review!"];

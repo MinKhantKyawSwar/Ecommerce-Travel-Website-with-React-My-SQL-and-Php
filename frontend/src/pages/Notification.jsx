@@ -32,9 +32,40 @@ const Notification = () => {
                 theme="light"
                 transition={Slide}
             />
-            <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">
-                Notifications
-            </h2>
+            <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">
+                    Notifications
+                </h2>
+                <div className="flex space-x-2">
+                    <button
+                        onClick={() => {
+                            // Collapse all expanded messages
+                            setExpandedMessages({});
+
+                            // Mark all notifications as read
+                            notifications.forEach((notification) => {
+                                if (notification.noti_status !== 'read') {
+                                    markAsRead(notification.notification_id);
+                                }
+                            });
+                        }}
+                        className="px-3 py-2 text-xs font-medium text-white bg-gray-800 rounded-md hover:bg-gray-800"
+                    >
+                        Mark all as read
+                    </button>
+                    <button
+                        onClick={() => {
+                            notifications.forEach((notification) => {
+                                deleteNotification(notification.notification_id);
+                            });
+                        }}
+                        className="px-3 py-2 text-xs font-medium text-white bg-red-500 rounded-md hover:bg-red-600"
+                    >
+                        Delete All
+                    </button>
+                </div>
+            </div>
+
             <hr className="mb-4 border-gray-300 dark:border-gray-700" />
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table className="min-w-full table-auto">
@@ -92,7 +123,7 @@ const Notification = () => {
                                                     e.stopPropagation(); // Prevent click event from triggering row click
                                                     markAsRead(notification.notification_id);
                                                 }}
-                                                className="px-3 py-2 text-xs font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 mr-2"
+                                                className="px-3 py-2 text-xs font-medium text-white bg-gray-800 rounded-md hover:bg-black mr-2"
                                             >
                                                 Mark as Read
                                             </button>

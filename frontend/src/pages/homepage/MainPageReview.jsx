@@ -47,12 +47,12 @@ const MainPageReview = ({ homePageReview }) => {
                 </div>
                 <p
                   className={`${index === 2
-                      ? "h-24 text-gray-700 text-sm text-center p-3"
-                      : "h-14 text-gray-700 text-xs text-center p-3"
+                      ? "h-24 text-gray-700 text-lg font-bold text-center p-3"
+                      : "h-16 text-gray-700 text-sm -mt-4 text-center p-3"
                     } break-words`}
                 >
                  {
-                  review.review_description.length > 52 ? ( review.review_description.substring(0, 52) + "...") : review.review_description
+                  review.review_description.length > 44 ? ( review.review_description.substring(0, 44) + "...") : review.review_description
                  }
                 </p>
 
@@ -85,8 +85,6 @@ const MainPageReview = ({ homePageReview }) => {
                     </div>
                   </div>
                 </div>
-                {/* Review Description */}
-
               </div>
             ))
           ) : (

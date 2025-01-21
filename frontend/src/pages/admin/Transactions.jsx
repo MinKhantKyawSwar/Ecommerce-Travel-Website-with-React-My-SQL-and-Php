@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { TailSpin } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
 import { Bounce, Slide, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,6 +10,7 @@ const Transactions = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [transactionsPerPage, setTransactionsPerPage] = useState(6);
+  const [loading, setIsLoading] = useState(false);
   const [reload, setReload] = useState(false);
   const navigate = useNavigate();
 
@@ -64,6 +66,7 @@ const Transactions = () => {
   };
 
   const transactionHandler = async (email, id, booking_id, status) => {
+    setIsLoading(true);
     try {
       const response = await axios.post(
         `http://localhost:3000/backend/getTransactions.php`,
@@ -94,6 +97,7 @@ const Transactions = () => {
         theme: "light",
       });
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -171,22 +175,58 @@ const Transactions = () => {
                       >
                         Details
                       </button>
-                      <button
-                        onClick={() =>
-                          transactionHandler(transaction.email, transaction.user_id, transaction.booking_id, "approved")
-                        }
-                        className="px-2 py-2 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
-                      >
-                        Approve
-                      </button>
-                      <button
-                        onClick={() =>
-                          transactionHandler(transaction.email, transaction.user_id, transaction.booking_id, "denied")
-                        }
-                        className="px-3 py-2 text-xs font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
-                      >
-                        Deny
-                      </button>
+                      {
+                        !loading && (
+                          <button
+                            onClick={() =>
+                              transactionHandler(transaction.email, transaction.user_id, transaction.booking_id, "approved")
+                            }
+                            className="px-2 py-2 text-xs text-center font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
+                          >
+                            Approve
+                          </button>
+                        )
+                      }
+                      {loading && (
+                        <div className="px-6 py-2 text-xs text-center font-medium text-white bg-green-600 rounded-md hover:bg-green-700">
+                          <TailSpin
+                            visible={true}
+                            height="17"
+                            width="17"
+                            color="#ffffff"
+                            ariaLabel="tail-spin-loading"
+                            radius="1"
+                            wrapperStyle={{}}
+                            wrapperClass=""
+                          />
+                        </div>
+                      )}
+                      {
+                        !loading && (
+                          <button
+                            onClick={() =>
+                              transactionHandler(transaction.email, transaction.user_id, transaction.booking_id, "denied")
+                            }
+                            className="px-3 py-2 text-xs font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+                          >
+                            Deny
+                          </button>
+                        )
+                      }
+                      {loading && (
+                        <div className="px-4 py-2 text-xs font-medium text-white bg-red-600 rounded-md hover:bg-red-700">
+                          <TailSpin
+                            visible={true}
+                            height="17"
+                            width="17"
+                            color="#ffffff"
+                            ariaLabel="tail-spin-loading"
+                            radius="1"
+                            wrapperStyle={{}}
+                            wrapperClass=""
+                          />
+                        </div>
+                      )}
                     </td>
                   )}
                   {transaction.booking_status === "approved" && (
@@ -204,6 +244,7 @@ const Transactions = () => {
                       </p>
                     </td>
                   )}
+
                   {transaction.booking_status === "denied" && (
                     <td className="flex flex-row justify-start gap-2 px-6 py-4 font-semibold">
                       <button

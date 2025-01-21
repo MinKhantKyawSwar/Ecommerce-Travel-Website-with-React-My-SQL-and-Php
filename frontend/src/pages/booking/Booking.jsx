@@ -374,7 +374,7 @@ const Booking = () => {
   };
 
   const paymentHandler = () => {
-
+    
     setLoading(true);
     setOrder(true);
 

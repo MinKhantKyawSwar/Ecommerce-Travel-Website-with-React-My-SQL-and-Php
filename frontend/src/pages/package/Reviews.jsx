@@ -46,6 +46,7 @@ const Reviews = ({ id }) => {
       totalRating: parseFloat(totalRating),
       destination: parseInt(id),
     };
+
     try {
       const response = await axios.put(
         `http://localhost:3000/backend/updateReviewInfo.php`,
@@ -149,7 +150,8 @@ const Reviews = ({ id }) => {
         );
 
         if (response.data.status === 1) {
-          totalRatingData(averageRating);
+          // totalRatingData(averageRating);
+          console.log(response.data.average_rating);
           setPrevReview([...prevReview, response.data.data]);
           setReviewTitle("");
           setDescription("");
@@ -205,7 +207,7 @@ const Reviews = ({ id }) => {
       );
 
       if (response.data.status === 1) {
-        totalRatingData(averageRating);
+        // totalRatingData(averageRating);
         const updatedReviews = prevReview.map((review) =>
           review.review_id === currentReviewId ? response.data.data : review
         );
@@ -247,7 +249,7 @@ const Reviews = ({ id }) => {
       );
 
       if (response.data.status === 1) {
-        totalRatingData(averageRating);
+        // totalRatingData(averageRating);
         setReload(!reload);
       } else {
         setError("Failed to delete review");
@@ -260,6 +262,7 @@ const Reviews = ({ id }) => {
   useEffect(() => {
     getPrevReview();
   }, [showReviewForm, reload]);
+
 
   return (
     <>
