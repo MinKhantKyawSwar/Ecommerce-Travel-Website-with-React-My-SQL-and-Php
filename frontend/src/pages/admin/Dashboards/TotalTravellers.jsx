@@ -5,7 +5,7 @@ const TotalTravellers = ({ travellers }) => {
     <div>
       <div className="flex items-center justify-between">
         <p className="text-3xl font-bold text-blue-600">
-          {travellers.current_month_count + travellers.previous_month_count}
+          {Number(travellers.current_month_count) + Number(travellers.previous_month_count)}
         </p>
         <div className="flex items-center">
           {travellers.current_month_count > travellers.previous_month_count ? (

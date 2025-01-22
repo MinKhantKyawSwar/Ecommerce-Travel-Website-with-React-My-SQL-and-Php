@@ -20,15 +20,15 @@ const MainPageReview = ({ homePageReview }) => {
         transition={Slide}
       />
       <div className="mt-6">
-        <div className="flex leading-tight justify-between px-10"></div>
-        <div className="mt-6 flex justify-center gap-4 items-center space-x-5 px-10">
+        <div className="flex leading-tight justify-between px-4 md:px-10"></div>
+        <div className="mt-6 flex flex-wrap justify-center gap-4 items-center px-4 md:px-10">
           {homePageReview && homePageReview.length > 0 ? (
             homePageReview.slice(0, 5).map((review, index) => (
               <div
                 key={index}
                 className={`${index === 2
-                  ? "bg-white shadow-xl rounded-lg p-6 w-[350px] h-[350px] transform scale-105 border border-gray-300 hover:shadow-2xl"
-                  : "bg-white shadow-lg rounded-lg p-4 w-[200px] h-[280px] border border-gray-200 hover:shadow-2xl"
+                  ? "bg-white shadow-xl rounded-lg p-6 w-full md:w-[350px] h-[350px] transform scale-105 border border-gray-300 hover:shadow-2xl"
+                  : "bg-white shadow-lg rounded-lg p-4 w-full md:w-[200px] h-[280px] border border-gray-200 hover:shadow-2xl"
                   } flex-shrink-0`}
               >
                 {/* Destination Image */}
@@ -37,27 +37,26 @@ const MainPageReview = ({ homePageReview }) => {
                   alt={`${review.city} Destination`}
                   className="w-full h-[120px] object-cover rounded-t-lg mb-4"
                 />
-                <div className="flex flex-row justify-between">
-                  <div className={`${index === 2 ? "flex justify-start text-2xl text-gray-800" : "flex justify-start text-lg text-gray-800"}`}>
-                    <RiDoubleQuotesL />
+                <div className="flex justify-between">
+                  <div className="flex text-gray-800">
+                    <RiDoubleQuotesL className={`${index === 2 ? "text-2xl" : "text-lg"}`} />
                   </div>
-                  <div className={`${index === 2 ? "flex justify-end text-2xl text-gray-800" : "flex justify-end text-lg text-gray-800"}`}>
-                    <RiDoubleQuotesR />
+                  <div className="flex text-gray-800">
+                    <RiDoubleQuotesR className={`${index === 2 ? "text-2xl" : "text-lg"}`} />
                   </div>
                 </div>
                 <p
                   className={`${index === 2
-                      ? "h-24 text-gray-700 text-lg font-bold text-center p-3"
-                      : "h-16 text-gray-700 text-sm -mt-4 text-center p-3"
+                    ? "h-24 text-gray-700 text-base md:text-lg font-bold text-center p-3"
+                    : "h-16 text-gray-700 text-sm text-center p-3"
                     } break-words`}
                 >
-                 {
-                  review.review_description.length > 44 ? ( review.review_description.substring(0, 44) + "...") : review.review_description
-                 }
+                  {review.review_description.length > 44
+                    ? review.review_description.substring(0, 44) + "..."
+                    : review.review_description}
                 </p>
 
-
-                <div className="flex items-center ">
+                <div className="flex items-center">
                   <img
                     src={`http://localhost:3000/backend/${review.profile_image}`}
                     alt={`${review.city} Destination`}
@@ -69,7 +68,7 @@ const MainPageReview = ({ homePageReview }) => {
                   <div className="flex flex-col justify-center">
                     <h3
                       className={`${index === 2
-                        ? "text-xl md:text-xl font-bold text-gray-800"
+                        ? "text-base md:text-xl font-bold text-gray-800"
                         : "text-sm md:text-xs font-bold text-gray-800"
                         }`}
                     >
@@ -79,7 +78,7 @@ const MainPageReview = ({ homePageReview }) => {
                       <span className={`${index === 2 ? "text-yellow-500 text-lg" : "text-yellow-500 text-sm"}`}>
                         {"★".repeat(review.rating)}
                       </span>
-                      <span className={`${index === 2 ? "text-gray-500 ml-2" : "text-gray-500 text-sm"}`}>
+                      <span className={`${index === 2 ? "text-gray-500 ml-2" : "text-gray-500 text-sm ml-2"}`}>
                         ({review.rating} / 5)
                       </span>
                     </div>
@@ -88,12 +87,14 @@ const MainPageReview = ({ homePageReview }) => {
               </div>
             ))
           ) : (
-            <p className="text-gray-500">No reviews available.</p>
+            <p className="text-gray-500 text-center w-full">
+              No reviews available.
+            </p>
           )}
         </div>
       </div>
-
     </>
+
   );
 };
 

@@ -353,8 +353,8 @@ switch ($method) {
                                     destination on destination.destination_id = package.destination
                                 JOIN 
                                     location on location.location_id = destination.location
-                                WHERE 
-                                    booking_date BETWEEN :previousMonthStart AND :currentMonthEnd
+                            -- WHERE 
+                --                  booking_date BETWEEN :previousMonthStart AND :currentMonthEnd
                                 GROUP BY 
                                     city
                                 ORDER BY 
@@ -363,8 +363,8 @@ switch ($method) {
 
                 $stmt = $conn->prepare($getTotalCount);
                 // Bind the dynamic date parameters
-                $stmt->bindParam(':previousMonthStart', $previousMonthStart);
-                $stmt->bindParam(':currentMonthEnd', $currentMonthEnd);
+                // $stmt->bindParam(':previousMonthStart', $previousMonthStart);
+                // $stmt->bindParam(':currentMonthEnd', $currentMonthEnd);
                 $stmt->execute();
 
                 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -400,8 +400,8 @@ switch ($method) {
                     booking
                   JOIN 
                     package on package.package_id = booking.package
-                  WHERE 
-                    booking_date BETWEEN :previousMonthStart AND :currentMonthEnd
+                --   WHERE 
+                --     booking_date BETWEEN :previousMonthStart AND :currentMonthEnd
                   GROUP BY 
                     package.package_id
                   ORDER BY 
@@ -409,8 +409,8 @@ switch ($method) {
                   LIMIT 10;";
 
                 $stmt = $conn->prepare($getTotalCount);
-                $stmt->bindParam(':previousMonthStart', $previousMonthStart);
-                $stmt->bindParam(':currentMonthEnd', $currentMonthEnd);
+                // $stmt->bindParam(':previousMonthStart', $previousMonthStart);
+                // $stmt->bindParam(':currentMonthEnd', $currentMonthEnd);
                 $stmt->execute();
 
                 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);

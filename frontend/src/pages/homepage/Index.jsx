@@ -349,9 +349,9 @@ const Index = () => {
         <>
           <div>
             <Hero customers={customers} />
-            <div className="mt-6 max-w-7xl mx-auto px-6 py-6 grid grid-cols-1 md:grid-cols-2 items-center">
+            <div className="mt-6 max-w-7xl mx-auto px-6 py-6 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
               {/* Image Section */}
-              <div className="relative overflow-hidden h-[36rem]">
+              <div className="relative overflow-hidden h-[24rem] md:h-[36rem]">
                 <div
                   className={`flex h-full transition-transform duration-[1500ms] ease-in-out ${isTransitioning ? `transform -translate-x-${currentIndex * 100}%` : ""
                     }`}
@@ -364,7 +364,7 @@ const Index = () => {
                       <img
                         src={image}
                         alt={`Slide ${index + 1}`}
-                        className="ml-24 h-full object-cover"
+                        className="h-full w-full object-cover"
                       />
                     </div>
                   ))}
@@ -372,17 +372,17 @@ const Index = () => {
               </div>
 
               {/* Text Section */}
-              <div className="flex flex-col text-center md:text-left ">
+              <div className="flex flex-col text-center md:text-left space-y-6">
                 <motion.h1
                   ref={ref}
-                  className="pb-10 mt-10 font-sans text-4xl md:text-6xl font-extrabold leading-tight text-gray-900"
+                  className="font-sans text-3xl md:text-6xl font-extrabold leading-tight text-gray-900"
                   initial="hidden"
                   animate={controls}
                   variants={variants}
                 >
                   Discover the world's wonders
                 </motion.h1>
-                <p className="text-lg text-gray-600">
+                <p className="text-base md:text-lg text-gray-600">
                   Embark on a journey like no other. Explore breathtaking landscapes, rich cultures, and unforgettable experiences with our travel packages.
                 </p>
                 <div>
@@ -394,42 +394,35 @@ const Index = () => {
               </div>
             </div>
 
-            <div className="mt-12">
-              <h2 className="text-2xl md:text-3xl text-center font-bold text-gray-800 uppercase tracking-wide">
+            <div className="mt-12 px-4 md:px-0">
+              <h2 className="text-xl md:text-2xl text-center font-bold text-gray-800 uppercase tracking-wide">
                 Check Out Reviews
               </h2>
-              <MainPageReview
-                homePageReview={homePageReview}
-              />
+              <MainPageReview homePageReview={homePageReview} />
             </div>
-            <div className="max-w-7xl mx-auto px-4 py-12">
-              <div className="">
-                <WebsiteInfo
-                  packagesCount={packagesCount}
-                  travellers={travellers}
-                  destinationCount={destinationCount}
-                />
-              </div>
-              <div>
-                <TopRatedDestinations
-                  topDestinations={topDestinations}
-                  handleDetails={handleDetails}
-                />
-              </div>
-              <div className="mb-20">
+
+            <div className="max-w-7xl mx-auto px-4 py-8 md:py-12 space-y-12">
+              <WebsiteInfo
+                packagesCount={packagesCount}
+                travellers={travellers}
+                destinationCount={destinationCount}
+              />
+              <TopRatedDestinations
+                topDestinations={topDestinations}
+                handleDetails={handleDetails}
+              />
+              <div className="mb-10">
                 <Features />
               </div>
-
-              <div>
-                <FunPlaces
-                  destinations={destinations}
-                  handleDetails={handleDetails}
-                />
-              </div>
+              <FunPlaces
+                destinations={destinations}
+                handleDetails={handleDetails}
+              />
             </div>
           </div>
         </>
       )}
+
     </>
   );
 };
