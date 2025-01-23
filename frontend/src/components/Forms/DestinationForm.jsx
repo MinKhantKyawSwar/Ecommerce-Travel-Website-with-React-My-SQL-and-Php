@@ -304,7 +304,7 @@ const DestinationForm = () => {
           transition: Slide,
         });
       } else if (response.data.status === 1) {
-        toast.success(response.data.message, {
+        toast.success("Destination Successfully Added", {
           position: "top-center",
           autoClose: 1000,
           hideProgressBar: false,

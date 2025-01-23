@@ -3,7 +3,7 @@ import { Formik, Form, Field } from "formik";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
-import { ToastContainer, toast, Slide } from "react-toastify";
+import { ToastContainer, toast,Bounce, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import StyledErrorMessage from "../../utils/StyledErrorMessage";
 import { Navigate, useParams, useSearchParams } from "react-router-dom";
@@ -71,7 +71,17 @@ const PackageDetailsForm = () => {
     try {
       const response = await axios.post(url, values);
       if (response.data.status === 1) {
-        toast.success("Packages submitted successfully!");
+        toast.success("Packages submitted successfully!", {
+          position: "top-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
         setRedirect(true);
       } else {
         toast.error(response.data.message);
