@@ -35,7 +35,7 @@ switch ($method) {
             if (!password_verify($password, $hashedPassword)) {
                 $response = ['status' => 0, 'message' => "Invalid password"];
             } else {
-                if (strtolower($user['status']) === "approved") { // Case-insensitive check for 'ban'
+                if (strtolower($user['status']) === "approved") {
                     $tokenData = [
                         'id' => $user['user_id'],
                         'username' => $user['username'],

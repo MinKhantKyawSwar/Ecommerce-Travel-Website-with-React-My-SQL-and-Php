@@ -19,8 +19,10 @@ switch ($method) {
             $email = $data->email;
             $phone = $data->phone;
             $role = $data->role;
+            
             $password = $data->password;
             $hashedpassword = password_hash($password, PASSWORD_DEFAULT);
+            
             $created_at = $data->created_at;
             $profile_image = $data->profile_image;
             $status = $data->status;

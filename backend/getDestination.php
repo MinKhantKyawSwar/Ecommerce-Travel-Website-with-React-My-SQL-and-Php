@@ -52,6 +52,7 @@ switch ($method) {
                     $response = ['status' => 0, 'message' => "Failed to find!"];
                 }
             } else {
+                
                 // Query to fetch all destinations
                 $getAllDestinations = "SELECT 
                     destination.*,
