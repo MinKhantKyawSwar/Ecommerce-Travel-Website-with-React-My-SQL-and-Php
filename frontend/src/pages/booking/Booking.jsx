@@ -203,7 +203,7 @@ const Booking = () => {
     }
   };
 
-  // getting available
+  // getting available dates
   const getAvailableDates = async () => {
     try {
       const response = await axios.get(
@@ -228,12 +228,13 @@ const Booking = () => {
           return format(localDate, "MM/dd/yyyy"); // Format the date
         });
 
-        setAvailableDates(formattedDates); // Update state with formatted dates\
+        setAvailableDates(formattedDates); // Update state with formatted dates
       }
     } catch (error) {
       console.error("Error fetching available dates:", error);
     }
   };
+
   const getDiscountInfo = async () => {
     try {
       const response = await axios.get(
@@ -603,6 +604,7 @@ const Booking = () => {
                 )}
               </Field>
               <StyledErrorMessage name="country" />{" "}
+
               {/* Ensure this matches the Field name */}
               <div className="mb-3">
                 <label for="city" className="font-medium block mb-1">
@@ -626,7 +628,7 @@ const Booking = () => {
                             value={locationInfoItem.location_id} // Use location_id as the value
                             label={`${locationInfoItem.city}, ${locationInfoItem.country}`} // Combine city and country for the label
                           >
-                            {`${locationInfoItem.city}, ${locationInfoItem.country}`}{" "}
+                            {`${locationInfoItem.city}, ${locationInfoItem.country}`}
                             {/* Display combined label */}
                           </option>
                         ) : null // Return null if the country does not match
@@ -737,9 +739,7 @@ const Booking = () => {
                             name={`passports.${index}.fullName`}
                             className="text-sm border border-black py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
                           />
-                          <StyledErrorMessage
-                            name={`passports.${index}.fullName`}
-                          />{" "}
+                          <StyledErrorMessage name={`passports.${index}.fullName`} />{" "}
                         </div>
 
                         <div className="flex-1 text-sm">
@@ -751,9 +751,7 @@ const Booking = () => {
                             name={`passports.${index}.passportNumber`}
                             className="text-sm border border-black py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
                           />
-                          <StyledErrorMessage
-                            name={`passports.${index}.passportNumber`}
-                          />{" "}
+                          <StyledErrorMessage name={`passports.${index}.passportNumber`}/>{" "}
                         </div>
                         <div className="flex-1">
                           <label className="font-medium block mb-1 text-sm">
@@ -764,9 +762,7 @@ const Booking = () => {
                             name={`passports.${index}.expirationDate`}
                             className="text-sm border border-black py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
                           />
-                          <StyledErrorMessage
-                            name={`passports.${index}.expirationDate`}
-                          />{" "}
+                          <StyledErrorMessage name={`passports.${index}.expirationDate`} />{" "}
                         </div>
                       </div>
                     </div>
@@ -831,6 +827,7 @@ const Booking = () => {
                 <p className="font-medium text-2xl mt-6">${totalPrice}</p>
               )}
             </div>
+            
             {!order && (
               <button
                 className="w-full flex items-center justify-center rounded-lg  px-5 py-2.5 text-sm font-medium  bg-black text-white mt-6"

@@ -55,11 +55,8 @@ const Explore = () => {
     }
   };
 
-  // Unique countries and cities for filtering
+  // Unique countries for filtering
   const uniqueCountries = Array.from(new Set(destinations.map((destination) => destination.country))).sort();
-  const uniqueCities = Array.from(new Set(destinations.map((destination) => destination.city))).sort();
-  const uniqueCategories = Array.from(new Set(destinations.map((destination) => destination.category_name))).sort();
-
   // Handle country checkbox change
   const handleCountryCheckboxChange = (event) => {
     const { name, checked } = event.target;
@@ -68,6 +65,8 @@ const Explore = () => {
     );
   };
 
+  // Unique cites for filtering
+  const uniqueCities = Array.from(new Set(destinations.map((destination) => destination.city))).sort();
   // Handle city checkbox change
   const handleCityCheckboxChange = (event) => {
     const { name, checked } = event.target;
@@ -76,6 +75,8 @@ const Explore = () => {
     );
   };
 
+  // Unique categories for filtering
+  const uniqueCategories = Array.from(new Set(destinations.map((destination) => destination.category_name))).sort();
   const handleCategoryCheckboxChange = (event) => {
     const { name, checked } = event.target;
     setSelectedCategories((prev) =>
@@ -90,6 +91,7 @@ const Explore = () => {
 
   // Filter destinations based on search query and selected filters
   useEffect(() => {
+
     const filtered = destinations.filter((destination) => {
       const matchesSearchQuery =
         destination.country.toLowerCase().includes(searchQuery) ||
@@ -168,6 +170,7 @@ const Explore = () => {
               Reset Filters
             </button>
           </div>
+
           <div>
             <p className="text-2xl font-semibold text-gray-900 mb-2">Price Range</p>
             <hr />
@@ -242,7 +245,7 @@ const Explore = () => {
             </form>
           </div>
 
-          <div>
+          <div className="mb-20">
             <p className="text-2xl font-semibold text-gray-900 mb-4">Categories</p>
             <hr />
             <form>
@@ -267,9 +270,9 @@ const Explore = () => {
         </div>
 
         {/* Main Content */}
-        <div className="flex flex-col w-full">
-          <div className="flex w-full h-full justify-start">
-            <div className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="flex flex-col w-full ">
+          <div className="flex w-full h-full justify-start ">
+            <div className="h-48 grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {currentDestinations.map((destination, index) => (
                 <div
                   key={index}
@@ -320,8 +323,8 @@ const Explore = () => {
                   key={index}
                   onClick={() => paginate(index + 1)}
                   className={`px-4 py-2 text-lg font-semibold text-gray-600 bg-white border border-gray-300 hover:bg-gray-100 transition-all ${currentPage === index + 1
-                    ? "bg-gray-200 text-gray-900 font-semibold"
-                    : ""
+                      ? "bg-gray-200 text-gray-900 font-semibold"
+                      : ""
                     }`}
                 >
                   {index + 1}
@@ -339,6 +342,7 @@ const Explore = () => {
             </nav>
           </div>
         </div>
+
       </div>
     </div>
 

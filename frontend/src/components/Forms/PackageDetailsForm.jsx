@@ -263,6 +263,7 @@ const PackageDetailsForm = () => {
               >
                 Add More
               </button>
+              
               <button
                 type="submit"
                 className="text-white bg-black py-3 font-medium w-full text-center rounded-lg hover:bg-neutral-900 transition duration-200"
