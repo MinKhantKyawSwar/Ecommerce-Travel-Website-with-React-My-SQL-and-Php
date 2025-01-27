@@ -3,7 +3,7 @@ import { Formik, Form, Field } from "formik";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
-import { ToastContainer, toast,Bounce, Slide } from "react-toastify";
+import { Bounce, Slide, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import StyledErrorMessage from "../../utils/StyledErrorMessage";
 import { Navigate, useParams, useSearchParams } from "react-router-dom";
@@ -82,7 +82,7 @@ const PackageDetailsForm = () => {
           theme: "light",
           transition: Bounce,
         });
-        setRedirect(true);
+        setTimeout(() => setRedirect(true), 1500)
       } else {
         toast.error(response.data.message);
       }
@@ -102,7 +102,10 @@ const PackageDetailsForm = () => {
   useEffect(() => {
     getAllRegion();
   }, []);
-
+  
+  if (redirect) {
+    return <Navigate to={`/admin`} />;
+  }
   return (
     <>
       <ToastContainer
@@ -114,7 +117,6 @@ const PackageDetailsForm = () => {
         <h1 className="text-center font-semibold text-3xl my-4 ">
           Package Details Form
         </h1>
-        {redirect && <Navigate to={`/admin`} />}
         <Formik
           initialValues={formEntries}
           enableReinitialize={true}
@@ -263,7 +265,7 @@ const PackageDetailsForm = () => {
               >
                 Add More
               </button>
-              
+
               <button
                 type="submit"
                 className="text-white bg-black py-3 font-medium w-full text-center rounded-lg hover:bg-neutral-900 transition duration-200"

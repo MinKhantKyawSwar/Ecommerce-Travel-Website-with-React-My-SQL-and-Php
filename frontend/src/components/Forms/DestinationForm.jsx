@@ -304,7 +304,7 @@ const DestinationForm = () => {
           transition: Slide,
         });
       } else if (response.data.status === 1) {
-        toast.success("Destination Successfully Added", {
+        toast.success(response.data.message, {
           position: "top-center",
           autoClose: 1000,
           hideProgressBar: false,
@@ -315,7 +315,7 @@ const DestinationForm = () => {
           theme: "light",
           transition: Bounce,
         });
-        setRedirect(true); // Redirect after successful submission
+        setTimeout(() => setRedirect(true), 1500); // Redirect after successful submission
       } else if (response.data.status === 6) {
         toast.error(response.data.message, {
           position: "top-center",
@@ -409,7 +409,7 @@ const DestinationForm = () => {
       return <Navigate to="/admin" />;
     }
   }
-  
+
 
   return (
     <>

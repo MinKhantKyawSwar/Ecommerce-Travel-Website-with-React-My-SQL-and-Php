@@ -171,7 +171,7 @@ const GuideForm = () => {
           transition: Slide,
         });
       } else if (response.data.status === 1) {
-        toast.success(response.data.message, {
+        toast.success("Guide data successfully added!", {
           position: "top-center",
           autoClose: 1000,
           hideProgressBar: false,
@@ -182,7 +182,7 @@ const GuideForm = () => {
           theme: "light",
           transition: Bounce,
         });
-        setRedirect(true); // Redirect after successful submission
+        setTimeout(() => setRedirect(true), 1500); // Redirect after successful submission
       } else if (response.data.status === 6) {
         toast.error(response.data.message, {
           position: "top-center",
@@ -323,7 +323,7 @@ const GuideForm = () => {
                   type="text"
                   name="guide_name"
                   id="guide_name"
-                  className="text-lg border-2 border-gray-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="text-lg border-2 border-gray-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800"
                 />
                 <StyledErrorMessage name="guide_name" />
               </div>
@@ -336,7 +336,7 @@ const GuideForm = () => {
                   type="text"
                   name="email"
                   id="email"
-                  className="text-lg border-2 border-gray-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="text-lg border-2 border-gray-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800"
                 />
                 <StyledErrorMessage name="email" />
               </div>
@@ -349,7 +349,7 @@ const GuideForm = () => {
                   as="textarea"
                   name="description"
                   id="description"
-                  className="text-lg border-2 border-gray-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="text-lg border-2 border-gray-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800"
                   rows="8"
                 />
                 <StyledErrorMessage name="description" />
@@ -363,7 +363,7 @@ const GuideForm = () => {
                   type="text"
                   name="language"
                   id="language"
-                  className="text-lg border-2 border-gray-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="text-lg border-2 border-gray-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800"
                 />
                 <StyledErrorMessage name="language" />
               </div>
@@ -376,13 +376,13 @@ const GuideForm = () => {
                   type="number"
                   name="exp_years"
                   id="exp_years"
-                  className="text-lg border-2 border-gray-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="text-lg border-2 border-gray-900 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800"
                 />
                 <StyledErrorMessage name="exp_years" />
               </div>
 
               <button
-                className="text-white bg-gray-900 py-3 font-medium w-full text-center rounded-lg hover:bg-teal-700 transition duration-200"
+                className="text-white bg-gray-900 py-3 font-medium w-full text-center rounded-lg hover:bg-gray-800 transition duration-200"
                 type="submit"
                 disabled={isSubmitting}
               >

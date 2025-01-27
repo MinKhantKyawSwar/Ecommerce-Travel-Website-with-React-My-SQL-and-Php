@@ -3,7 +3,7 @@ import { Formik, Form, Field } from "formik";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
-import { ToastContainer, toast, Slide } from "react-toastify";
+import { Bounce, ToastContainer, toast, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import StyledErrorMessage from "../../utils/StyledErrorMessage";
 import { Navigate, useParams, useSearchParams } from "react-router-dom";
@@ -91,8 +91,18 @@ const EditPackageDetailsForm = () => {
       try {
         const response = await axios.post(url, values);
         if (response.data.status === 1) {
-          toast.success("Packages updated successfully!");
-          setRedirect(true);
+          toast.success("Package updated successfully!", {
+            position: "top-center",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          });
+          setTimeout(() => setRedirect(true), 1500)
         } else {
           toast.error(response.data.message);
         }
@@ -129,7 +139,7 @@ const EditPackageDetailsForm = () => {
         transition={Slide}
       />
       <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
-        <h1 className="text-center font-semibold text-3xl my-4 text-blue-600">
+        <h1 className="text-center font-semibold text-3xl my-4 text-gray-800">
           Package Details Form
         </h1>
         {redirect && <Navigate to={`/admin`} />}
@@ -159,7 +169,7 @@ const EditPackageDetailsForm = () => {
                       onChange={(e) =>
                         handleFieldChange(index, "city", e.target.value)
                       }
-                      className=" text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                      className=" text-lg border-2 border-gray-800 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800"
                     />
                     <StyledErrorMessage name={`formEntries.${index}.city`} />
                   </div>
@@ -177,7 +187,7 @@ const EditPackageDetailsForm = () => {
                       onChange={(e) =>
                         handleFieldChange(index, "country", e.target.value)
                       }
-                      className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                      className="text-lg border-2 border-gray-800 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800"
                     />
                     <StyledErrorMessage name={`formEntries.${index}.country`} />
                   </div>
@@ -195,7 +205,7 @@ const EditPackageDetailsForm = () => {
                       onChange={(e) =>
                         handleFieldChange(index, "region", e.target.value)
                       }
-                      className="text-lg border border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="text-lg border border-gray-800 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800"
                     >
                       <option value="" label="Select one option" />
                       {region.map((region) => (
@@ -220,7 +230,7 @@ const EditPackageDetailsForm = () => {
                       onChange={(e) =>
                         handleFieldChange(index, "price", e.target.value)
                       }
-                      className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                      className="text-lg border-2 border-gray-800 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800"
                     />
                     <StyledErrorMessage name={`formEntries.${index}.price`} />
                   </div>
@@ -242,7 +252,7 @@ const EditPackageDetailsForm = () => {
                           e.target.value
                         )
                       }
-                      className="text-lg border-2 border-blue-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                      className="text-lg border-2 border-gray-800 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800"
                     />
                     <StyledErrorMessage
                       name={`formEntries.${index}.number_of_available_people`}
@@ -260,7 +270,7 @@ const EditPackageDetailsForm = () => {
                       onChange={(date) =>
                         handleFieldChange(index, "travel_date", date)
                       }
-                      className="text-lg border-2 border-teal-600 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                      className="text-lg border-2 border-gray-800 py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800"
                     />
                   </div>
                 </div>
@@ -268,7 +278,7 @@ const EditPackageDetailsForm = () => {
 
               <button
                 type="submit"
-                className="text-white bg-blue-600 py-3 font-medium w-full text-center rounded-lg hover:bg-teal-700 transition duration-200"
+                className="text-white bg-gray-800 py-3 font-medium w-full text-center rounded-lg hover:bg-gray-800 transition duration-200"
               >
                 Submit All
               </button>
