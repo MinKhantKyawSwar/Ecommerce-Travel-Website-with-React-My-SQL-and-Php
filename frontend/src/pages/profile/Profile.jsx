@@ -93,9 +93,11 @@ const Profile = () => {
     e.preventDefault();
 
     const { username, email, phone, profile_image } = formData;
+    const user_id = localStorage.getItem("user_id");
     const url = "http://localhost:3000/backend/editProfile.php";
 
     const formDataToSend = new FormData();
+    formDataToSend.append("user_id", user_id);
     formDataToSend.append("username", username);
     formDataToSend.append("email", email);
     formDataToSend.append("phone", phone);

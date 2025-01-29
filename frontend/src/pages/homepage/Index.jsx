@@ -353,7 +353,7 @@ const Index = () => {
               {/* Image Section */}
               <div className="relative overflow-hidden h-[24rem] md:h-[36rem]">
                 <div
-                  className={`flex h-full transition-transform duration-[1500ms] ease-in-out ${isTransitioning ? `transform -translate-x-${currentIndex * 100}%` : ""
+                  className={`flex ml-24 h-full transition-transform duration-[1500ms] ease-in-out ${isTransitioning ? `transform -translate-x-${currentIndex * 100}%` : ""
                     }`}
                   style={{
                     transform: `translateX(-${currentIndex * 100}%)`, // Move to the current index
@@ -364,7 +364,7 @@ const Index = () => {
                       <img
                         src={image}
                         alt={`Slide ${index + 1}`}
-                        className="h-full w-full object-cover"
+                        className="h-full object-cover"
                       />
                     </div>
                   ))}

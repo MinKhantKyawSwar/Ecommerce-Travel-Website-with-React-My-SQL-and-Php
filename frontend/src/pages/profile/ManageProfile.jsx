@@ -49,9 +49,12 @@ const ManageProfile = () => {
 
   const submitHandler = async (values) => {
     const { email, username, phone, password, profile_image } = values;
+    const user_id = localStorage.getItem("user_id");
     let url = "http://localhost:3000/backend/editProfile.php";
+    console.log("User ID: ", user_id);
 
     const data = {
+      user_id,
       username,
       email,
       phone,
@@ -61,6 +64,7 @@ const ManageProfile = () => {
 
     try {
       const formData = new FormData();
+      formData.append("user_id", user_id);
       formData.append("email", email);
       formData.append("username", username);
       formData.append("phone", phone);
