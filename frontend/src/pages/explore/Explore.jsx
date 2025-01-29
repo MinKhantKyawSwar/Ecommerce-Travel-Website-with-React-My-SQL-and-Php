@@ -323,7 +323,7 @@ const Explore = () => {
                   key={index}
                   onClick={() => paginate(index + 1)}
                   className={`px-4 py-2 text-lg font-semibold text-gray-600 bg-white border border-gray-300 hover:bg-gray-100 transition-all ${currentPage === index + 1
-                      ? "bg-gray-200 text-gray-900 font-semibold"
+                      ? "bg-gray-200 text-gray-900 border-2 border-black font-semibold"
                       : ""
                     }`}
                 >

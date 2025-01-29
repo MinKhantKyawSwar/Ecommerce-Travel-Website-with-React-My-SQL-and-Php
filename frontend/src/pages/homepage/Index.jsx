@@ -269,7 +269,6 @@ const Index = () => {
       );
       if (response.data.status === 1) {
         setHomePageReview(response.data.data);
-        console.log(response.data.data)
       } else {
         setError("No data found for customers");
       }

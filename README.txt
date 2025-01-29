@@ -1,6 +1,12 @@
 # React and PHP Project
 
-This read me file contains all the necessary information such as installations and set up a web application built using React for the frontend and PHP for the backend. Follow the guide below to set up the project and resolve common issues.
+This read me file contains all the necessary information such as installations and set up a web application built using React for the frontend and PHP for the backend. 
+
+To start the E-commerce site to work, first start the XAMPP and run a php file of your choice from the backend. Then, open terminal and type 
+	cd frontend
+	npm install
+	npm run dev
+Before running those commend it is require to install node in your PC. Follow the guide below to set up the project and resolve common issues.
 
 ## Table of Contents
 
@@ -11,8 +17,8 @@ This read me file contains all the necessary information such as installations a
 2. [PHP Setup](#php-setup)
    - [Prerequisites](#php-prerequisites)
    - [Setting up the PHP Backend](#setting-up-the-php-backend)
-3. [Contributing](#contributing)
-4. [License](#license)
+3. [Testing Data] (#testing-data)
+
 
 ---
 
@@ -89,3 +95,22 @@ Make sure you have the following installed:
 There will be sql file called trailblaze_tour_ecommerce
 First, in the xampp sql admin page, create trailblaze_tour_ecommerce database,
 after that import given file
+
+----
+## Testing Data
+
+### Customers
+
+1. customer 1
+   email - frostwosix@gmail.com
+   password - Frost123
+
+2. customer 2
+   email - minkhantkyawswar@gmail.com
+   password - Mkks123
+
+### Admin
+
+1. admin 1
+   email - admin@gmail.com
+   password - Admin123

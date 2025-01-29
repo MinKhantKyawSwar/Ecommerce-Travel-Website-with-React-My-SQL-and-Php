@@ -34,7 +34,7 @@ const Main = () => {
       {/* Navigation */}
       <Nav />
 
-      <div className="right-16 bottom-20 fixed z-50">
+      <div className="right-16 bottom-10 fixed z-50">
         <img
           src={botIcon}
           alt="chatbot"

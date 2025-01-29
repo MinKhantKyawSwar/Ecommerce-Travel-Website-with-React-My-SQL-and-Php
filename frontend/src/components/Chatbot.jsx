@@ -3,7 +3,6 @@ import axios from "axios";
 import { DNA, TailSpin } from 'react-loader-spinner';
 import botIcon from "../assets/pictures/bot.png";
 import { UserContext } from "../providers/UserContext";
-
 const faq = [
   "What is the booking process?",
   "How can I pay for the tours?",
@@ -46,6 +45,13 @@ const Chatbot = () => {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showQuestions, setShowQuestions] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
+
+  // Get user_id from localStorage and set isLogin state
+  useEffect(() => {
+    const user_id = localStorage.getItem("user_id");
+    setIsLogin(!!user_id); // Set isLogin based on whether user_id is present
+  }, []);
 
   const handleSendMessage = async (input) => {
     if (!input) return;
@@ -150,11 +156,21 @@ const Chatbot = () => {
                   <div className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} space-x-2`}>
                     <div className={`flex items-end space-x-2 ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}>
                       {msg.sender === 'user' && (
-                        <img
-                          src={`http://localhost:3000/backend/${userInfo.profile_image}`}
-                          alt="User Logo"
-                          className="w-8 h-8 rounded-full border-2 border-white"
-                        />
+                        isLogin ? (
+                          <img
+                            src={`http://localhost:3000/backend/${userInfo.profile_image}`}
+                            alt="User Logo"
+                            className="w-8 h-8 rounded-full border-2 border-white"
+                          />
+                        )
+                          :
+                          (
+                            <img
+                              src={`http://localhost:3000/backend/pictures/profile/defaultProfile.png`}
+                              alt="User Logo"
+                              className="w-8 h-8 rounded-full border-2 border-white"
+                            />
+                          )
                       )}
                       {msg.sender !== 'user' && (
                         <img
@@ -248,7 +264,6 @@ const Chatbot = () => {
         </div>
       </div>
     </div>
-
   );
 };
 
