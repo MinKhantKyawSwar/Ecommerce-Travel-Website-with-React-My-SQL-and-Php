@@ -2,11 +2,18 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { jsPDF } from "jspdf";
+import { IoArrowBackCircle } from "react-icons/io5";
 
 const Recipts = () => {
   const [transactions, setTransactions] = useState(null); // Default state as null\
   const { id } = useParams();
   const navigate = useNavigate();
+
+
+  const goBackHandler = () => {
+    navigate(-1);
+  };
+
 
   // Fetch transaction data
   const getTransactionData = async () => {
@@ -54,7 +61,7 @@ const Recipts = () => {
     doc.setFontSize(20); // Larger font size
     doc.setTextColor(255, 255, 255); // White text color
     doc.text("Trailblazers Travel Agency", 105, 14, { align: "center" }); // Centered text
-  
+
     // Smaller subheader: "Payment Receipt"
     doc.setFontSize(14); // Smaller font size
     doc.setTextColor(255, 255, 255); // Black text color
@@ -99,13 +106,13 @@ const Recipts = () => {
     doc.line(marginLeft, yPosition, 190, yPosition);
 
     yPosition += 10;
-    
+
     doc.setFontSize(12);
     doc.setFont("Helvetica", "bold");
     doc.setTextColor(0, 0, 0); // Black text color
     doc.text("Travellers Information", marginLeft, yPosition);
     yPosition += 10;
-     
+
     const travellersDetails = [...new Set(transactions.full_names.split(","))].map((name, index) => ({
       label: (index + 1),
       value: name.trim(),
@@ -117,7 +124,7 @@ const Recipts = () => {
 
     travellersDetails.forEach((detail, index) => {
       doc.setFont("Helvetica", "bold");
-      doc.text(`${detail.label}.`, marginLeft+ 10, yPosition);
+      doc.text(`${detail.label}.`, marginLeft + 10, yPosition);
       doc.setFont("Helvetica", "normal");
       doc.text(detail.value, marginLeft + 20, yPosition); // Adjusted position
       doc.setFont("Helvetica", "normal");
@@ -183,14 +190,14 @@ const Recipts = () => {
 
     // Footer Section
     yPosition += 20;
-   
+
 
     // Add footer background
     doc.setFillColor(0, 0, 0); // Black
     doc.rect(0, 265, 210, 40, "F");
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(10);
-    doc.setTextColor(255, 255,255);
+    doc.setTextColor(255, 255, 255);
     doc.text(
       "Thank you for choosing Trailblazers Travel Agency. Have a safe journey!",
       105,
@@ -209,98 +216,109 @@ const Recipts = () => {
   }, []);
 
   return (
-    <div className="max-w-lg mx-auto p-6 border border-gray-300 rounded-lg shadow-lg bg-white">
-      <h1 className="text-2xl font-bold text-center text-gray-800 mb-4">
-        Booking Receipt
-      </h1>
-      {transactions ? (
-        <div className="space-y-2">
-          <table className="w-full text-left border-collapse">
-            <tbody>
-              {[
-                { label: "Booking ID", value: id },
-                { label: "User Name", value: transactions.username },
-                { label: "Package Name", value: transactions.package_name },
-                { label: "City", value: transactions.city },
-                { label: "Country", value: transactions.country },
-                { label: "Region", value: transactions.region_name },
-                { label: "Booking Date", value: transactions.booking_date },
-                { label: "Travel Date", value: transactions.travel_date },
-                {
-                  label: "Number of People",
-                  value: transactions.number_of_people,
-                },
-                { label: "Payment Method", value: transactions.payment_name },
-                { label: "Add-ons", value: transactions.add_ons },
-                { label: "Discount", value: `${transactions.discount}%` },
-                {
-                  label: "Total Price (tax included)",
-                  value: `$${transactions.total_price}`,
-                },
-              ].map(({ label, value }, index) => (
-                <tr
-                  key={index}
-                  className={index % 2 === 0 ? "bg-gray-100" : ""}
-                >
-                  <td className="border-b border-gray-300 py-2 px-4 font-semibold">
-                    {label}:
-                  </td>
-                  <td className="border-b border-gray-300 py-2 px-4">
-                    {value || "N/A"}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {/* Passport Info */}
-          <div>
-            <p className="mt-5 font-bold text-2xl text-center">
-              Travellers Information
-            </p>
-            <table className="w-full text-left border-collapse mt-4">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="border-b border-gray-300 py-2 px-4 font-semibold">
-                    Traveler
-                  </th>
-                  <th className="border-b border-gray-300 py-2 px-4 font-semibold">
-                    Passport Number
-                  </th>
-                </tr>
-              </thead>
+    <>
+      <div className="flex items-start justify-start">
+        <button
+          className="flex py-2 mt-2 px-6 rounded-lg bg-transparent text-neutral-800 font-medium"
+          onClick={goBackHandler}
+        >
+
+          <IoArrowBackCircle className="text-2xl mr-2" />Go Back
+        </button>
+      </div>
+      <div className="max-w-lg mx-auto p-6 border border-gray-300 rounded-lg shadow-lg bg-white">
+        <h1 className="text-2xl font-bold text-center text-gray-800 mb-4">
+          Booking Receipt
+        </h1>
+        {transactions ? (
+          <div className="space-y-2">
+            <table className="w-full text-left border-collapse">
               <tbody>
-                {[...new Set(transactions.full_names.split(","))].map(
-                  (name, index) => (
-                    <tr
-                      key={index}
-                      className={index % 2 === 0 ? "bg-gray-100" : ""}
-                    >
-                      <td className="border-b border-gray-300 py-2 px-4">
-                        {name.trim()}
-                      </td>
-                      <td className="border-b border-gray-300 py-2 px-4">
-                        {transactions.passport_numbers
-                          .split(",")
-                          [index]?.trim() || "N/A"}
-                      </td>
-                    </tr>
-                  )
-                )}
+                {[
+                  { label: "Booking ID", value: id },
+                  { label: "User Name", value: transactions.username },
+                  { label: "Package Name", value: transactions.package_name },
+                  { label: "City", value: transactions.city },
+                  { label: "Country", value: transactions.country },
+                  { label: "Region", value: transactions.region_name },
+                  { label: "Booking Date", value: transactions.booking_date },
+                  { label: "Travel Date", value: transactions.travel_date },
+                  {
+                    label: "Number of People",
+                    value: transactions.number_of_people,
+                  },
+                  { label: "Payment Method", value: transactions.payment_name },
+                  { label: "Add-ons", value: transactions.add_ons },
+                  { label: "Discount", value: `${transactions.discount}%` },
+                  {
+                    label: "Total Price (tax included)",
+                    value: `$${transactions.total_price}`,
+                  },
+                ].map(({ label, value }, index) => (
+                  <tr
+                    key={index}
+                    className={index % 2 === 0 ? "bg-gray-100" : ""}
+                  >
+                    <td className="border-b border-gray-300 py-2 px-4 font-semibold">
+                      {label}:
+                    </td>
+                    <td className="border-b border-gray-300 py-2 px-4">
+                      {value || "N/A"}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
+            {/* Passport Info */}
+            <div>
+              <p className="mt-5 font-bold text-2xl text-center">
+                Travellers Information
+              </p>
+              <table className="w-full text-left border-collapse mt-4">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="border-b border-gray-300 py-2 px-4 font-semibold">
+                      Traveler
+                    </th>
+                    <th className="border-b border-gray-300 py-2 px-4 font-semibold">
+                      Passport Number
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...new Set(transactions.full_names.split(","))].map(
+                    (name, index) => (
+                      <tr
+                        key={index}
+                        className={index % 2 === 0 ? "bg-gray-100" : ""}
+                      >
+                        <td className="border-b border-gray-300 py-2 px-4">
+                          {name.trim()}
+                        </td>
+                        <td className="border-b border-gray-300 py-2 px-4">
+                          {transactions.passport_numbers
+                            .split(",")
+                          [index]?.trim() || "N/A"}
+                        </td>
+                      </tr>
+                    )
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      ) : (
-        <p>Loading transaction details...</p>
-      )}
-      <button
-        className="mt-6 w-full py-2 bg-neutral-800 text-white font-semibold rounded hover:bg-black transition duration-200"
-        onClick={downloadReceipt}
-        disabled={!transactions}
-      >
-        Download PDF Receipt
-      </button>
-    </div>
+        ) : (
+          <p>Loading transaction details...</p>
+        )}
+        <button
+          className="mt-6 w-full py-2 bg-neutral-800 text-white font-semibold rounded hover:bg-black transition duration-200"
+          onClick={downloadReceipt}
+          disabled={!transactions}
+        >
+          Download PDF Receipt
+        </button>
+      </div>
+    </>
   );
 };
 

@@ -15,7 +15,7 @@ const WebsiteInfo = ({ packagesCount, travellers, destinationCount }) => {
         <span className="block text-sm md:text-base text-gray-600">
           Explore Available Packages, Destinations, Total Travelers, and Active Adventures on our site.
         </span>
-        <div className="flex flex-wrap justify-between py-8 gap-6 md:gap-10">
+        <div className="flex flex-wrap justify-center md:justify-between py-8 gap-6 md:gap-10">
           {/* Available Packages */}
           <div className="w-1/2 md:w-[22%] flex flex-col items-center text-center">
             <div className="flex items-center">

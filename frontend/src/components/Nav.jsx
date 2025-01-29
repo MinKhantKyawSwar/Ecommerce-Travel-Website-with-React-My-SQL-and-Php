@@ -208,7 +208,7 @@ const Nav = () => {
         >
           Explore
         </Link>
-        <button className="btn btn-ghost btn-circle" onClick={searchBarToggler}>
+        <button className="btn btn-ghost btn-circle md:block hidden" onClick={searchBarToggler}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
@@ -258,7 +258,7 @@ const Nav = () => {
         </Link>
       </div>
       {token ? (
-        <div className="navbar-end px-2 md:px-4 flex items-center space-x-3">
+        <div className="navbar-end px-2 md:px-4 flex items-center md:space-x-3">
 
           <div className="dropdown dropdown-end">
             <Link to="/favorite-destinations">
@@ -394,20 +394,30 @@ const Nav = () => {
 
         </div>
       ) : (
-        <div className="navbar-end px-1 md:px-4 flex space-x-3">
+        <>
+          <div className="navbar-end px-1 md:px-4 hidden md:flex space-x-3 ">
+            <Link
+              to="/register"
+              className=" text-xs border border-black px-2 py-2 rounded-md md:btn md:btn-outline  hover:border-blue-600 hover:text-white"
+            >
+              Register
+            </Link>
+            <Link
+              to="/login"
+              className=" text-xs border border-black px-2 py-2  md:btn md:btn-outline bg-gray-900 md:bg-gray-900 text-white md:text-white rounded-lg"
+            >
+              Login
+            </Link>
+          </div>
+          <div className="navbar-end px-1 md:px-4 md:hidden flex space-x-3 ">
           <Link
-            to="/register"
-            className=" text-xs border border-black px-2 py-2 rounded-md md:btn md:btn-outline  hover:border-blue-600 hover:text-white"
-          >
-            Register
-          </Link>
-          <Link
-            to="/login"
-            className=" text-xs border border-black px-2 py-2  md:btn md:btn-outline bg-gray-900 md:bg-gray-900 text-white md:text-white rounded-lg"
-          >
-            Login
-          </Link>
-        </div>
+              to="/login"
+              className=" text-xs border border-black px-2 py-2 rounded-md md:btn md:btn-outline hover:bg-gray-900  hover:border-gray-900 hover:text-white"
+            >
+              Get Started
+            </Link>
+          </div>
+        </>
       )}
     </div>
   );

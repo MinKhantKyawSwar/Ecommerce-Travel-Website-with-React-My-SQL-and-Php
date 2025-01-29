@@ -39,7 +39,7 @@ const Reviews = ({ id }) => {
       setLoading(false); // Set loading to false after fetching
     }
   };
-  
+
   // need fixing here
   const totalRatingData = async (totalRating) => {
     const data = {
@@ -362,12 +362,13 @@ const Reviews = ({ id }) => {
               <div className="modal-box max-w-3xl bg-white rounded-lg shadow-lg p-6">
                 <form method="dialog">
                   <button
-                    className="absolute top-4 right-4 z-10 text-black hover:text-gray-800 focus:outline-none"
+                    className="fixed top-4 right-4 z-50 text-black hover:text-gray-800 focus:outline-none"
                     aria-label="Close"
                   >
                     <IoIosClose size={32} />
                   </button>
                 </form>
+
                 <div className="modal-action w-full flex flex-col items-center">
                   {loading ? (
                     <div className="flex items-center justify-center">

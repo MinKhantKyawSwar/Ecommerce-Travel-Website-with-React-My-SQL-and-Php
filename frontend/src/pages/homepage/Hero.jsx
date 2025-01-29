@@ -7,7 +7,7 @@ const Hero = ({ customers }) => {
     <div>
       <div className="relative top-0 md:mt-6 w-full mb-12">
         {/* right-[28%] */}
-        <div className="absolute bottom-72 lg:bottom-16 left-16 md:left-20">
+        <div className="absolute bottom-3 md:bottom-72 lg:bottom-16 left-10 lg:left-16 md:left-20">
           <div className="flex justify-center md:mt-4">
             {customers.map((customer, index) => (
               <div key={index} className="-mx-1 mt-2 md:mt-0">
@@ -20,7 +20,7 @@ const Hero = ({ customers }) => {
                 />
               </div>
             ))}
-            <p className="text-white text-xs ml-2">
+            <p className="text-white text-xs  ml-2">
               more than 1000 travellers <br />
               had travelled with trailblazers!
             </p>

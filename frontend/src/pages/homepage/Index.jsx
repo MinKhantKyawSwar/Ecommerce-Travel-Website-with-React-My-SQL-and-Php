@@ -349,8 +349,28 @@ const Index = () => {
           <div>
             <Hero customers={customers} />
             <div className="mt-6 max-w-7xl mx-auto px-6 py-6 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+              <div className="relative md:hidden overflow-hidden h-[24rem] sm:h-[28rem] md:h-[36rem] lg:h-[40rem]">
+                <div
+                  className={`flex h-full transition-transform duration-[1500ms] ease-in-out ${isTransitioning ? `transform -translate-x-${currentIndex * 100}%` : ""
+                    }`}
+                  style={{
+                    transform: `translateX(-${currentIndex * 100}%)`, // Move to the current index
+                  }}
+                >
+                  {images.map((image, index) => (
+                    <div key={index} className="w-full h-full flex-shrink-0">
+                      <img
+                        src={image}
+                        alt={`Slide ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {/* Image Section */}
-              <div className="relative overflow-hidden h-[24rem] md:h-[36rem]">
+              <div className="md:block hidden relative overflow-hidden h-[24rem] md:h-[36rem]">
                 <div
                   className={`flex ml-24 h-full transition-transform duration-[1500ms] ease-in-out ${isTransitioning ? `transform -translate-x-${currentIndex * 100}%` : ""
                     }`}

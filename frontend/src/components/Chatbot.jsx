@@ -125,7 +125,7 @@ const Chatbot = () => {
     <div className=" flex justify-center">
       <div className="bg-white flex flex-col w-3/4 h-[600px] p-6 rounded-xl shadow-lg border border-gray-300">
 
-        <div className="flex items-center justify-center mb-6">
+        <div className="flex items-center justify-center mb-6 pt-2">
           <p className="font-bold text-3xl">Trailblazers ChatBot</p>
         </div>
 

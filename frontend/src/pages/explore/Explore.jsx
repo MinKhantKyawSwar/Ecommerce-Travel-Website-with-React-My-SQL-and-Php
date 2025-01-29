@@ -18,6 +18,7 @@ const Explore = () => {
   const [maxPrice, setMaxPrice] = useState(1200); // Maximum price available
   const [currentPage, setCurrentPage] = useState(1); // Track the current page
   const [destinationPerPage] = useState(9); // Number of destinations per page
+  const [isVisible, setIsVisible] = useState(false);
 
   const navigate = useNavigate();
 
@@ -150,7 +151,7 @@ const Explore = () => {
             <input
               type="text"
               className="grow max-w-md"
-              placeholder="Search countries or cities..."
+              placeholder="Search here..."
               onChange={handleSearchChange}
             />
           </label>
@@ -160,9 +161,16 @@ const Explore = () => {
       {/* Main Section with Sidebar at the top on smaller screens */}
       <div className="w-full flex flex-col md:flex-row gap-2">
         {/* Sidebar - Moves to top on smaller screens */}
-        <div className="w-full md:w-1/4 px-4 mb-8">
+        <button
+          onClick={() => setIsVisible(!isVisible)}
+          className="w-full text-lg font-semibold text-gray-900 mb-4 block sm:hidden"
+        >
+          {isVisible ? 'Hide Filters' : 'Show Filters'}
+        </button>
+        <div className={`${isVisible ? 'block' : 'hidden'} sm:block w-full md:w-1/4 px-4 mb-8`}>
+
           {/* Reset Button */}
-          <div className="mt-6">
+          <div className="mt-6 ">
             <button
               onClick={handleReset}
               className="w-full py-2 mb-5 text-sm font-semibold text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors duration-200"
@@ -270,9 +278,9 @@ const Explore = () => {
         </div>
 
         {/* Main Content */}
-        <div className="flex flex-col w-full ">
-          <div className="flex w-full h-full justify-start ">
-            <div className="h-48 grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="flex flex-col w-full">
+          <div className="flex w-full h-full justify-start">
+            <div className="h-full grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {currentDestinations.map((destination, index) => (
                 <div
                   key={index}
@@ -310,8 +318,7 @@ const Explore = () => {
             <nav className="inline-flex items-center space-x-2">
               <button
                 onClick={() => paginate(currentPage - 1)}
-                className={`px-4 py-2 text-lg font-semibold text-gray-900 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 transition-all ${currentPage === 1 ? "cursor-not-allowed opacity-50" : ""
-                  }`}
+                className={`px-4 py-2 text-lg font-semibold text-gray-900 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 transition-all ${currentPage === 1 ? "cursor-not-allowed opacity-50" : ""}`}
                 disabled={currentPage === 1}
               >
                 Previous
@@ -323,8 +330,8 @@ const Explore = () => {
                   key={index}
                   onClick={() => paginate(index + 1)}
                   className={`px-4 py-2 text-lg font-semibold text-gray-600 bg-white border border-gray-300 hover:bg-gray-100 transition-all ${currentPage === index + 1
-                      ? "bg-gray-200 text-gray-900 border-2 border-black font-semibold"
-                      : ""
+                    ? "bg-gray-200 text-gray-900 border-2 border-black font-semibold"
+                    : ""
                     }`}
                 >
                   {index + 1}
@@ -333,8 +340,7 @@ const Explore = () => {
 
               <button
                 onClick={() => paginate(currentPage + 1)}
-                className={`px-4 py-2 text-lg font-semibold text-gray-900 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 transition-all ${currentPage === totalPages ? "cursor-not-allowed opacity-50" : ""
-                  }`}
+                className={`px-4 py-2 text-lg font-semibold text-gray-900 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 transition-all ${currentPage === totalPages ? "cursor-not-allowed opacity-50" : ""}`}
                 disabled={currentPage === totalPages}
               >
                 Next
@@ -342,6 +348,7 @@ const Explore = () => {
             </nav>
           </div>
         </div>
+
 
       </div>
     </div>
