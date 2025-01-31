@@ -7,10 +7,12 @@ import { useEffect, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 // import { XMarkIcon } from "@heroicons/react/24/solid";
 import StyledErrorMessage from "../../utils/StyledErrorMessage";
+import { TailSpin } from "react-loader-spinner";
 
 const DestinationForm = () => {
   const [region, setRegion] = useState([]);
   const [previousDestination, setPreviousDestination] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState([]);
   const [redirect, setRedirect] = useState(false);
   const [imagePreview, setImagePreview] = useState(null); // store preview image for accommodation
@@ -206,6 +208,7 @@ const DestinationForm = () => {
   });
 
   const submitHandler = async (values) => {
+    setLoading(true);
     const {
       city,
       country,
@@ -335,6 +338,7 @@ const DestinationForm = () => {
         error.response ? error.response.data : error.message
       );
     }
+    setLoading(false);
   };
 
   const goBackHandler = () => {
@@ -629,11 +633,21 @@ const DestinationForm = () => {
               </div>
 
               <button
-                className="text-white bg-neutral-900 py-3 font-medium w-full text-center rounded-lg hover:bg-black transition duration-200"
+                className="flex items-center justify-center text-white bg-neutral-900 py-3 font-medium w-full text-center rounded-lg hover:bg-black transition duration-200"
                 type="submit"
                 disabled={isSubmitting}
               >
-                Submit
+                {loading ? (
+                  <TailSpin
+                    visible={true}
+                    height="20"
+                    width="20"
+                    color="#FFFFFF"
+                    ariaLabel="loading-spinner"
+                  />
+                ) : (
+                  <span>Submit</span>
+                )}
               </button>
             </Form>
           )}

@@ -249,6 +249,12 @@ switch ($method) {
 
                 // Connect to the database
                 $conn = $db->connect();
+                $sql2 = 'SELECT MAX(destination_id) AS last_id FROM destination';
+                $stmt2 = $conn->prepare($sql2);
+                $stmt2->execute(); // Execute the query
+                $row = $stmt2->fetch(PDO::FETCH_ASSOC);
+
+                $last_id = $row['last_id'] ?? null;
 
                 // Prepare the SQL statement to insert new destination
                 $sql = "INSERT INTO package(package_name, description,flight_description, flight_image, facilities, facilities_image, meals, meals_image, activities, activities_image, duration, destination, tour_guide) VALUES 
@@ -267,7 +273,7 @@ switch ($method) {
                 $stmt->bindParam(':activities', $activities);
                 $stmt->bindParam(':activities_image', $activities_image);
                 $stmt->bindParam(':duration', $duration);
-                $stmt->bindParam(':destination', $destination);
+                $stmt->bindParam(':destination', $last_id);
                 $stmt->bindParam(':tour_guide', $tour_guide);
 
                 // Execute the statement
@@ -298,46 +304,45 @@ switch ($method) {
             // Check if "Package-Id" header exists
             if (isset($headers['Package-Id'])) {
                 $package_id = $headers['Package-Id'];
-         
-            // Retrieve all data
 
-            $conn = $db->connect();
-            $deletePackage = "DELETE FROM package_info WHERE package= :package_id";
-            $stmt = $conn->prepare($deletePackage);
-            $stmt->bindParam(':package_id', $package_id);
-            $status1 = $stmt->execute();
+                // Retrieve all data
 
-
-            $deletePackage = "DELETE FROM package WHERE package_id= :package_id";
-            $stmt = $conn->prepare($deletePackage);
-            $stmt->bindParam(':package_id', $package_id);
-            $status2 = $stmt->execute();
+                $conn = $db->connect();
+                $deletePackage = "DELETE FROM package_info WHERE package= :package_id";
+                $stmt = $conn->prepare($deletePackage);
+                $stmt->bindParam(':package_id', $package_id);
+                $status1 = $stmt->execute();
 
 
-            if ($status1 && $status2) {
-                $response = ['status' => 1, 'message' => "Package successfully deleted!"];
-            } else {
-                $response = ['status' => 0, 'message' => "Failed to delete Package!"];
-            }
-        } else if (isset($headers['Package-Info-Id'])) {
+                $deletePackage = "DELETE FROM package WHERE package_id= :package_id";
+                $stmt = $conn->prepare($deletePackage);
+                $stmt->bindParam(':package_id', $package_id);
+                $status2 = $stmt->execute();
+
+
+                if ($status1 && $status2) {
+                    $response = ['status' => 1, 'message' => "Package successfully deleted!"];
+                } else {
+                    $response = ['status' => 0, 'message' => "Failed to delete Package!"];
+                }
+            } else if (isset($headers['Package-Info-Id'])) {
                 $package_info_id = $headers['Package-Info-Id'];
-            // Retrieve all data
+                // Retrieve all data
 
-            $conn = $db->connect();
-            $deletePackage = "DELETE FROM package_info WHERE package_info_id= :package_info_id";
-            $stmt = $conn->prepare($deletePackage);
-            $stmt->bindParam(':package_info_id', $package_info_id);
-            $status = $stmt->execute();
+                $conn = $db->connect();
+                $deletePackage = "DELETE FROM package_info WHERE package_info_id= :package_info_id";
+                $stmt = $conn->prepare($deletePackage);
+                $stmt->bindParam(':package_info_id', $package_info_id);
+                $status = $stmt->execute();
 
-            if ($status) {
-                $response = ['status' => 1, 'message' => "Package Details successfully deleted!"];
+                if ($status) {
+                    $response = ['status' => 1, 'message' => "Package Details successfully deleted!"];
+                } else {
+                    $response = ['status' => 0, 'message' => "Failed to delete Package Details!"];
+                }
             } else {
-                $response = ['status' => 0, 'message' => "Failed to delete Package Details!"];
+                $response = ['status' => 0, 'message' => "Id is missing!"];
             }
-        }
-        else{
-            $response = ['status' => 0, 'message' => "Id is missing!"];
-        }
         } catch (PDOException $e) {
             $response = ['status' => 0, 'message' => "Error: " . $e->getMessage()];
         }
