@@ -279,7 +279,7 @@ const Explore = () => {
 
         {/* Main Content */}
         <div className="flex flex-col w-full">
-          <div className="flex w-full h-full justify-start">
+          <div className="flex w-full h-fit justify-start">
             <div className="h-full grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {currentDestinations.map((destination, index) => (
                 <div
