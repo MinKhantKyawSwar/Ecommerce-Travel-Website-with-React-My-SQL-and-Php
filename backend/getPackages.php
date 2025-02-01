@@ -268,6 +268,7 @@ switch ($method) {
                 $stmt->bindParam(':flight_image', $flight_image);
                 $stmt->bindParam(':facilities', $facilities);
                 $stmt->bindParam(':facilities_image', $facilities_image);
+                
                 $stmt->bindParam(':meals', $meals);
                 $stmt->bindParam(':meals_image', $meals_image);
                 $stmt->bindParam(':activities', $activities);
