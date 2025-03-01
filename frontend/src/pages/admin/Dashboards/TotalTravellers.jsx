@@ -39,7 +39,7 @@ const TotalTravellers = ({ travellers }) => {
               >
                 <path d="M12 5v14m7-7l-7 7-7-7" />
               </svg>
-              <span className="font-semibold">-{travellers.difference}</span>
+              <span className="font-semibold">{travellers.difference}</span>
             </div>
           ) : (
             <div className="text-gray-600 font-semibold">No Change</div>

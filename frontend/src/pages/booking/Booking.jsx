@@ -104,8 +104,8 @@ const Booking = () => {
   const getLocationInfo = async (travelDate) => {
     try {
       const formattedTravelDate = travelDate
-        ? travelDate.toISOString().split("T")[0]
-        : null;
+      ? `${travelDate.getFullYear()}-${String(travelDate.getMonth() + 1).padStart(2, "0")}-${String(travelDate.getDate()).padStart(2, "0")}`
+      : null;
       const response = await axios.get(
         "http://localhost:3000/backend/getBooking.php",
         {
@@ -142,6 +142,7 @@ const Booking = () => {
           },
         }
       );
+      console.log(response.data);
 
       if (response.data.status === 0) {
       } else if (response.data.status === 1) {
@@ -413,12 +414,16 @@ const Booking = () => {
   const submitHandler = async (values) => {
     const { city, payment_method, number_of_people, travel_date } = values;
 
+    const formattedTravelDate = travel_date
+  ? `${travel_date.getFullYear()}-${String(travel_date.getMonth() + 1).padStart(2, "0")}-${String(travel_date.getDate()).padStart(2, "0")}`
+  : null;
+
     // Prepare the data object
     const data = {
       user_id: localStorage.getItem("user_id"),
       package: Number(id),
       booking_date: new Date(),
-      travel_date,
+      travel_date: formattedTravelDate,
       city,
       payment_method,
       number_of_people,
@@ -566,7 +571,7 @@ const Booking = () => {
                   availableDates.some(
                     (availableDate) =>
                       format(new Date(availableDate), "MM/dd/yyyy") ===
-                      format(date, "MM/dd/yyyy") // Compare formatted dates
+                      format(date, "MM/dd/yyyy")
                   )
                 }
                 className="text-lg border border-black py-2 px-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
