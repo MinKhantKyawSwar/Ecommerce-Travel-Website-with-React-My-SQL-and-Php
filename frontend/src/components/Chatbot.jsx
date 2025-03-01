@@ -14,7 +14,6 @@ const faq = [
   "Can I book a tour as a gift?",
   "Are flights included in the tour package?",
   "Do I need a visa for the tour destination?",
-  "How long does the tour last?",
   "Can I make changes to my booking after confirmation?",
   "Do I need a passport for the tour destination?",
   "Is travel insurance included?",
@@ -30,13 +29,9 @@ const faq = [
   "What languages do your guides speak?",
   "Do you offer special accommodations for disabled travelers?",
   "Can I join a tour if I am traveling from a different city or country?",
-  "How can I stay updated on upcoming tours and offers?",
   "What if my flight gets delayed or canceled?",
   "Are there special discounts for students or seniors?",
-  "Can I extend my stay after the tour?",
-  "Do you offer adventure tours?",
-  "Do you provide child-friendly tours?",
-  "Can I pay in installments?"
+  "Do you offer adventure tours?"
 ];
 const Chatbot = () => {
   const { userInfo } = useContext(UserContext);

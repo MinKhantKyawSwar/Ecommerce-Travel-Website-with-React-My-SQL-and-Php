@@ -51,8 +51,8 @@ const MainPageReview = ({ homePageReview }) => {
                     : "h-16 text-gray-700 text-sm text-center p-3"
                     } break-words`}
                 >
-                  {review.review_description.length > 44
-                    ? review.review_description.substring(0, 44) + "..."
+                  {review.review_description.length > 33
+                    ? review.review_description.substring(0, 33) + "..."
                     : review.review_description}
                 </p>
 
