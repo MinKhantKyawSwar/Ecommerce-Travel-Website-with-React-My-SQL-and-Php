@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 29, 2025 at 01:21 PM
+-- Generation Time: Mar 01, 2025 at 03:27 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -111,7 +111,11 @@ INSERT INTO `booking` (`booking_id`, `user`, `package`, `source_location`, `book
 (43, 82, 33, 161, '2025-02-10', '2025-02-14', 2, 1, 3, 1, 726, 'approved'),
 (44, 95, 27, 161, '2025-02-08', '2025-02-12', 1, 1, 5, 2, 1000, 'approved'),
 (45, 101, 40, 161, '2025-02-14', '2025-02-13', 1, 1, 2, 2, 726, 'approved'),
-(46, 3, 22, 166, '2025-01-23', '2025-02-13', 2, 4, 10, 1, 2768, 'approved');
+(46, 3, 22, 166, '2025-01-23', '2025-02-13', 2, 4, 10, 1, 2768, 'approved'),
+(47, 2, 27, 166, '2025-01-30', '2025-02-14', 1, 1, 9, 3, 560, 'approved'),
+(48, 2, 18, 1, '2025-01-31', '2025-02-19', 2, 2, 9, 1, 1778, 'approved'),
+(49, 131, 58, 166, '2025-03-01', '2025-03-14', 2, 1, 10, 1, 499, 'pending'),
+(50, 131, 26, 166, '2025-03-01', '2025-03-13', 2, 2, 9, 3, 1499, 'pending');
 
 -- --------------------------------------------------------
 
@@ -165,7 +169,7 @@ CREATE TABLE `destination` (
 --
 
 INSERT INTO `destination` (`destination_id`, `location`, `description`, `category`, `accommodation`, `destination_image`, `destination_second_image`, `destination_third_image`, `accommodation_image`, `rating`) VALUES
-(1, 166, 'This  is a 5-day, 4-night immersive experience designed for those seeking both cultural insights and outdoor adventure in Myanmar’s largest city. This package offers a balance of urban exploration, historical landmarks, nature treks, and wildlife encounters.  Starting with a deep dive into Yangon’s rich heritage, you\'ll visit iconic sites like the Shwedagon and Sule Pagodas, followed by a cultural evening at the bustling Bogyoke Aung San Market. The second day takes you on a nature trek through ', 9, 'Yangon Hotel', 'pictures/destination_image/6775171194762_Yangon snapshot iso.jpg', 'pictures/destination_image/6775171194768_banner-yangon.jpg', 'pictures/destination_image/6775171194769_yangon.jpg', 'pictures/accommodation/677517119476a_yangon-hotel.jpg', 3.7),
+(1, 166, 'This  is a 5-day, 4-night immersive experience designed for those seeking both cultural insights and outdoor adventure in Myanmar’s largest city. This package offers a balance of urban exploration, historical landmarks, nature treks, and wildlife encounters.  Starting with a deep dive into Yangon’s rich heritage, you\'ll visit iconic sites like the Shwedagon and Sule Pagodas, followed by a cultural evening at the bustling Bogyoke Aung San Market. The second day takes you on a nature trek through ', 9, 'Yangon Hotel', 'pictures/destination_image/6775171194762_Yangon snapshot iso.jpg', 'pictures/destination_image/6775171194768_banner-yangon.jpg', 'pictures/destination_image/6775171194769_yangon.jpg', 'pictures/accommodation/677517119476a_yangon-hotel.jpg', 3.5),
 (2, 168, 'Bagan is an ancient city located in the Mandalay Region of Myanmar, famous for its stunning archaeological site and historical significance. It was once the capital of the Pagan Kingdom from the 9th to the 13th centuries and is home to over 2,000 temples, pagodas, and stupas spread across a vast plain. Bagan is renowned for its breathtaking sunrise and sunset views, where thousands of ancient structures rise from the misty plains, creating a magical, otherworldly atmosphere. The city is a UNESCO', 4, '4 star hotel', 'pictures/destination_image/6775200967fef_bagan2.jpg', 'pictures/destination_image/6775200967ff2_bagan.jpg', 'pictures/destination_image/6775200967ff3_bagan3.jpg', 'pictures/accommodation/6775200967ff4_338773_16100417450047364128.jpg', 5),
 (3, 171, 'Paris, the capital of France, is a timeless symbol of romance, culture, and elegance. Known as the \"City of Lights,\" it captivates visitors with its iconic landmarks, world-class art, and vibrant atmosphere. The Eiffel Tower, Notre-Dame Cathedral, and the Arc de Triomphe stand as enduring symbols of Paris’s rich history and architectural grandeur.\r\n\r\nThe city is a hub for art and culture, home to renowned museums like the Louvre, housing the Mona Lisa, and the Musée d\'Orsay, showcasing Impressio', 4, 'Boutique Hotels', 'pictures/destination_image/67755ec31c363_paris2.jpg', 'pictures/destination_image/67755ec31c701_Large-Arc-de-Triomphe-at-sunrise-Paris-France-1277179412.jpg', 'pictures/destination_image/67755ec31c704_paros.jpg', 'pictures/accommodation/67755ec31c706_paris.jpg', 4.3),
 (4, 61, 'Tokyo, the capital city of Japan, is a bustling metropolis that beautifully blends modern innovation with deep-rooted traditions. Known for its towering skyscrapers, neon lights, and vibrant nightlife, Tokyo is also a city where centuries-old temples, serene gardens, and traditional tea houses coexist with futuristic technology and fashion.\r\n\r\nAt the heart of Tokyo is its diverse districts, each offering something unique. Shibuya and Shinjuku are famous for their busy streets, shopping, and ente', 3, '4 star hotel', 'pictures/destination_image/6775851043cb7_japan1.jpg', 'pictures/destination_image/6775851043cbc_japan2.jpg', 'pictures/destination_image/6775851043cbd_japan3.jpg', 'pictures/accommodation/6775851043cbe_paris_activities.jpg', 3),
@@ -180,7 +184,8 @@ INSERT INTO `destination` (`destination_id`, `location`, `description`, `categor
 (13, 46, 'Amsterdam, the capital of the Netherlands, is renowned for its picturesque canals, rich history, and vibrant cultural scene. Visitors can explore iconic museums, historic neighborhoods, and enjoy the city\'s lively atmosphere.', 4, '4 star hotel', 'pictures/destination_image/679139acf342d_Amsterdam3.png', 'pictures/destination_image/679139acf3431_Amsterdam2.png', 'pictures/destination_image/679139acf3432_Amsterdam1.png', 'pictures/accommodation/679139acf3433_Amsterdam_accommodation.png', 0),
 (14, 63, 'Beijing, the capital of China, is a vibrant city blending ancient history with modern marvels. It\'s known for its iconic landmarks, bustling markets, and rich cultural experiences. Visitors can explore historical treasures like the Great Wall, Forbidden City, and Temple of Heaven, or dive into modern attractions, thriving street food scenes, and cutting-edge architecture.', 11, '5 star hotel', 'pictures/destination_image/6791bd0e60f15_bejing.png', 'pictures/destination_image/6791bd0e60f19_bejing_2.png', 'pictures/destination_image/6791bd0e60f1a_bejing_3.png', 'pictures/accommodation/6791bd0e60f1b_beijing_facilities.png', 0),
 (15, 81, 'Egypt, the \"Land of Pharaohs,\" is a country steeped in history and mystery. From the colossal Pyramids of Giza and the Great Sphinx to the tranquil Nile River and vibrant bazaars of Cairo, Egypt offers a journey into the past like no other. Visitors can explore ancient temples, desert landscapes, and the warm waters of the Red Sea, making it a perfect destination for history buffs, adventurers, and beach lovers alike.', 8, '4 star hotel', 'pictures/destination_image/679249a20c76c_giza_3.png', 'pictures/destination_image/679249a20c76f_giza_2.png', 'pictures/destination_image/679249a20c770_giza_1.png', 'pictures/accommodation/679249a20c771_giza_accommodation.png', 0),
-(16, 102, 'Melbourne, Australia\'s cultural capital, is renowned for its vibrant arts scene, diverse culinary offerings, and dynamic sports culture. The city boasts a rich tapestry of experiences, from exploring its iconic laneways adorned with street art to enjoying performances at the Arts Centre Melbourne. Visitors can immerse themselves in the bustling atmosphere of Queen Victoria Market, stroll through the picturesque Royal Botanic Gardens, or attend world-class sporting events at the Melbourne Cricket', 9, '4 star hotel', 'pictures/destination_image/679254aebd4f9_melbourne_1.png', 'pictures/destination_image/679254aebd4fc_melbourne_3.png', 'pictures/destination_image/679254aebd4fd_melbourne_2.png', 'pictures/accommodation/679254aebd4fe_melbourne_accommodation.png', 0);
+(16, 102, 'Melbourne, Australia\'s cultural capital, is renowned for its vibrant arts scene, diverse culinary offerings, and dynamic sports culture. The city boasts a rich tapestry of experiences, from exploring its iconic laneways adorned with street art to enjoying performances at the Arts Centre Melbourne. Visitors can immerse themselves in the bustling atmosphere of Queen Victoria Market, stroll through the picturesque Royal Botanic Gardens, or attend world-class sporting events at the Melbourne Cricket', 9, '4 star hotel', 'pictures/destination_image/679254aebd4f9_melbourne_1.png', 'pictures/destination_image/679254aebd4fc_melbourne_3.png', 'pictures/destination_image/679254aebd4fd_melbourne_2.png', 'pictures/accommodation/679254aebd4fe_melbourne_accommodation.png', 0),
+(21, 44, 'Madrid, the vibrant capital of Spain, is renowned for its rich cultural heritage, world-class art museums, delectable cuisine, and lively nightlife. The city boasts a harmonious blend of historical architecture and modern infrastructure, offering visitors a plethora of experiences.', 9, 'Royal Hotel', 'pictures/destination_image/679c5005282ac_madrid_3.png', 'pictures/destination_image/679c5005282af_madrid_2.png', 'pictures/destination_image/679c5005282b0_madrid_1.png', 'pictures/accommodation/679c5005282b1_madrid_accommodation.png', 0);
 
 -- --------------------------------------------------------
 
@@ -411,7 +416,8 @@ INSERT INTO `location` (`location_id`, `city`, `country`, `region`) VALUES
 (174, 'Phuket', 'Thailand', 4),
 (175, 'Dubai', 'United Arab Emirate', 4),
 (176, 'Namche Bazaa', 'nepal', 4),
-(177, 'New York', 'United States', 4);
+(177, 'New York', 'United States', 4),
+(178, ' Madrid', 'Spain', 3);
 
 -- --------------------------------------------------------
 
@@ -443,7 +449,13 @@ INSERT INTO `notifications` (`notification_id`, `user`, `message`, `noti_status`
 (28, 14, 'Admin has approved your booking! Thank you for choosing to travel with us!', 'read', '2025-01-19 05:32:33', '2025-01-18 20:33:58'),
 (69, 3, 'Payment is successful and your booking is waiting for admin approval', 'read', '2025-01-23 13:33:54', '2025-01-23 04:34:00'),
 (70, 1, 'A user books and waiting for your approval. Please check transactions from the admin panel.', 'read', '2025-01-23 13:33:54', '2025-01-23 04:34:09'),
-(71, 3, 'Admin has approved your booking! Thank you for choosing to travel with us!', 'read', '2025-01-23 13:34:18', '2025-01-23 04:34:28');
+(71, 3, 'Admin has approved your booking! Thank you for choosing to travel with us!', 'read', '2025-01-23 13:34:18', '2025-01-23 04:34:28'),
+(73, 1, 'A user books and waiting for your approval. Please check transactions from the admin panel.', 'read', '2025-01-31 01:06:55', '2025-01-30 16:07:17'),
+(76, 1, 'A user books and waiting for your approval. Please check transactions from the admin panel.', 'read', '2025-01-31 13:26:09', '2025-01-31 04:26:43'),
+(78, 131, 'Payment is successful and your booking is waiting for admin approval', 'read', '2025-03-01 08:53:37', '2025-03-01 14:23:55'),
+(79, 1, 'A user books and waiting for your approval. Please check transactions from the admin panel.', 'read', '2025-03-01 08:53:37', '2025-03-01 14:24:00'),
+(80, 131, 'Payment is successful and your booking is waiting for admin approval', 'read', '2025-03-01 08:55:37', '2025-03-01 14:25:45'),
+(81, 1, 'A user books and waiting for your approval. Please check transactions from the admin panel.', 'unread', '2025-03-01 08:55:37', '2025-03-01 08:55:37');
 
 -- --------------------------------------------------------
 
@@ -518,7 +530,9 @@ INSERT INTO `package` (`package_id`, `package_name`, `description`, `flight_desc
 (60, 'Luxury Red Sea Escape', ' luxurious journey combining history and relaxation. Begin with a stay in a 5-star Cairo hotel, touring the ancient pyramids and mosques. Embark on a luxury Nile Cruise from Luxor to Aswan, visiting temples and local villages. ', 'business class', 'pictures/package/67924caed90de_Amsterdam_flight.png', '4-star hotel or luxury homestay', 'pictures/package/67924caed90e1_giza_accommodation.png', 'Daily breakfasts and select meals included', 'pictures/package/67924caed90e2_giza_meals.png', 'visiting temples and local villages, a beachside retreat in Hurghada, enjoying snorkeling or diving in the crystal-clear waters of the Red Sea, Camel ride at the pyramids, Tickets to museums and theme parks', 'pictures/package/67924caed90e3_giza_activities.png', 10, 15, 39),
 (61, 'Melbourne City Explorer\r\n', 'Dive into the heart of Melbourne with this city-focused tour. Discover the bustling Queen Victoria Market, explore the iconic laneways filled with street art, and visit landmarks like Federation Square and Flinders Street Station. Experience a panoramic view of the city from the Eureka Skydeck and end your evenings with Melbourne\'s famous coffee and international cuisines.', 'Business Class', 'pictures/package/67925c55691e9_dubai flight.jpg', 'Royal Hotel', 'pictures/package/67925c83644e7_melbourne_facilities.png', 'Daily Cuisine', 'pictures/package/67925c8f5490a_melbourne_meals.png', 'Eureka Skydeck entry,\r\nQueen Victoria Market tour,\r\nvisit landmarks like Federation Square and Flinders Street Station\r\n', 'pictures/package/67925e9b94140_melbourne_activities.png', 6, 16, 11),
 (62, ' Great Ocean Road Adventure', 'Take a breathtaking journey along the Great Ocean Road, one of the world’s most scenic coastal drives. Visit iconic sites like the Twelve Apostles, Loch Ard Gorge, and Bells Beach. Enjoy coastal walks, wildlife spotting, and stunning ocean views. Stay overnight in the seaside town of Apollo Bay.', 'business class', 'pictures/package/67925f89ab730_Amsterdam_flight.png', 'Royal Hotel', 'pictures/package/67925f89ab734_melbourne_accommodation.png', 'Daily breakfasts and select meals included', 'pictures/package/67925f89ab736_melbourne_meals.png', 'Guided tour of the Great Ocean Road highlights, Meals during the tour, Visit iconic sites like the Twelve Apostles, Loch Ard Gorge, and Bells Beach, ', 'pictures/package/67925f89ab737_melbourne_activities.png', 8, 16, 25),
-(63, 'Adventure and Nature Package', 'Perfect for outdoor enthusiasts! Enjoy an early morning hot air balloon ride over the Yarra Valley, hike through the Grampians National Park, and explore Wilson\'s Promontory National Park for pristine beaches and wildlife', 'business class', 'pictures/package/6792613a9cbcf_Amsterdam_flight.png', 'Royal Hotel', 'pictures/package/6792613a9cbd3_melbourne_accommodation.png', 'Daily breakfasts and select meals included', 'pictures/package/6792613a9cbd5_melbourne_meals.png', 'National park entry fees, Meals during outdoor excursions, an early morning hot air balloon ride, Wilson\'s Promontory National Park', 'pictures/package/6792613a9cbd6_melbourne_activities.png', 11, 16, 5);
+(63, 'Adventure and Nature Package', 'Perfect for outdoor enthusiasts! Enjoy an early morning hot air balloon ride over the Yarra Valley, hike through the Grampians National Park, and explore Wilson\'s Promontory National Park for pristine beaches and wildlife', 'business class', 'pictures/package/6792613a9cbcf_Amsterdam_flight.png', 'Royal Hotel', 'pictures/package/6792613a9cbd3_melbourne_accommodation.png', 'Daily breakfasts and select meals included', 'pictures/package/6792613a9cbd5_melbourne_meals.png', 'National park entry fees, Meals during outdoor excursions, an early morning hot air balloon ride, Wilson\'s Promontory National Park', 'pictures/package/6792613a9cbd6_melbourne_activities.png', 11, 16, 5),
+(64, 'Glamour of Spain', '  This tour combines a guided walking exploration through Madrid\'s historic city center with a panoramic bus tour, providing a comprehensive overview of the city\'s most iconic landmarks.', 'business class', 'pictures/package/679c3acca23eb_madrid_flight.png', 'Royal Hotel', 'pictures/package/679c3acca23ef_madrid_accommodation.png', 'Daily breakfasts and select meals included', 'pictures/package/679c3acca23f0_madrid_meals.png', 'Seine River cruise at sunset Skip-the-line access to the Louvre Museum and other attractions Day trip to the Palace of Versailles with transportation Gourmet dinner at a Michelin-starred restaurant French pastry-making workshop and wine-tasting experience', 'pictures/package/679c3acca23f1_madrid_activities.png', 6, 17, 10),
+(65, 'Glamour of Spain', ' This tour combines a guided walking exploration through Madrid\'s historic city center with a panoramic bus tour, providing a comprehensive overview of the city\'s most iconic landmarks.', 'business class', 'pictures/package/679c502fabfda_madrid_flight.png', ' royal hotel', 'pictures/package/679c502fabfde_madrid_accommodation.png', 'All meals with snacks', 'pictures/package/679c502fabfdf_madrid_meals.png', 'Guided city tour, wellness spa, entry tickets', 'pictures/package/679c502fabfe0_madrid_activities.png', 5, 21, 13);
 
 -- --------------------------------------------------------
 
@@ -543,8 +557,8 @@ INSERT INTO `package_info` (`package_info_id`, `source_location`, `price`, `trav
 (1, 1, 799, '2025-02-12', 40, 18),
 (2, 167, 799, '2025-02-12', 40, 18),
 (3, 8, 899, '2025-02-12', 40, 18),
-(4, 1, 798, '2025-02-19', 40, 18),
-(5, 1, 799, '2025-02-19', 39, 18),
+(4, 1, 798, '2025-02-19', 38, 18),
+(5, 1, 799, '2025-02-19', 38, 18),
 (6, 1, 799, '2025-02-26', 38, 18),
 (7, 17, 699, '2025-02-12', 40, 18),
 (8, 1, 799, '2025-02-12', 40, 19),
@@ -625,7 +639,7 @@ INSERT INTO `package_info` (`package_info_id`, `source_location`, `price`, `trav
 (83, 1, 499, '2025-02-18', 29, 26),
 (84, 1, 498, '2025-02-25', 30, 26),
 (85, 166, 399, '2025-02-07', 30, 27),
-(86, 166, 399, '2025-02-14', 30, 27),
+(86, 166, 399, '2025-02-14', 29, 27),
 (87, 166, 399, '2025-02-21', 30, 27),
 (88, 166, 899, '2025-02-07', 29, 28),
 (89, 166, 799, '2025-02-14', 23, 28),
@@ -936,7 +950,7 @@ INSERT INTO `package_info` (`package_info_id`, `source_location`, `price`, `trav
 (396, 166, 499, '2025-02-21', 30, 58),
 (397, 166, 499, '2025-02-28', 30, 58),
 (398, 166, 499, '2025-03-07', 30, 58),
-(399, 166, 499, '2025-03-14', 30, 58),
+(399, 166, 499, '2025-03-14', 29, 58),
 (400, 166, 499, '2025-03-21', 30, 58),
 (401, 166, 799, '2025-02-12', 30, 59),
 (402, 166, 799, '2025-02-19', 30, 59),
@@ -984,7 +998,30 @@ INSERT INTO `package_info` (`package_info_id`, `source_location`, `price`, `trav
 (444, 166, 1199, '2025-04-02', 30, 63),
 (445, 166, 1199, '2025-04-16', 30, 63),
 (446, 1, 699, '2025-05-09', 30, 18),
-(447, 1, 699, '2025-08-07', 30, 18);
+(447, 1, 699, '2025-08-07', 30, 18),
+(448, 166, 599, '2025-02-14', 30, 64),
+(449, 166, 699, '2025-02-14', 30, 65),
+(450, 1, 599, '2025-02-14', 30, 65),
+(451, 166, 599, '2025-03-06', 40, 21),
+(452, 166, 599, '2025-03-20', 40, 21),
+(453, 166, 599, '2025-03-13', 40, 23),
+(454, 166, 599, '2025-03-06', 40, 22),
+(455, 166, 599, '2025-03-13', 36, 26),
+(456, 166, 599, '2025-03-13', 40, 29),
+(457, 166, 599, '2025-03-13', 40, 32),
+(458, 166, 599, '2025-03-12', 40, 33),
+(459, 166, 599, '2025-03-13', 40, 40),
+(460, 166, 599, '2025-03-20', 40, 40),
+(461, 166, 599, '2025-03-17', 40, 55),
+(462, 166, 599, '2025-03-12', 40, 65),
+(463, 166, 599, '2025-03-06', 40, 38),
+(464, 166, 599, '2025-03-13', 40, 38),
+(465, 166, 599, '2025-03-20', 40, 38),
+(466, 166, 599, '2025-03-27', 40, 38),
+(467, 166, 599, '2025-03-13', 40, 39),
+(468, 166, 599, '2025-03-20', 40, 39),
+(469, 166, 599, '2025-03-27', 40, 39),
+(470, 22, 599, '2025-03-12', 40, 21);
 
 -- --------------------------------------------------------
 
@@ -1050,7 +1087,13 @@ INSERT INTO `passport_info` (`passport_info_id`, `booking_id`, `full_name`, `pas
 (43, 46, 'Daw Thu Thu Zan', '2J5SA-SADA', '2026-06-02'),
 (44, 46, 'Shaun', 'SHKAI-AKU', '2025-01-30'),
 (45, 46, 'Smith Doe', 'YAU-AJAU', '2027-06-22'),
-(46, 46, 'Jonny Doe', 'JAU-AU', '2026-02-11');
+(46, 46, 'Jonny Doe', 'JAU-AU', '2026-02-11'),
+(47, 47, 'Min Khant Kyaw Swar', 'QDQQ-1231', '2027-07-28'),
+(48, 48, 'Min Khant Kyaw Swar', '1DAIQ-1231', '2026-06-10'),
+(49, 48, 'Shaun', 'SHKAI-AKU', '2026-06-30'),
+(50, 49, 'Min Khant Kyaw Swar', '2J5SA-SADA', '2025-06-18'),
+(51, 50, 'Min Khant Kyaw Swar', '2J5SA-SADA', '2027-06-09'),
+(52, 50, 'Ye Yint', 'JAU-AU', '2028-06-07');
 
 -- --------------------------------------------------------
 
@@ -1149,7 +1192,7 @@ INSERT INTO `review` (`review_id`, `review_title`, `description`, `rating`, `cre
 (30, 'Beach!!', 'It looks so interesting and relaxing!', 4, '2025-01-18T19:41:42.534Z', 14, 5),
 (39, 'cozy and chill place to live ', 'I have lived there since my childhood and i totally recommend you to go there', 5, '2025-01-19T18:47:57.805Z', 3, 2),
 (41, 'Might be the best trekking trip ever!', 'Wow, It looks amazing', 5, '2025-01-21T08:44:16.741Z', 3, 12),
-(56, 'So great', 'I live there', 4, '2025-01-21T09:21:02.446Z', 3, 1),
+(56, 'So great!', 'I live there', 2, '2025-01-21T09:21:02.446Z', 3, 1),
 (57, 'Yes it is fun!', 'I have been there when i was young and I booked it to go there next month.', 5, '2025-01-21T09:45:11.309Z', 3, 5),
 (58, 'Amazing Experience', 'The views were breathtaking, had a great time!', 5, '2024-10-15', 2, 1),
 (59, 'Not Worth It', 'The place was crowded and overpriced.', 2, '2024-09-20', 3, 2),
@@ -1352,8 +1395,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`user_id`, `username`, `email`, `phone`, `role`, `profile_image`, `password`, `created_at`, `status`, `reset_password_code`) VALUES
 (1, 'admin', 'admin@gmail.com', '097941849971', 'admin', 'pictures/profile/6780856ef29e0_admin.jpg', '$2y$10$EmWL4eEQbPVoRMGs5qCWQeD4LxuRrt9Pzsu6y0vFcCG8PKrv08avK', '2025-01-07 06:52:45', 'approved', 0),
-(2, 'Min Khant Kyaw Swar', 'mkks1986.mkks@gmail.com', '09794184997', 'customer', 'pictures/profile/6777f5126a1d5_bagan3.jpg', '$2y$10$JUc1BsQiHg5R684uMfAkI.lLLbDWoXhZI2k9sAV0RedlY1VDu8zCq', '2024-12-10 06:52:45', 'approved', 416406),
-(3, 'Frost', 'frostwosix@gmail.com', '09827291821', 'customer', 'pictures/profile/677ad9a6a6937_profile.jpg', '$2y$10$EEPfgfe8wogFnI8pV7RqzOBN4dqqQ482/ru.lGwlV0MyL4hudoGLG', '2025-01-07 06:52:45', 'approved', NULL),
+(2, 'Min Khant', 'mkks1986.mkks@gmail.com', '09794184997', 'customer', 'pictures/profile/679c4f0375ffc_images (1).jpg', '$2y$10$ACdkoQxQePV/VfMZ4C8cjuynBATf.qqD8ZOIZt7Zs71e8OY/1tr8m', '2024-12-10 06:52:45', 'approved', NULL),
+(3, 'Frost', 'frostwosix@gmail.com', '09827291821', 'customer', 'pictures/profile/677ad9a6a6937_profile.jpg', '$2y$10$EEPfgfe8wogFnI8pV7RqzOBN4dqqQ482/ru.lGwlV0MyL4hudoGLG', '2025-01-07 06:52:45', 'approved', 432141),
 (4, 'Zwe Thuta Min Thein', 'zwethuta@gmail.com', '09821313131', 'customer', 'pictures/profile/6780914f4100f_kotoegyi.jpg', '$2y$10$dEqhtrGbNnU8HLIYCi8GC.uaaztgiEShW3NyehC3zMYpbWUlCYCZ2', '2024-12-10 06:52:45', 'approved', 0),
 (5, 'Linn Myat', 'linnmyat@gmail.com', '09794184997', 'customer', '/pictures/profile/defaultProfile.png', '$2y$10$egApD4TvulmYGQHWXGHOA.vErfTKHR0ITSCXWMbH7fJCaBDmrwbha', '1/2/2025, 6:22:40 AM', 'approved', 0),
 (6, 'johndoe', 'johndoe@example.com', '11234567890', 'customer', 'pictures/profile/67795edf30619_maxresdefault.jpg', '$2y$10$oRwhLqS/iQWRMEOiURude.8p0M5MD/5e0amiIXnBWPKMPb.9RPkJO', '2025-01-07 06:52:45', 'approved', 0),
@@ -1479,7 +1522,9 @@ INSERT INTO `users` (`user_id`, `username`, `email`, `phone`, `role`, `profile_i
 (126, 'lisa_ray', 'ekim@bentley.net', '7{random:10}', 'customer', '/pictures/profile/defaultProfile.png', '$2y$10$JUc1BsQiHg5R684uMfAkI.lLLbDWoXhZI2k9sAV0RedlY1VDu8zCq', '2024-10-15 02:49:07', 'approved', 0),
 (127, 'sierra_dorsey', 'martinsharon@davis.org', '81511839396', 'customer', '/pictures/profile/defaultProfile.png', '$2y$10$JUc1BsQiHg5R684uMfAkI.lLLbDWoXhZI2k9sAV0RedlY1VDu8zCq', '2024-10-08 19:15:13', 'approved', 0),
 (128, 'david_walsh', 'dwayne61@pruitt.com', '7{random:10}', 'customer', '/pictures/profile/defaultProfile.png', '$2y$10$JUc1BsQiHg5R684uMfAkI.lLLbDWoXhZI2k9sAV0RedlY1VDu8zCq', '2024-09-16 20:51:00', 'approved', 0),
-(129, 'jessica_oconnor', 'michelle22@gmail.com', '7{random:10}', 'customer', '/pictures/profile/defaultProfile.png', '$2y$10$JUc1BsQiHg5R684uMfAkI.lLLbDWoXhZI2k9sAV0RedlY1VDu8zCq', '2024-10-15 23:25:59', 'approved', 0);
+(129, 'jessica_oconnor', 'michelle22@gmail.com', '7{random:10}', 'customer', '/pictures/profile/defaultProfile.png', '$2y$10$JUc1BsQiHg5R684uMfAkI.lLLbDWoXhZI2k9sAV0RedlY1VDu8zCq', '2024-10-15 23:25:59', 'approved', 0),
+(130, 'min khant ', 'minkhant12@gmail.com', '09794184997', 'customer', '/pictures/profile/defaultProfile.png', '$2y$10$Ae0sq.7nryzXXlRUkQ/Xr.MrQ7w6jKK8LAAClHGa05i3Ke/jVg3Ca', '1/30/2025, 8:12:53 PM', 'approved', NULL),
+(131, 'Swar', 'mkks.mkks@gmail.com', '09794184997', 'customer', '/pictures/profile/defaultProfile.png', '$2y$10$5f9ICcWTOuC8DWX6NIqfjOnFXCc/RhXsTzfvrWrF9AQK5vLRfxzpi', '3/1/2025, 3:38:41 PM', 'approved', NULL);
 
 --
 -- Indexes for dumped tables
@@ -1622,7 +1667,7 @@ ALTER TABLE `add_on`
 -- AUTO_INCREMENT for table `booking`
 --
 ALTER TABLE `booking`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT for table `category`
@@ -1634,7 +1679,7 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT for table `destination`
 --
 ALTER TABLE `destination`
-  MODIFY `destination_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `destination_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `discount`
@@ -1646,37 +1691,37 @@ ALTER TABLE `discount`
 -- AUTO_INCREMENT for table `favorite_destinations`
 --
 ALTER TABLE `favorite_destinations`
-  MODIFY `favorite_destination_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `favorite_destination_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
 
 --
 -- AUTO_INCREMENT for table `location`
 --
 ALTER TABLE `location`
-  MODIFY `location_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=178;
+  MODIFY `location_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=179;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
 
 --
 -- AUTO_INCREMENT for table `package`
 --
 ALTER TABLE `package`
-  MODIFY `package_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `package_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 
 --
 -- AUTO_INCREMENT for table `package_info`
 --
 ALTER TABLE `package_info`
-  MODIFY `package_info_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=448;
+  MODIFY `package_info_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=471;
 
 --
 -- AUTO_INCREMENT for table `passport_info`
 --
 ALTER TABLE `passport_info`
-  MODIFY `passport_info_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `passport_info_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT for table `payment`
@@ -1694,13 +1739,13 @@ ALTER TABLE `region`
 -- AUTO_INCREMENT for table `review`
 --
 ALTER TABLE `review`
-  MODIFY `review_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=158;
+  MODIFY `review_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=160;
 
 --
 -- AUTO_INCREMENT for table `saveditems`
 --
 ALTER TABLE `saveditems`
-  MODIFY `saved_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=163;
+  MODIFY `saved_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=169;
 
 --
 -- AUTO_INCREMENT for table `tourguide`
@@ -1712,7 +1757,7 @@ ALTER TABLE `tourguide`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=130;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=132;
 
 --
 -- Constraints for dumped tables
