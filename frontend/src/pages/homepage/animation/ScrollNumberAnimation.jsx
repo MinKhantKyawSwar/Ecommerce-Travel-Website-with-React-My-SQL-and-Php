@@ -39,7 +39,7 @@ const ScrollNumberAnimation = ({ targetNumber }) => {
   return (
     <motion.h1
       ref={ref}
-      className="text-5xl font-bold text-gray-600 my-4"
+      className="text-5xl font-bold text-white my-4"
       transition={{ duration: 0.3 }}
     >
       <motion.span

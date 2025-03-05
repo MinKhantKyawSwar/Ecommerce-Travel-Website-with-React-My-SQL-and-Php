@@ -5,6 +5,7 @@ import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { Bounce, Slide, ToastContainer, toast } from "react-toastify";
 import { UserContext } from "../../providers/UserContext";
+import { motion } from "framer-motion";
 
 const FunPlaces = ({ destinations, handleDetails }) => {
   const [savedDestinations, setSavedDestinations] = useState([]);
@@ -173,13 +174,17 @@ const FunPlaces = ({ destinations, handleDetails }) => {
       </div>
 
       {/* Carousel Container */}
-      <div className="carousel carousel-center gap-4 rounded-box relative p-4 sm:p-6 lg:p-8 shadow-lg">
+      <div className="carousel carousel-center gap-4 rounded-box relative sm:p-6 lg:p-8">
         {/* Grid for Destinations */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {currentDestinations.map((destination, index) => (
-            <div
-              className="relative bg-white rounded-lg border overflow-hidden shadow-lg h-80 sm:h-[20rem] md:h-[22rem] lg:h-[25rem] p-3"
-              key={index}
+            <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: "easeOut", delay: index * 0.2 }}
+            viewport={{ once: false, amount: 0.3 }}
+              className="relative shadow-lg rounded-lg border overflow-hidden h-80 sm:h-[20rem] md:h-[22rem] lg:h-[25rem] p-3"
             >
               {localStorage.getItem("user_id") && (
                 <button
@@ -187,7 +192,7 @@ const FunPlaces = ({ destinations, handleDetails }) => {
                     e.stopPropagation();
                     toggleSavedItem(destination.destination_id);
                   }}
-                  className="absolute top-5 right-6 text-white bg-black/50 p-2 rounded-full hover:bg-black/70 transition z-10"
+                  className="absolute top-6 right-6 text-white bg-black/50 p-2 rounded-full hover:bg-black/70 transition z-10"
                 >
                   {savedDestinations.includes(destination.destination_id) ? (
                     <IoMdHeart className="text-2xl" />
@@ -196,53 +201,50 @@ const FunPlaces = ({ destinations, handleDetails }) => {
                   )}
                 </button>
               )}
-
-              <img
-                src={`http://localhost:3000/backend/${destination.destination_image}`}
-                alt={destination.city}
-                className="w-full h-full object-cover rounded-lg"
-              />
-
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-
-              <div className="absolute bottom-4 left-4 right-4 text-white pb-2 rounded-lg shadow-lg">
-                <div className="flex flex-col sm:flex-row justify-between h-full">
-                  <div className="mb-2">
-                    <h3 className="text-lg sm:text-xl font-bold">{destination.city}</h3>
-                    <p className="text-xs text-gray-300">{destination.country}</p>
+              <div className="relative h-full bg-cover bg-center bg-no-repeat carousel-item">
+                <img
+                  src={`http://localhost:3000/backend/${destination.destination_image}`}
+                  alt={destination.city}
+                  className="w-full h-full object-cover rounded-lg"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                <div className="absolute bottom-4 left-4 right-4 text-white pb-2 rounded-lg shadow-lg">
+                  <div className="flex flex-col sm:flex-row justify-between h-full">
+                    <div className="mb-2">
+                      <h3 className="text-lg sm:text-xl font-bold">{destination.city}</h3>
+                      <p className="text-xs text-gray-300">{destination.country}</p>
+                    </div>
+                    <div className="mb-4">
+                      <span className="flex mt-4 gap-1 px-3 py-1 bg-yellow-500 text-white text-sm font-semibold rounded-lg">
+                        <p>from</p>${destination.price}
+                      </span>
+                    </div>
                   </div>
-                  <div className="mb-4">
-                    <span className="flex mt-4 gap-1 px-3 py-1 bg-yellow-500 text-white text-sm font-semibold rounded-lg">
-                      <p>from</p>${destination.price}
-                    </span>
-                  </div>
+                  <button
+                    className="w-full px-4 py-2 hover:text-black hover:bg-gray-100 rounded-lg border-white border bg-transparent text-white transition duration-200"
+                    onClick={() => handleDetails(destination.destination_id)}
+                  >
+                    View Details
+                  </button>
                 </div>
-                <button
-                  className="w-full px-4 py-2 hover:text-black hover:bg-gray-100 rounded-lg border-white border bg-transparent text-white transition duration-200"
-                  onClick={() => handleDetails(destination.destination_id)}
-                >
-                  View Details
-                </button>
+                <span className="absolute top-4 left-4 bg-white/50 backdrop-blur-md backdrop-saturate-150 border border-gray-200 text-gray-900 text-sm font-semibold px-3 py-1 rounded-md shadow-sm">
+                  ⭐ {destination.rating}
+                </span>
               </div>
-              <span className="absolute top-6 left-6 bg-white/50 backdrop-blur-md backdrop-saturate-150 border border-gray-200 text-gray-900 text-sm font-semibold px-3 py-1 rounded-md shadow-sm">
-                ⭐ {destination.rating}
-              </span>
-            </div>
+            </motion.div>
           ))}
         </div>
 
         {/* Navigation Buttons */}
         <button
-          className={`absolute top-1/2 left-0 transform -translate-y-1/2 bg-gray-800 text-white rounded-full px-4 py-2 shadow-lg hover:bg-gray-700 ${currentPage === 0 ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+          className={`absolute top-1/2 left-0 transform -translate-y-1/2 bg-gray-800 text-white rounded-full px-4 py-2 shadow-lg hover:bg-gray-700 ${currentPage === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
           onClick={handlePrev}
           disabled={currentPage === 0}
         >
           ❮
         </button>
         <button
-          className={`absolute top-1/2 right-0 transform -translate-y-1/2 bg-gray-800 text-white rounded-full px-4 py-2 shadow-lg hover:bg-gray-700 ${currentPage === totalPages - 1 ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+          className={`absolute top-1/2 right-0 transform -translate-y-1/2 bg-gray-800 text-white rounded-full px-4 py-2 shadow-lg hover:bg-gray-700 ${currentPage === totalPages - 1 ? "opacity-50 cursor-not-allowed" : ""}`}
           onClick={handleNext}
           disabled={currentPage === totalPages - 1}
         >

@@ -5,6 +5,7 @@ import { UserContext } from "../../providers/UserContext";
 import "react-toastify/dist/ReactToastify.css";
 import { Bounce, Slide, ToastContainer, toast } from "react-toastify";
 import axios from "axios";
+import { motion } from "framer-motion";
 
 const TopRatedDestinations = ({ topDestinations, handleDetails }) => {
 
@@ -175,13 +176,17 @@ const TopRatedDestinations = ({ topDestinations, handleDetails }) => {
         </div>
 
         {/* Carousel Container */}
-        <div className="carousel carousel-center gap-4 rounded-box relative  sm:p-6 lg:p-8 ">
+        <div className="carousel carousel-center gap-4 rounded-box relative sm:p-6 lg:p-8">
           {/* Grid for Destinations */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {currentDestinations.map((destination, index) => (
-              <div
-                className="relative shadow-lg rounded-lg border overflow-hidden h-80 sm:h-[20rem] md:h-[22rem] lg:h-[25rem] p-3"
+              <motion.div
                 key={index}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, ease: "easeOut", delay: index * 0.2 }}
+                viewport={{ once: false, amount: 0.3 }}
+                className="relative shadow-lg rounded-lg border overflow-hidden h-80 sm:h-[20rem] md:h-[22rem] lg:h-[25rem] p-3"
               >
                 {localStorage.getItem("user_id") && (
                   <button
@@ -208,12 +213,8 @@ const TopRatedDestinations = ({ topDestinations, handleDetails }) => {
                   <div className="absolute bottom-4 left-4 right-4 text-white pb-2 rounded-lg shadow-lg">
                     <div className="flex flex-col sm:flex-row justify-between h-full">
                       <div className="mb-2">
-                        <h3 className="text-lg sm:text-xl font-bold">
-                          {destination.city}
-                        </h3>
-                        <p className="text-xs text-gray-300">
-                          {destination.country}
-                        </p>
+                        <h3 className="text-lg sm:text-xl font-bold">{destination.city}</h3>
+                        <p className="text-xs text-gray-300">{destination.country}</p>
                       </div>
                       <div className="mb-4">
                         <span className="flex mt-4 gap-1 px-3 py-1 bg-yellow-500 text-white text-sm font-semibold rounded-lg">
@@ -229,27 +230,23 @@ const TopRatedDestinations = ({ topDestinations, handleDetails }) => {
                     </button>
                   </div>
                   <span className="absolute top-4 left-4 bg-white/50 backdrop-blur-md backdrop-saturate-150 border border-gray-200 text-gray-900 text-sm font-semibold px-3 py-1 rounded-md shadow-sm">
-                  ⭐ {destination.rating}
+                    ⭐ {destination.rating}
                   </span>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
 
           {/* Navigation Buttons */}
           <button
-            className={`absolute top-1/2 left-0 transform -translate-y-1/2 bg-gray-800 text-white rounded-full px-4 py-2 shadow-lg hover:bg-gray-700 ${currentPage === 0 ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+            className={`absolute top-1/2 left-0 transform -translate-y-1/2 bg-gray-800 text-white rounded-full px-4 py-2 shadow-lg hover:bg-gray-700 ${currentPage === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
             onClick={handlePrev}
             disabled={currentPage === 0}
           >
             ❮
           </button>
           <button
-            className={`absolute top-1/2 right-0 transform -translate-y-1/2 bg-gray-800 text-white rounded-full px-4 py-2 shadow-lg hover:bg-gray-700 ${currentPage === totalPages - 1
-              ? "opacity-50 cursor-not-allowed"
-              : ""
-              }`}
+            className={`absolute top-1/2 right-0 transform -translate-y-1/2 bg-gray-800 text-white rounded-full px-4 py-2 shadow-lg hover:bg-gray-700 ${currentPage === totalPages - 1 ? "opacity-50 cursor-not-allowed" : ""}`}
             onClick={handleNext}
             disabled={currentPage === totalPages - 1}
           >
