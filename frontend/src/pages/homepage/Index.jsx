@@ -415,7 +415,7 @@ const Index = () => {
 
             <div className="mt-12 px-4 md:px-0">
               <h2 className="text-xl md:text-2xl text-center font-bold text-gray-800 uppercase tracking-wide">
-                Check Out Reviews
+                Check Out Amazing Reviews!
               </h2>
               <MainPageReview homePageReview={homePageReview} />
             </div>

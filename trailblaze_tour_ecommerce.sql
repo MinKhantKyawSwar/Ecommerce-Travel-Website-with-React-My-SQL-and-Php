@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 01, 2025 at 03:27 PM
+-- Generation Time: Mar 06, 2025 at 11:17 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -81,10 +81,10 @@ INSERT INTO `booking` (`booking_id`, `user`, `package`, `source_location`, `book
 (3, 9, 19, 87, '2024-12-19', '2025-02-12', 1, 1, 7, 3, 569, 'approved'),
 (4, 6, 19, 43, '2025-01-01', '2025-02-12', 1, 1, 8, 2, 674, 'approved'),
 (5, 28, 23, 22, '2025-01-08', '2025-02-08', 1, 1, 4, 1, 300, 'approved'),
-(6, 6, 22, 166, '2025-01-08', '2025-02-13', 1, 4, 4, 3, 2320, 'approved'),
+(6, 6, 22, 166, '2025-03-08', '2025-02-13', 1, 4, 4, 3, 2320, 'approved'),
 (7, 2, 22, 1, '2025-01-08', '2025-02-07', 1, 1, 8, 1, 764, 'approved'),
 (8, 7, 22, 166, '2025-01-10', '2025-02-13', 1, 1, 8, 2, 135, 'approved'),
-(9, 4, 28, 166, '2025-01-10', '2025-02-14', 1, 2, 9, 1, 342, 'approved'),
+(9, 4, 28, 166, '2025-01-10', '2025-02-13', 1, 2, 9, 1, 342, 'approved'),
 (10, 8, 32, 166, '2025-01-10', '2025-02-06', 2, 2, 10, 3, 1081, 'approved'),
 (11, 20, 37, 166, '2025-01-13', '2025-02-07', 2, 2, 1, 3, 2943, 'denied'),
 (12, 11, 39, 166, '2025-01-13', '2025-02-14', 1, 1, 8, 1, 1304, 'approved'),
@@ -96,11 +96,11 @@ INSERT INTO `booking` (`booking_id`, `user`, `package`, `source_location`, `book
 (18, 13, 20, 62, '2025-01-18', '2025-02-28', 1, 1, 4, 2, 836, 'approved'),
 (19, 14, 32, 166, '2025-01-18', '2025-02-13', 1, 1, 9, 1, 530, 'approved'),
 (20, 14, 24, 173, '2025-01-18', '2025-01-25', 1, 1, 4, 1, 1376, 'approved'),
-(21, 14, 26, 1, '2025-01-18', '2025-02-18', 1, 1, 7, 2, 539, 'approved'),
-(22, 14, 19, 5, '2025-01-18', '2025-02-20', 1, 1, 6, 1, 1115, 'approved'),
-(23, 14, 38, 166, '2025-01-18', '2025-02-22', 1, 1, 8, 1, 1124, 'approved'),
-(24, 3, 38, 166, '2025-01-21', '2025-02-22', 1, 1, 5, 2, 1097, 'approved'),
-(25, 3, 44, 166, '2025-01-21', '2025-03-21', 1, 1, 5, 3, 778, 'pending'),
+(21, 14, 26, 1, '2025-03-01', '2025-02-18', 1, 1, 7, 2, 539, 'approved'),
+(22, 14, 19, 5, '2025-03-01', '2025-02-20', 1, 1, 6, 1, 1115, 'approved'),
+(23, 14, 38, 166, '2025-03-04', '2025-02-22', 1, 1, 8, 1, 1124, 'approved'),
+(24, 3, 38, 166, '2025-03-03', '2025-02-22', 1, 1, 5, 2, 1097, 'approved'),
+(25, 3, 44, 166, '2025-03-02', '2025-02-22', 1, 1, 5, 3, 778, 'pending'),
 (36, 12, 24, 161, '2025-02-11', '2025-02-07', 1, 1, 10, 1, 620, 'approved'),
 (37, 38, 19, 161, '2025-02-07', '2025-02-10', 2, 1, 11, 2, 726, 'approved'),
 (38, 52, 22, 161, '2025-02-10', '2025-02-14', 1, 1, 7, 1, 800, 'approved'),
@@ -114,8 +114,12 @@ INSERT INTO `booking` (`booking_id`, `user`, `package`, `source_location`, `book
 (46, 3, 22, 166, '2025-01-23', '2025-02-13', 2, 4, 10, 1, 2768, 'approved'),
 (47, 2, 27, 166, '2025-01-30', '2025-02-14', 1, 1, 9, 3, 560, 'approved'),
 (48, 2, 18, 1, '2025-01-31', '2025-02-19', 2, 2, 9, 1, 1778, 'approved'),
-(49, 131, 58, 166, '2025-03-01', '2025-03-14', 2, 1, 10, 1, 499, 'pending'),
-(50, 131, 26, 166, '2025-03-01', '2025-03-13', 2, 2, 9, 3, 1499, 'pending');
+(49, 131, 58, 166, '2025-03-01', '2025-03-14', 2, 1, 10, 1, 499, 'approved'),
+(50, 131, 26, 166, '2025-03-01', '2025-03-13', 2, 2, 9, 3, 1499, 'approved'),
+(51, 3, 23, 166, '2025-03-02', '2025-03-21', 1, 1, 10, 3, 1113, 'approved'),
+(52, 4, 26, 166, '2025-03-06', '2025-03-13', 1, 1, 8, 2, 674, 'approved'),
+(53, 3, 32, 166, '2025-03-06', '2025-03-13', 1, 1, 9, 1, 710, 'approved'),
+(54, 3, 58, 166, '2025-03-06', '2025-03-14', 1, 1, 10, 3, 636, 'approved');
 
 -- --------------------------------------------------------
 
@@ -417,7 +421,8 @@ INSERT INTO `location` (`location_id`, `city`, `country`, `region`) VALUES
 (175, 'Dubai', 'United Arab Emirate', 4),
 (176, 'Namche Bazaa', 'nepal', 4),
 (177, 'New York', 'United States', 4),
-(178, ' Madrid', 'Spain', 3);
+(178, ' Madrid', 'Spain', 3),
+(179, 'New York', 'Myanmar (Burma)', 4);
 
 -- --------------------------------------------------------
 
@@ -455,7 +460,21 @@ INSERT INTO `notifications` (`notification_id`, `user`, `message`, `noti_status`
 (78, 131, 'Payment is successful and your booking is waiting for admin approval', 'read', '2025-03-01 08:53:37', '2025-03-01 14:23:55'),
 (79, 1, 'A user books and waiting for your approval. Please check transactions from the admin panel.', 'read', '2025-03-01 08:53:37', '2025-03-01 14:24:00'),
 (80, 131, 'Payment is successful and your booking is waiting for admin approval', 'read', '2025-03-01 08:55:37', '2025-03-01 14:25:45'),
-(81, 1, 'A user books and waiting for your approval. Please check transactions from the admin panel.', 'unread', '2025-03-01 08:55:37', '2025-03-01 08:55:37');
+(81, 1, 'A user books and waiting for your approval. Please check transactions from the admin panel.', 'read', '2025-03-01 08:55:37', '2025-03-02 11:06:55'),
+(82, 3, 'Payment is successful and your booking is waiting for admin approval', 'read', '2025-03-02 06:15:38', '2025-03-02 11:46:06'),
+(83, 1, 'A user books and waiting for your approval. Please check transactions from the admin panel.', 'read', '2025-03-02 06:15:38', '2025-03-02 11:46:00'),
+(84, 3, 'Admin has approved your booking! Thank you for choosing to travel with us!', 'read', '2025-03-02 06:16:58', '2025-03-02 11:47:26'),
+(85, 131, 'Admin has approved your booking! Thank you for choosing to travel with us!', 'unread', '2025-03-02 21:01:37', '2025-03-02 21:01:37'),
+(86, 131, 'Admin has approved your booking! Thank you for choosing to travel with us!', 'unread', '2025-03-06 04:05:20', '2025-03-06 04:05:20'),
+(87, 4, 'Payment is successful and your booking is waiting for admin approval', 'read', '2025-03-06 04:08:07', '2025-03-06 09:38:12'),
+(88, 1, 'A user books and waiting for your approval. Please check transactions from the admin panel.', 'read', '2025-03-06 04:08:07', '2025-03-06 09:38:25'),
+(89, 4, 'Admin has approved your booking! Thank you for choosing to travel with us!', 'read', '2025-03-06 04:08:30', '2025-03-06 09:38:42'),
+(90, 3, 'Payment is successful and your booking is waiting for admin approval', 'read', '2025-03-06 04:37:47', '2025-03-06 10:07:52'),
+(91, 1, 'A user books and waiting for your approval. Please check transactions from the admin panel.', 'read', '2025-03-06 04:37:47', '2025-03-06 10:08:01'),
+(92, 3, 'Admin has approved your booking! Thank you for choosing to travel with us!', 'read', '2025-03-06 04:38:11', '2025-03-06 10:15:02'),
+(93, 3, 'Payment is successful and your booking is waiting for admin approval', 'read', '2025-03-06 04:45:54', '2025-03-06 10:16:44'),
+(94, 1, 'A user books and waiting for your approval. Please check transactions from the admin panel.', 'read', '2025-03-06 04:45:54', '2025-03-06 10:16:15'),
+(95, 3, 'Admin has approved your booking! Thank you for choosing to travel with us!', 'read', '2025-03-06 04:46:06', '2025-03-06 10:16:44');
 
 -- --------------------------------------------------------
 
@@ -593,7 +612,7 @@ INSERT INTO `package_info` (`package_info_id`, `source_location`, `price`, `trav
 (37, 114, 699, '2025-02-22', 40, 22),
 (38, 101, 699, '2025-02-17', 40, 22),
 (39, 166, 999, '2025-02-07', 30, 23),
-(40, 166, 1002, '2025-03-21', 30, 23),
+(40, 166, 1002, '2025-03-21', 29, 23),
 (41, 166, 999, '2025-02-14', 30, 23),
 (42, 22, 1299, '2025-02-08', 29, 23),
 (43, 22, 1299, '2025-02-15', 30, 23),
@@ -950,7 +969,7 @@ INSERT INTO `package_info` (`package_info_id`, `source_location`, `price`, `trav
 (396, 166, 499, '2025-02-21', 30, 58),
 (397, 166, 499, '2025-02-28', 30, 58),
 (398, 166, 499, '2025-03-07', 30, 58),
-(399, 166, 499, '2025-03-14', 29, 58),
+(399, 166, 499, '2025-03-14', 28, 58),
 (400, 166, 499, '2025-03-21', 30, 58),
 (401, 166, 799, '2025-02-12', 30, 59),
 (402, 166, 799, '2025-02-19', 30, 59),
@@ -1006,9 +1025,9 @@ INSERT INTO `package_info` (`package_info_id`, `source_location`, `price`, `trav
 (452, 166, 599, '2025-03-20', 40, 21),
 (453, 166, 599, '2025-03-13', 40, 23),
 (454, 166, 599, '2025-03-06', 40, 22),
-(455, 166, 599, '2025-03-13', 36, 26),
+(455, 166, 599, '2025-03-13', 35, 26),
 (456, 166, 599, '2025-03-13', 40, 29),
-(457, 166, 599, '2025-03-13', 40, 32),
+(457, 166, 599, '2025-03-13', 39, 32),
 (458, 166, 599, '2025-03-12', 40, 33),
 (459, 166, 599, '2025-03-13', 40, 40),
 (460, 166, 599, '2025-03-20', 40, 40),
@@ -1021,7 +1040,18 @@ INSERT INTO `package_info` (`package_info_id`, `source_location`, `price`, `trav
 (467, 166, 599, '2025-03-13', 40, 39),
 (468, 166, 599, '2025-03-20', 40, 39),
 (469, 166, 599, '2025-03-27', 40, 39),
-(470, 22, 599, '2025-03-12', 40, 21);
+(470, 22, 599, '2025-03-12', 40, 21),
+(471, 166, 599, '2025-03-13', 40, 44),
+(472, 166, 599, '2025-03-20', 40, 44),
+(473, 166, 599, '2025-03-27', 40, 44),
+(474, 1, 699, '2025-03-12', 40, 44),
+(475, 8, 599, '2025-03-12', 40, 44),
+(476, 15, 599, '2025-03-12', 40, 44),
+(477, 1, 599, '2025-03-20', 40, 21),
+(478, 23, 599, '2025-03-20', 40, 21),
+(479, 179, 795, '2025-03-13', 40, 23),
+(480, 24, 699, '2025-03-13', 40, 23),
+(481, 76, 599, '2025-03-13', 40, 23);
 
 -- --------------------------------------------------------
 
@@ -1093,7 +1123,11 @@ INSERT INTO `passport_info` (`passport_info_id`, `booking_id`, `full_name`, `pas
 (49, 48, 'Shaun', 'SHKAI-AKU', '2026-06-30'),
 (50, 49, 'Min Khant Kyaw Swar', '2J5SA-SADA', '2025-06-18'),
 (51, 50, 'Min Khant Kyaw Swar', '2J5SA-SADA', '2027-06-09'),
-(52, 50, 'Ye Yint', 'JAU-AU', '2028-06-07');
+(52, 50, 'Ye Yint', 'JAU-AU', '2028-06-07'),
+(53, 51, 'Min Khant Kyaw Swar', '2J5SA-SADA', '2027-06-08'),
+(54, 52, 'Zwe Thuta', '8i12-81238', '2027-06-17'),
+(55, 53, 'Min Khant Kyaw Swar', 'JAU-AU', '2026-11-18'),
+(56, 54, 'Min Khant Kyaw Swar', 'JAU-AU', '2026-02-11');
 
 -- --------------------------------------------------------
 
@@ -1396,7 +1430,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`user_id`, `username`, `email`, `phone`, `role`, `profile_image`, `password`, `created_at`, `status`, `reset_password_code`) VALUES
 (1, 'admin', 'admin@gmail.com', '097941849971', 'admin', 'pictures/profile/6780856ef29e0_admin.jpg', '$2y$10$EmWL4eEQbPVoRMGs5qCWQeD4LxuRrt9Pzsu6y0vFcCG8PKrv08avK', '2025-01-07 06:52:45', 'approved', 0),
 (2, 'Min Khant', 'mkks1986.mkks@gmail.com', '09794184997', 'customer', 'pictures/profile/679c4f0375ffc_images (1).jpg', '$2y$10$ACdkoQxQePV/VfMZ4C8cjuynBATf.qqD8ZOIZt7Zs71e8OY/1tr8m', '2024-12-10 06:52:45', 'approved', NULL),
-(3, 'Frost', 'frostwosix@gmail.com', '09827291821', 'customer', 'pictures/profile/677ad9a6a6937_profile.jpg', '$2y$10$EEPfgfe8wogFnI8pV7RqzOBN4dqqQ482/ru.lGwlV0MyL4hudoGLG', '2025-01-07 06:52:45', 'approved', 432141),
+(3, 'Frost', 'frostwosix@gmail.com', '098272918211', 'customer', 'pictures/profile/677ad9a6a6937_profile.jpg', '$2y$10$HD/gpLRoQxtiI2ZAI.r9ZeLiHt6DGKheMlClTpTYHpUUhA2oR1P1e', '2025-01-07 06:52:45', 'approved', NULL),
 (4, 'Zwe Thuta Min Thein', 'zwethuta@gmail.com', '09821313131', 'customer', 'pictures/profile/6780914f4100f_kotoegyi.jpg', '$2y$10$dEqhtrGbNnU8HLIYCi8GC.uaaztgiEShW3NyehC3zMYpbWUlCYCZ2', '2024-12-10 06:52:45', 'approved', 0),
 (5, 'Linn Myat', 'linnmyat@gmail.com', '09794184997', 'customer', '/pictures/profile/defaultProfile.png', '$2y$10$egApD4TvulmYGQHWXGHOA.vErfTKHR0ITSCXWMbH7fJCaBDmrwbha', '1/2/2025, 6:22:40 AM', 'approved', 0),
 (6, 'johndoe', 'johndoe@example.com', '11234567890', 'customer', 'pictures/profile/67795edf30619_maxresdefault.jpg', '$2y$10$oRwhLqS/iQWRMEOiURude.8p0M5MD/5e0amiIXnBWPKMPb.9RPkJO', '2025-01-07 06:52:45', 'approved', 0),
@@ -1667,7 +1701,7 @@ ALTER TABLE `add_on`
 -- AUTO_INCREMENT for table `booking`
 --
 ALTER TABLE `booking`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT for table `category`
@@ -1691,19 +1725,19 @@ ALTER TABLE `discount`
 -- AUTO_INCREMENT for table `favorite_destinations`
 --
 ALTER TABLE `favorite_destinations`
-  MODIFY `favorite_destination_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
+  MODIFY `favorite_destination_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
 
 --
 -- AUTO_INCREMENT for table `location`
 --
 ALTER TABLE `location`
-  MODIFY `location_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=179;
+  MODIFY `location_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=180;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
 
 --
 -- AUTO_INCREMENT for table `package`
@@ -1715,13 +1749,13 @@ ALTER TABLE `package`
 -- AUTO_INCREMENT for table `package_info`
 --
 ALTER TABLE `package_info`
-  MODIFY `package_info_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=471;
+  MODIFY `package_info_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=482;
 
 --
 -- AUTO_INCREMENT for table `passport_info`
 --
 ALTER TABLE `passport_info`
-  MODIFY `passport_info_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `passport_info_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT for table `payment`
@@ -1745,7 +1779,7 @@ ALTER TABLE `review`
 -- AUTO_INCREMENT for table `saveditems`
 --
 ALTER TABLE `saveditems`
-  MODIFY `saved_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=169;
+  MODIFY `saved_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=176;
 
 --
 -- AUTO_INCREMENT for table `tourguide`
